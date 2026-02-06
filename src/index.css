@@ -1,2 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Playwrite+NZ+Basic:wght@100..400&display=swap');
-*{font-family: "Playwrite NZ Basic", cursive;}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  * {
+    font-family: "Playwrite NZ Basic", cursive;
+  }
+}
