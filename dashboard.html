@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="box">
+    <h2>User Dashboard</h2>
+
+    <input type="text" id="studentName" placeholder="Your Name">
+
+    <select id="leaveType">
+        <option>Sick Leave</option>
+        <option>Casual Leave</option>
+    </select>
+
+    <input type="date" id="fromDate">
+    <input type="date" id="toDate">
+
+    <button onclick="submitLeave()">Submit Leave</button>
+
+    <ul id="list"></ul>
+
+    <button onclick="logout()">Logout</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
