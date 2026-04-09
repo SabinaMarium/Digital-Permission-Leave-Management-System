@@ -8,11 +8,24 @@
     <style>
         .date-group {
             display: flex;
-            gap: 12px;
+            gap: 15px;
             margin: 10px 0;
         }
-        .date-group input {
+        .date-field {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .date-field label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #4B5563;
+            margin-bottom: 4px;
+            margin-left: 4px;
+        }
+        .date-field input {
+            width: 100%;
+            margin: 0;
         }
         textarea {
             width: 100%;
@@ -33,9 +46,8 @@
         }
         .error-msg {
             color: #EF4444;
-            font-size: 0.75rem;
-            margin-top: -5px;
-            margin-bottom: 8px;
+            font-size: 0.7rem;
+            margin-top: 4px;
             display: block;
         }
         .leave-card {
@@ -44,6 +56,11 @@
             padding: 12px;
             margin-bottom: 10px;
             border-left: 4px solid #8b5cf6;
+            transition: all 0.2s;
+        }
+        .leave-card:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .leave-reason {
             font-size: 0.8rem;
@@ -77,42 +94,213 @@
             color: #6B7280;
             margin-top: 4px;
         }
+        
+        /* ========== HIGHLIGHTED APPLY SECTION ========== */
+        .apply-section {
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .apply-section::before {
+            content: "✨";
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 80px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+            pointer-events: none;
+        }
+        .apply-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -10px rgba(139, 92, 246, 0.4);
+            border-color: #6d28d9;
+        }
+        
+        /* ========== HIGHLIGHTED "APPLY FOR LEAVE" TEXT ========== */
+        .highlight-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .apply-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed, #c084fc, #4f46e5);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 60px;
+            letter-spacing: 1px;
+            animation: gradientShift 3s ease infinite, textGlow 2s ease-in-out infinite;
+            text-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
+            position: relative;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 5px rgba(79, 70, 229, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
+            100% { text-shadow: 0 0 5px rgba(79, 70, 229, 0.3); }
+        }
+        .apply-text::before {
+            content: "📝";
+            font-size: 1.8rem;
+            margin-right: 12px;
+            background: none;
+            color: #4f46e5;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+        }
+        .apply-text::after {
+            content: "✨";
+            font-size: 1.8rem;
+            margin-left: 12px;
+            background: none;
+            color: #7c3aed;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #4f46e5;
+            margin-top: -8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            font-size: 1rem;
+            padding: 14px;
+            margin-top: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #4338ca, #6d28d9);
+        }
+        
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .dashboard-header h2 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .header-icon {
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .history-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 1rem 0 0.8rem 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1E293B;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 8px;
+        }
+        
+        .required-star {
+            color: #EF4444;
+        }
+        
+        .welcome-badge {
+            color: #4f46e5;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            background: #EEF2FF;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
-    <div class="box" style="max-width: 550px;">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+    <div class="box" style="max-width: 600px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
             <button onclick="goHome()" style="width: auto; background: #6B7280; margin: 0; padding: 8px 16px;">← Home</button>
-            <h2 style="margin: 0; flex: 1;">📋 Leave Management</h2>
+            <div class="dashboard-header" style="flex: 1;">
+                <span class="header-icon">📋</span>
+                <h2>Leave Management</h2>
+                <span style="font-size: 1.2rem;">🎯</span>
+            </div>
         </div>
         
-        <p id="welcomeUser" style="color: #4f46e5; font-weight: 500; margin-bottom: 1.5rem;"></p>
+        <p class="welcome-badge" id="welcomeUser">
+            👋 Welcome back!
+        </p>
 
-        <!-- Leave Form -->
-        <div style="background: #F9FAFB; padding: 1.2rem; border-radius: 1rem; margin-bottom: 1.5rem;">
-            <h3 style="margin-top: 0; font-size: 1.1rem;">✍️ Apply for Leave</h3>
+        <!-- HIGHLIGHTED APPLY FOR LEAVE SECTION with BIG HIGHLIGHTED TEXT -->
+        <div class="apply-section">
+            <div class="highlight-title">
+                <span class="apply-text">Apply for Leave</span>
+            </div>
+            <div class="section-subtitle">
+                ⭐ Fill out the form below to request your leave ⭐
+            </div>
             
-            <input type="text" id="studentName" placeholder="Your full name">
+            <input type="text" id="studentName" placeholder="Full name *">
             
             <select id="leaveType">
                 <option value="Sick Leave">🤒 Sick Leave</option>
                 <option value="Casual Leave">🏖️ Casual Leave</option>
                 <option value="Emergency Leave">🚨 Emergency Leave</option>
-                
+                <option value="Annual Leave">🌴 Annual Leave</option>
             </select>
 
             <div class="date-group">
-                <input type="date" id="fromDate" placeholder="From date">
-                <input type="date" id="toDate" placeholder="To date">
+                <div class="date-field">
+                    <label>📅 Start Date <span class="required-star">*</span></label>
+                    <input type="date" id="fromDate">
+                </div>
+                <div class="date-field">
+                    <label>📅 End Date <span class="required-star">*</span></label>
+                    <input type="date" id="toDate">
+                </div>
             </div>
             <small id="dateError" class="error-msg"></small>
 
-            <textarea id="leaveReason" placeholder="Reason for leave (e.g., fever, family event, personal work...)"></textarea>
+            <textarea id="leaveReason" placeholder="📝 Reason for leave (e.g., fever, family event, personal work...)"></textarea>
 
-            <button onclick="submitLeave()">📨 Submit Leave Request</button>
+            <button onclick="submitLeave()" class="submit-btn">📨 Submit Leave Request →</button>
         </div>
 
-        <h3>📌 My Leave History</h3>
+        <div class="history-header">
+            <span>📜</span> My Leave History
+            <span>🕒</span>
+        </div>
         <div id="userLeaveList" style="max-height: 350px; overflow-y: auto;"></div>
         
         <button onclick="logout()" class="logout-btn" style="margin-top: 1rem;">🚪 Logout</button>
@@ -128,12 +316,12 @@
             let current = JSON.parse(localStorage.getItem("currentUser"));
             if(!current) return;
             let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
-            let myLeaves = allLeaves.filter(l => l.userEmail === current.email).reverse(); // newest first
+            let myLeaves = allLeaves.filter(l => l.userEmail === current.email).reverse();
             let container = document.getElementById("userLeaveList");
             if(!container) return;
             container.innerHTML = "";
             if(myLeaves.length === 0) {
-                container.innerHTML = "<div style='text-align:center; padding: 2rem; color: #6B7280;'>📭 No leave requests yet.</div>";
+                container.innerHTML = "<div style='text-align:center; padding: 2rem; color: #6B7280; background:#F9FAFB; border-radius:1rem;'>📭 No leave requests yet.<br>✨ Apply for your first leave above!</div>";
                 return;
             }
             myLeaves.forEach(l => {
@@ -144,12 +332,16 @@
                 if(l.status === "Approved") statusClass = "status-approved";
                 if(l.status === "Rejected") statusClass = "status-rejected";
                 
+                let statusIcon = l.status === "Approved" ? "✅" : (l.status === "Rejected" ? "❌" : "⏳");
+                
                 div.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <strong>${l.type}</strong>
-                        <span class="status-badge ${statusClass}">${l.status || "Pending"}</span>
+                        <span class="status-badge ${statusClass}">${statusIcon} ${l.status || "Pending"}</span>
                     </div>
-                    <div class="leave-dates">📅 ${l.from} → ${l.to}</div>
+                    <div class="leave-dates">
+                        📅 Start: ${l.from} &nbsp;→&nbsp; End: ${l.to}
+                    </div>
                     <div class="leave-reason">📝 ${l.reason || "No reason provided"}</div>
                 `;
                 container.appendChild(div);
@@ -161,10 +353,10 @@
             const fromDate = new Date(from);
             const toDate = new Date(to);
             if(fromDate > toDate) {
-                document.getElementById("dateError").innerText = "❌ End date cannot be before start date!";
+                document.getElementById("dateError").innerHTML = "❌ End Date cannot be earlier than Start Date!";
                 return false;
             }
-            document.getElementById("dateError").innerText = "";
+            document.getElementById("dateError").innerHTML = "";
             return true;
         }
         
@@ -194,13 +386,21 @@
             let to = document.getElementById("toDate").value;
             let reason = document.getElementById("leaveReason").value.trim();
             
-            if(!name || !type || !from || !to){
-                alert("❌ Please fill all fields (Name, Leave Type, From Date, To Date)");
+            if(!name){
+                alert("❌ Please enter your full name!");
+                return;
+            }
+            if(!from){
+                alert("❌ Please select Start Date!");
+                return;
+            }
+            if(!to){
+                alert("❌ Please select End Date!");
                 return;
             }
             
             if(!validateDates(from, to)) {
-                alert("❌ Please fix the date range error!");
+                alert("❌ Please fix the date range error! End Date must be after or equal to Start Date.");
                 return;
             }
             
@@ -224,11 +424,10 @@
             
             alert("✅ Leave request submitted successfully!");
             
-            
             document.getElementById("fromDate").value = "";
             document.getElementById("toDate").value = "";
             document.getElementById("leaveReason").value = "";
-            document.getElementById("dateError").innerText = "";
+            document.getElementById("dateError").innerHTML = "";
             
             showMyLeaves();
         };
@@ -240,7 +439,8 @@
                 else window.location.href = "index.html";
                 return;
             }
-            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
+            let welcomeMsg = document.getElementById("welcomeUser");
+            if(welcomeMsg) welcomeMsg.innerHTML = `👋 Welcome back, ${current.name} ✨`;
             if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
             showMyLeaves();
         };
