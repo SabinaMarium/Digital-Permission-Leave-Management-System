@@ -5,75 +5,210 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard | EduLeave</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .date-group {
+            display: flex;
+            gap: 12px;
+            margin: 10px 0;
+        }
+        .date-group input {
+            flex: 1;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            margin: 8px 0;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        textarea:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        .error-msg {
+            color: #EF4444;
+            font-size: 0.75rem;
+            margin-top: -5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .leave-card {
+            background: #F8FAFE;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #8b5cf6;
+        }
+        .leave-reason {
+            font-size: 0.8rem;
+            color: #4B5563;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed #E2E8F0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+        .status-approved {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+        .status-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+        .leave-dates {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+    </style>
 </head>
 <body>
-    <div class="box" style="max-width: 500px;">
-        <h2>📋 User Dashboard</h2>
-        <p id="welcomeUser" style="color: #2C7DA0; font-weight: 500;"></p>
-
-        <input type="text" id="studentName" placeholder="Your full name">
+    <div class="box" style="max-width: 550px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+            <button onclick="goHome()" style="width: auto; background: #6B7280; margin: 0; padding: 8px 16px;">← Home</button>
+            <h2 style="margin: 0; flex: 1;">📋 Leave Request</h2>
+        </div>
         
-        <select id="leaveType">
-            <option>Sick Leave</option>
-            <option>Casual Leave</option>
-            <option>Emergency Leave</option>
-        </select>
+        <p id="welcomeUser" style="color: #4f46e5; font-weight: 500; margin-bottom: 1.5rem;"></p>
 
-        <div style="display: flex; gap: 12px;">
-            <input type="date" id="fromDate" placeholder="From date">
-            <input type="date" id="toDate" placeholder="To date">
+        <!-- Leave Application Form -->
+        <div style="background: #F9FAFB; padding: 1.2rem; border-radius: 1rem; margin-bottom: 1.5rem;">
+            <h3 style="margin-top: 0; font-size: 1.1rem;">✍️ Apply for Leave</h3>
+            
+            <input type="text" id="studentName" placeholder="Your full name">
+            
+            <select id="leaveType">
+                <option value="Sick Leave">🤒 Sick Leave</option>
+                <option value="Casual Leave">🏖️ Casual Leave</option>
+                <option value="Emergency Leave">🚨 Emergency Leave</option>
+                <option value="Annual Leave">🌴 Annual Leave</option>
+            </select>
+
+            <div class="date-group">
+                <input type="date" id="fromDate" placeholder="From date">
+                <input type="date" id="toDate" placeholder="To date">
+            </div>
+            <small id="dateError" class="error-msg"></small>
+
+            <textarea id="leaveReason" placeholder="Reason for leave (e.g., fever, family event, personal work...)"></textarea>
+
+            <button onclick="submitLeave()">📨 Submit Leave Request</button>
         </div>
 
-        <button onclick="submitLeave()">📨 Submit Leave Request</button>
-
         <h3>📌 My Leave History</h3>
-        <ul id="userLeaveList"></ul>
-
-        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+        <div id="userLeaveList" style="max-height: 350px; overflow-y: auto;"></div>
+        
+        <button onclick="logout()" class="logout-btn" style="margin-top: 1rem;">🚪 Logout</button>
     </div>
+    
     <script src="script.js"></script>
     <script>
-        window.onload = function() {
-            let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(current && current.name) {
-                document.getElementById("welcomeUser").innerHTML = `Welcome, ${current.name} ✨`;
-                if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
-            }
-            showMyLeaves();
-        };
+        function goHome() {
+            window.location.href = "home.html";
+        }
+
         function showMyLeaves() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
             if(!current) return;
             let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
-            let myLeaves = allLeaves.filter(l => l.userEmail === current.email);
-            let list = document.getElementById("userLeaveList");
-            if(!list) return;
-            list.innerHTML = "";
+            let myLeaves = allLeaves.filter(l => l.userEmail === current.email).reverse(); // newest first
+            let container = document.getElementById("userLeaveList");
+            if(!container) return;
+            container.innerHTML = "";
             if(myLeaves.length === 0) {
-                list.innerHTML = "<li style='text-align:center;'>No leave requests yet.</li>";
+                container.innerHTML = "<div style='text-align:center; padding: 2rem; color: #6B7280;'>📭 No leave requests yet.</div>";
                 return;
             }
             myLeaves.forEach(l => {
-                let li = document.createElement("li");
-                li.innerHTML = `<strong>${l.type}</strong> — ${l.from} to ${l.to} <span style="font-size:0.7rem; background:#E2E8F0; padding:2px 8px; border-radius:20px;">${l.status || "Pending"}</span>`;
-                list.appendChild(li);
+                let div = document.createElement("div");
+                div.className = "leave-card";
+                
+                let statusClass = "status-pending";
+                if(l.status === "Approved") statusClass = "status-approved";
+                if(l.status === "Rejected") statusClass = "status-rejected";
+                
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <strong>${l.type}</strong>
+                        <span class="status-badge ${statusClass}">${l.status || "Pending"}</span>
+                    </div>
+                    <div class="leave-dates">📅 ${l.from} → ${l.to}</div>
+                    <div class="leave-reason">📝 ${l.reason || "No reason provided"}</div>
+                `;
+                container.appendChild(div);
             });
         }
+        
+        function validateDates(from, to) {
+            if(!from || !to) return true;
+            const fromDate = new Date(from);
+            const toDate = new Date(to);
+            if(fromDate > toDate) {
+                document.getElementById("dateError").innerText = "❌ End date cannot be before start date!";
+                return false;
+            }
+            document.getElementById("dateError").innerText = "";
+            return true;
+        }
+        
+        document.getElementById("fromDate")?.addEventListener("change", function() {
+            let from = document.getElementById("fromDate").value;
+            let to = document.getElementById("toDate").value;
+            validateDates(from, to);
+        });
+        
+        document.getElementById("toDate")?.addEventListener("change", function() {
+            let from = document.getElementById("fromDate").value;
+            let to = document.getElementById("toDate").value;
+            validateDates(from, to);
+        });
+        
         window.submitLeave = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current){ alert("Please login again"); window.location.href="index.html"; return; }
+            if(!current){ 
+                alert("Please login again"); 
+                window.location.href="index.html"; 
+                return; 
+            }
+            
             let name = document.getElementById("studentName").value.trim();
             let type = document.getElementById("leaveType").value;
             let from = document.getElementById("fromDate").value;
             let to = document.getElementById("toDate").value;
+            let reason = document.getElementById("leaveReason").value.trim();
+            
             if(!name || !type || !from || !to){
-                alert("Please fill all fields");
+                alert("❌ Please fill all fields (Name, Leave Type, From Date, To Date)");
                 return;
             }
-            if(new Date(from) > new Date(to)){
-                alert("From date cannot be after To date");
+            
+            if(!validateDates(from, to)) {
+                alert("❌ Please fix the date range error!");
                 return;
             }
+            
+            if(!reason) {
+                alert("⚠️ Please provide a reason for your leave request.");
+                return;
+            }
+            
             let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
             leaves.push({
                 userName: name,
@@ -81,14 +216,33 @@
                 type: type,
                 from: from,
                 to: to,
+                reason: reason,
                 status: "Pending",
                 timestamp: Date.now()
             });
             localStorage.setItem("leaves", JSON.stringify(leaves));
-            alert("Leave request submitted!");
-            showMyLeaves();
+            
+            alert("✅ Leave request submitted successfully!");
+            
+            // Clear form
             document.getElementById("fromDate").value = "";
             document.getElementById("toDate").value = "";
+            document.getElementById("leaveReason").value = "";
+            document.getElementById("dateError").innerText = "";
+            
+            showMyLeaves();
+        };
+        
+        window.onload = function() {
+            let current = JSON.parse(localStorage.getItem("currentUser"));
+            if(!current || current.role === "admin"){
+                if(current && current.role === "admin") window.location.href = "admin.html";
+                else window.location.href = "index.html";
+                return;
+            }
+            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
+            if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
+            showMyLeaves();
         };
     </script>
 </body>

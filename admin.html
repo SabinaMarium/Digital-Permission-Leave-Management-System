@@ -6,69 +6,169 @@
     <title>Admin Panel | EduLeave</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-actions button {
-            background: #F59E0B;
-            margin-right: 8px;
-            width: auto;
-            padding: 6px 16px;
-            font-size: 0.8rem;
+        .admin-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #8b5cf6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .admin-actions button.approve { background: #10B981; }
-        .admin-actions button.reject { background: #EF4444; }
-        li {
+        .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            margin-bottom: 0.5rem;
         }
-        .req-info { flex: 1; }
+        .admin-name {
+            font-weight: 700;
+            color: #1E293B;
+        }
+        .admin-email {
+            font-size: 0.7rem;
+            color: #6B7280;
+        }
+        .admin-dates {
+            font-size: 0.75rem;
+            color: #4B5563;
+            margin: 6px 0;
+        }
+        .admin-reason {
+            background: #F3F4F6;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+            font-size: 0.85rem;
+            color: #374151;
+        }
+        .status-select {
+            padding: 4px 8px;
+            border-radius: 20px;
+            border: 1px solid #E2E8F0;
+            font-size: 0.75rem;
+        }
+        .action-btn {
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+        .btn-approve { background: #10B981; color: white; }
+        .btn-reject { background: #EF4444; color: white; }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-bar input, .filter-bar select {
+            width: auto;
+            flex: 1;
+            margin: 0;
+            padding: 8px 12px;
+        }
     </style>
 </head>
 <body>
-    <div class="box" style="max-width: 650px;">
-        <h2>👑 Admin Control</h2>
-        <p style="margin-bottom: 0.5rem;">Manage all leave requests</p>
-        <ul id="adminList"></ul>
-        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+    <div class="box" style="max-width: 750px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="margin: 0;">👑 Admin Panel</h2>
+            <button onclick="logout()" style="width: auto; background: #EF4444; padding: 8px 16px;">Logout</button>
+        </div>
+        <p style="margin-bottom: 1rem;">Manage all leave requests</p>
+        
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or email" onkeyup="filterRequests()">
+            <select id="statusFilter" onchange="filterRequests()">
+                <option value="all">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+        
+        <div id="adminList"></div>
     </div>
     <script src="script.js"></script>
     <script>
-        function renderAdminRequests() {
-            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+        let allRequests = [];
+        
+        function renderAdminRequests(requestsToShow) {
             let container = document.getElementById("adminList");
             if(!container) return;
             container.innerHTML = "";
-            if(leaves.length === 0){
-                container.innerHTML = "<li>✨ No leave requests yet.</li>";
+            if(requestsToShow.length === 0){
+                container.innerHTML = "<div style='text-align:center; padding: 2rem;'>✨ No leave requests found.</div>";
                 return;
             }
-            leaves.forEach((req, idx) => {
-                let li = document.createElement("li");
-                li.style.marginBottom = "12px";
-                li.style.flexWrap = "wrap";
-                li.innerHTML = `
-                    <div class="req-info">
-                        <strong>${req.userName || req.name}</strong> (${req.userEmail})<br>
-                        ${req.type} · ${req.from} → ${req.to}<br>
-                        <span style="background:#EFF6FF; padding:2px 8px; border-radius:40px; font-size:0.7rem;">${req.status || "Pending"}</span>
+            requestsToShow.forEach((req, idx) => {
+                let div = document.createElement("div");
+                div.className = "admin-card";
+                div.innerHTML = `
+                    <div class="admin-header">
+                        <div>
+                            <span class="admin-name">${escapeHtml(req.userName || req.name)}</span>
+                            <div class="admin-email">${req.userEmail}</div>
+                        </div>
+                        <div>
+                            <select id="status-${idx}" class="status-select" onchange="updateStatus(${idx}, this.value)">
+                                <option value="Pending" ${req.status === "Pending" ? "selected" : ""}>⏳ Pending</option>
+                                <option value="Approved" ${req.status === "Approved" ? "selected" : ""}>✅ Approved</option>
+                                <option value="Rejected" ${req.status === "Rejected" ? "selected" : ""}>❌ Rejected</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="admin-actions">
-                        ${req.status !== "Approved" ? `<button class="approve" onclick="updateRequestStatus(${idx}, 'Approved')">✓ Approve</button>` : ""}
-                        ${req.status !== "Rejected" ? `<button class="reject" onclick="updateRequestStatus(${idx}, 'Rejected')">✗ Reject</button>` : ""}
-                    </div>
+                    <div class="admin-dates">📅 ${req.from} → ${req.to}</div>
+                    <div class="admin-reason">📝 Reason: ${escapeHtml(req.reason || "No reason provided")}</div>
+                    <div style="font-size:0.7rem; color:#8B5CF6; margin-top:6px;">Type: ${req.type}</div>
                 `;
-                container.appendChild(li);
+                container.appendChild(div);
             });
         }
-        window.updateRequestStatus = function(index, newStatus) {
+        
+        function escapeHtml(str) {
+            if(!str) return "";
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function updateStatus(index, newStatus) {
             let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
             if(leaves[index]) {
                 leaves[index].status = newStatus;
                 localStorage.setItem("leaves", JSON.stringify(leaves));
-                renderAdminRequests();
-                alert(`Request ${newStatus.toLowerCase()} successfully.`);
+                loadAndFilter();
+                alert(`✅ Request marked as ${newStatus}`);
             }
-        };
+        }
+        
+        function loadAndFilter() {
+            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            allRequests = leaves;
+            filterRequests();
+        }
+        
+        function filterRequests() {
+            let searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
+            let statusFilter = document.getElementById("statusFilter")?.value || "all";
+            
+            let filtered = allRequests.filter(req => {
+                let matchesSearch = (req.userName || "").toLowerCase().includes(searchTerm) || 
+                                   (req.userEmail || "").toLowerCase().includes(searchTerm);
+                let matchesStatus = statusFilter === "all" || req.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            renderAdminRequests(filtered);
+        }
+        
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
             if(!current || current.role !== "admin"){
@@ -76,7 +176,7 @@
                 window.location.href = "index.html";
                 return;
             }
-            renderAdminRequests();
+            loadAndFilter();
         };
     </script>
 </body>
