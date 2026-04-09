@@ -18,7 +18,7 @@ function register() {
         return;
     }
     
-    // Password strength validation
+    
     const hasUpper = /[A-Z]/.test(pass);
     const hasLower = /[a-z]/.test(pass);
     const hasDigit = /[0-9]/.test(pass);
