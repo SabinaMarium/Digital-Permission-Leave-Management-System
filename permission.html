@@ -178,7 +178,7 @@
             window.location.href = "home.html";
         }
 
-        // সঠিক টাইম ভ্যালিডেশন ফাংশন
+        
         function validateTimes(startTime, endTime) {
             if(!startTime || !endTime) {
                 document.getElementById("timeError").innerHTML = "";
@@ -186,7 +186,7 @@
                 return true;
             }
             
-            // টাইমকে তুলনা করার জন্য মিনিটে কনভার্ট করুন
+           
             let [startHour, startMinute] = startTime.split(':').map(Number);
             let [endHour, endMinute] = endTime.split(':').map(Number);
             
@@ -237,7 +237,7 @@
             validateTimes(startTime, formattedEnd);
         }
 
-        // রিয়েল-টাইম ভ্যালিডেশন
+        
         document.getElementById("startTime")?.addEventListener("change", function() {
             let start = document.getElementById("startTime").value;
             let end = document.getElementById("endTime").value;
