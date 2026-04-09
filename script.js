@@ -56,7 +56,7 @@ function login() {
     if (found.role === "admin") {
         window.location.href = "admin.html";
     } else {
-        window.location.href = "home.html";  // Changed from dashboard.html to home.html
+        window.location.href = "home.html";  
     }
 }
 
