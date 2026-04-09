@@ -7,7 +7,7 @@
 
 body {
     min-height: 100vh;
-    /* নতুন ব্যাকগ্রাউন্ড - গা dark ় নীল ও পার্পল মিক্স, বক্সের সাথে কন্ট্রাস্ট বাড়ানোর জন্য */
+  
     background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #2d1b4e 100%);
     display: flex;
     justify-content: center;
