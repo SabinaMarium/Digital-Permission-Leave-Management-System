@@ -42,7 +42,7 @@ function register() {
     window.location.href = "index.html";
 }
 
-// Login function - now redirects to home.html for users
+
 function login() {
     let email = document.getElementById("loginEmail")?.value.trim();
     let pass = document.getElementById("loginPassword")?.value;
