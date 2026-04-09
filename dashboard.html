@@ -83,12 +83,12 @@
     <div class="box" style="max-width: 550px;">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
             <button onclick="goHome()" style="width: auto; background: #6B7280; margin: 0; padding: 8px 16px;">← Home</button>
-            <h2 style="margin: 0; flex: 1;">📋 Leave Request</h2>
+            <h2 style="margin: 0; flex: 1;">📋 Leave Management</h2>
         </div>
         
         <p id="welcomeUser" style="color: #4f46e5; font-weight: 500; margin-bottom: 1.5rem;"></p>
 
-        <!-- Leave Application Form -->
+        <!-- Leave Form -->
         <div style="background: #F9FAFB; padding: 1.2rem; border-radius: 1rem; margin-bottom: 1.5rem;">
             <h3 style="margin-top: 0; font-size: 1.1rem;">✍️ Apply for Leave</h3>
             
@@ -98,7 +98,7 @@
                 <option value="Sick Leave">🤒 Sick Leave</option>
                 <option value="Casual Leave">🏖️ Casual Leave</option>
                 <option value="Emergency Leave">🚨 Emergency Leave</option>
-                <option value="Annual Leave">🌴 Annual Leave</option>
+                
             </select>
 
             <div class="date-group">
@@ -224,7 +224,7 @@
             
             alert("✅ Leave request submitted successfully!");
             
-            // Clear form
+            
             document.getElementById("fromDate").value = "";
             document.getElementById("toDate").value = "";
             document.getElementById("leaveReason").value = "";
