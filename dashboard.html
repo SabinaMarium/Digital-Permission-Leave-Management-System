@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard | EduLeave</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📋%3C/text%3E%3C/svg%3E">
     <style>
         .date-group {
             display: flex;
@@ -50,17 +51,22 @@
             margin-top: 4px;
             display: block;
         }
+        .success-msg {
+            color: #10B981;
+            font-size: 0.7rem;
+            margin-top: 4px;
+            display: block;
+        }
         .leave-card {
             background: #F8FAFE;
             border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
             border-left: 4px solid #8b5cf6;
-            transition: all 0.2s;
+            transition: transform 0.1s;
         }
         .leave-card:hover {
             transform: translateX(3px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .leave-reason {
             font-size: 0.8rem;
@@ -69,9 +75,23 @@
             padding-top: 6px;
             border-top: 1px dashed #E2E8F0;
         }
+        .admin-comment {
+            background: #FEF3C7;
+            padding: 10px 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            border-left: 3px solid #F59E0B;
+        }
+        .comment-label {
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #B45309;
+            margin-bottom: 5px;
+        }
         .status-badge {
             display: inline-block;
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
@@ -94,181 +114,57 @@
             color: #6B7280;
             margin-top: 4px;
         }
-        
-        /* ========== HIGHLIGHTED APPLY SECTION ========== */
-        .apply-section {
-            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-            padding: 1.5rem;
-            border-radius: 1.5rem;
-            margin-bottom: 2rem;
-            border: 2px solid #8b5cf6;
-            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.3);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .apply-section::before {
-            content: "✨";
-            position: absolute;
-            top: -15px;
-            right: -15px;
-            font-size: 80px;
-            opacity: 0.1;
-            transform: rotate(15deg);
-            pointer-events: none;
-        }
-        .apply-section:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 30px -10px rgba(139, 92, 246, 0.4);
-            border-color: #6d28d9;
-        }
-        
-        /* ========== HIGHLIGHTED "APPLY FOR LEAVE" TEXT ========== */
-        .highlight-title {
-            text-align: center;
+        .form-section {
+            background: #F9FAFB;
+            padding: 1.2rem;
+            border-radius: 1rem;
             margin-bottom: 1.5rem;
         }
-        .apply-text {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed, #c084fc, #4f46e5);
-            background-size: 300% 300%;
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            display: inline-block;
-            padding: 8px 24px;
-            border-radius: 60px;
-            letter-spacing: 1px;
-            animation: gradientShift 3s ease infinite, textGlow 2s ease-in-out infinite;
-            text-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
-            position: relative;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes textGlow {
-            0% { text-shadow: 0 0 5px rgba(79, 70, 229, 0.3); }
-            50% { text-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
-            100% { text-shadow: 0 0 5px rgba(79, 70, 229, 0.3); }
-        }
-        .apply-text::before {
-            content: "📝";
-            font-size: 1.8rem;
-            margin-right: 12px;
-            background: none;
-            color: #4f46e5;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-        }
-        .apply-text::after {
-            content: "✨";
-            font-size: 1.8rem;
-            margin-left: 12px;
-            background: none;
-            color: #7c3aed;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-        }
-        
-        .section-subtitle {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #4f46e5;
-            margin-top: -8px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-        
-        .submit-btn {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            font-size: 1rem;
-            padding: 14px;
-            margin-top: 20px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-        .submit-btn:hover {
-            background: linear-gradient(135deg, #4338ca, #6d28d9);
-        }
-        
-        .dashboard-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .dashboard-header h2 {
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        .header-icon {
-            font-size: 2rem;
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        .history-header {
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin: 1rem 0 0.8rem 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1E293B;
-            border-bottom: 2px solid #E2E8F0;
-            padding-bottom: 8px;
         }
-        
         .required-star {
             color: #EF4444;
         }
-        
-        .welcome-badge {
-            color: #4f46e5;
-            font-weight: 500;
-            margin-bottom: 1.2rem;
-            background: #EEF2FF;
-            padding: 8px 16px;
-            border-radius: 30px;
-            display: inline-block;
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .quick-btn {
+            background: #E0E7FF;
+            color: #4338CA;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            width: auto;
+            margin: 0;
+        }
+        .quick-btn:hover {
+            background: #C7D2FE;
+            transform: scale(0.96);
         }
     </style>
 </head>
 <body>
-    <div class="box" style="max-width: 600px;">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
+    <div class="box" style="max-width: 580px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
             <button onclick="goHome()" style="width: auto; background: #6B7280; margin: 0; padding: 8px 16px;">← Home</button>
-            <div class="dashboard-header" style="flex: 1;">
-                <span class="header-icon">📋</span>
-                <h2>Leave Dashboard</h2>
-                <span style="font-size: 1.2rem;">🎯</span>
-            </div>
+            <h2 style="margin: 0; flex: 1;">📋 Leave Management</h2>
         </div>
         
-        <p class="welcome-badge" id="welcomeUser">
-            👋 Welcome back!
-        </p>
+        <p id="welcomeUser" style="color: #4f46e5; font-weight: 500; margin-bottom: 1rem;"></p>
 
-        
-        <div class="apply-section">
-            <div class="highlight-title">
-                <span class="apply-text">Apply for Leave</span>
-            </div>
-            <div class="section-subtitle">
-                ⭐ Fill out the form below to request your leave ⭐
+        <!-- Leave Application Form -->
+        <div class="form-section">
+            <div class="section-title">
+                <span>✍️ Apply for Leave</span>
             </div>
             
             <input type="text" id="studentName" placeholder="Full name *">
@@ -280,6 +176,7 @@
                 <option value="Annual Leave">🌴 Annual Leave</option>
             </select>
 
+            <!-- Date fields with labels - Start Date & End Date -->
             <div class="date-group">
                 <div class="date-field">
                     <label>📅 Start Date <span class="required-star">*</span></label>
@@ -294,14 +191,11 @@
 
             <textarea id="leaveReason" placeholder="📝 Reason for leave (e.g., fever, family event, personal work...)"></textarea>
 
-            <button onclick="submitLeave()" class="submit-btn">📨 Submit Leave Request →</button>
+            <button onclick="submitLeave()">📨 Submit Leave Request</button>
         </div>
 
-        <div class="history-header">
-            <span>📜</span> My Leave History
-            <span>🕒</span>
-        </div>
-        <div id="userLeaveList" style="max-height: 350px; overflow-y: auto;"></div>
+        <h3>📌 My Leave History</h3>
+        <div id="userLeaveList" style="max-height: 400px; overflow-y: auto;"></div>
         
         <button onclick="logout()" class="logout-btn" style="margin-top: 1rem;">🚪 Logout</button>
     </div>
@@ -321,7 +215,7 @@
             if(!container) return;
             container.innerHTML = "";
             if(myLeaves.length === 0) {
-                container.innerHTML = "<div style='text-align:center; padding: 2rem; color: #6B7280; background:#F9FAFB; border-radius:1rem;'>📭 No leave requests yet.<br>✨ Apply for your first leave above!</div>";
+                container.innerHTML = "<div style='text-align:center; padding: 2rem; color: #6B7280;'>📭 No leave requests yet.</div>";
                 return;
             }
             myLeaves.forEach(l => {
@@ -332,19 +226,44 @@
                 if(l.status === "Approved") statusClass = "status-approved";
                 if(l.status === "Rejected") statusClass = "status-rejected";
                 
-                let statusIcon = l.status === "Approved" ? "✅" : (l.status === "Rejected" ? "❌" : "⏳");
+                let statusText = l.status || "Pending";
+                let statusIcon = statusText === "Approved" ? "✅" : (statusText === "Rejected" ? "❌" : "⏳");
+                
+                // কমেন্ট HTML তৈরি করা (যদি থাকে)
+                let adminCommentHtml = "";
+                if(l.adminComment) {
+                    adminCommentHtml = `
+                        <div class="admin-comment">
+                            <div class="comment-label">💬 Admin Comment (${l.adminName || "Admin"} - ${l.actionDate || ""}):</div>
+                            ${escapeHtml(l.adminComment)}
+                        </div>
+                    `;
+                }
                 
                 div.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <strong>${l.type}</strong>
-                        <span class="status-badge ${statusClass}">${statusIcon} ${l.status || "Pending"}</span>
+                        <span class="status-badge ${statusClass}">${statusIcon} ${statusText}</span>
                     </div>
                     <div class="leave-dates">
                         📅 Start: ${l.from} &nbsp;→&nbsp; End: ${l.to}
                     </div>
-                    <div class="leave-reason">📝 ${l.reason || "No reason provided"}</div>
+                    <div class="leave-reason">
+                        📝 ${l.reason || "No reason provided"}
+                    </div>
+                    ${adminCommentHtml}
                 `;
                 container.appendChild(div);
+            });
+        }
+        
+        function escapeHtml(str) {
+            if(!str) return "";
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
             });
         }
         
@@ -360,6 +279,7 @@
             return true;
         }
         
+        // Real-time date validation
         document.getElementById("fromDate")?.addEventListener("change", function() {
             let from = document.getElementById("fromDate").value;
             let to = document.getElementById("toDate").value;
@@ -424,6 +344,7 @@
             
             alert("✅ Leave request submitted successfully!");
             
+            // Clear form
             document.getElementById("fromDate").value = "";
             document.getElementById("toDate").value = "";
             document.getElementById("leaveReason").value = "";
@@ -439,8 +360,7 @@
                 else window.location.href = "index.html";
                 return;
             }
-            let welcomeMsg = document.getElementById("welcomeUser");
-            if(welcomeMsg) welcomeMsg.innerHTML = `👋 Welcome back, ${current.name} ✨`;
+            document.getElementById("welcomeUser").innerHTML = `👋 Welcome back, ${current.name}`;
             if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
             showMyLeaves();
         };
