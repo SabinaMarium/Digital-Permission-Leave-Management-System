@@ -47,6 +47,7 @@
             margin: 5px 0 0 0;
             padding-left: 20px;
             color: #4B5563;
+            list-style: none;
         }
         .req-list li {
             margin: 3px 0;
@@ -55,13 +56,39 @@
             border-left: none;
             font-size: 0.7rem;
         }
-        .req-met { color: #10B981; text-decoration: line-through; opacity: 0.7; }
+        
+        /* CSS Icon Styling - No images needed! */
+        .form-icon {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3); }
+        }
     </style>
 </head>
 <body>
     <div class="box">
+        <!-- CSS Icon instead of image -->
+        <div class="form-icon">
+            <div class="icon-circle">📝</div>
+        </div>
         <h2>Create Account</h2>
-        <p style="margin-bottom: 1rem; color: #4B5563;">Join the leave management system</p>
+        <p style="margin-bottom: 1rem; color: #4B5563; text-align: center;">Join the leave management system</p>
 
         <input type="text" id="name" placeholder="Full name">
         
@@ -72,20 +99,20 @@
         <input type="password" id="password" placeholder="Create password">
         <div id="passwordStrength" class="password-strength">🔒 Password strength: </div>
         <ul class="req-list" id="passwordReqs">
-            <li id="reqUpper">✓ At least 1 uppercase letter (A-Z)</li>
-            <li id="reqLower">✓ At least 1 lowercase letter (a-z)</li>
-            <li id="reqDigit">✓ At least 1 digit (0-9)</li>
-            <li id="reqSpecial">✓ At least 1 special character (@$!%*?&)</li>
-            <li id="reqLength">✓ Minimum 8 characters long</li>
+            <li id="reqUpper">🔤 At least 1 uppercase letter (A-Z)</li>
+            <li id="reqLower">🔡 At least 1 lowercase letter (a-z)</li>
+            <li id="reqDigit">🔢 At least 1 digit (0-9)</li>
+            <li id="reqSpecial">✨ At least 1 special character (@$!%*?&)</li>
+            <li id="reqLength">📏 Minimum 8 characters long</li>
         </ul>
 
         <select id="role">
             <option value="">Select role</option>
-            <option value="user">User (Student/Employee)</option>
-            <option value="admin">Administrator</option>
+            <option value="user">👤 User (Student/Employee)</option>
+            <option value="admin">👑 Administrator</option>
         </select>
 
-        <button onclick="register()">Register →</button>
+        <button onclick="register()">Create Account →</button>
 
         <p style="text-align: center; margin-top: 1.5rem;">Already have account? <a href="index.html">Sign in</a></p>
     </div>
@@ -156,7 +183,7 @@
             document.getElementById("reqLength").style.color = isLong ? "#10B981" : "#EF4444";
             
             if(hasUpper && hasLower && hasDigit && hasSpecial && isLong) {
-                strengthDiv.innerHTML = "✅ Strong Password!";
+                strengthDiv.innerHTML = "✅ Strong Password! Great job!";
                 strengthDiv.className = "password-strength strength-strong";
                 return "strong";
             } else if((hasUpper || hasLower) && (hasDigit || hasSpecial) && pwd.length >= 6) {

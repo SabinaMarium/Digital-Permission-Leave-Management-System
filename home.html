@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | EduLeave</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Data URI Favicon (emoji as fallback) -->
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABnElEQVR4nO2WvUoDQRSFv4mKpRBB0EIKCwuLNIJYBRsbCxtfQhAfQh9AUF/AR/ABbGxsLARrGxsLUbSwsLAQRRAEQf9xM2SYzUw2O4usBw7Mzm7uPffs3NldIYSAiIiIiIiIiIiIiIiIKCGd+AF6QFE/5pRcoI+6Jp5rSjGQV/ALfV3P1AHyihmUgG72AANZ+UJYAS/AtSlsghfgaArb4AU4nsIueAFOprAPXoDTKArBwAlwEUUpeJ00gDgDehMoMwA6pQHfUQB4nDSApZQCoG8K4FUKQFVJAH2TBnBv8gB1YhJQNQkArpMA0OQEDcBJogDqnAQATZIGUOckAWhCGgDtSAKokwTQjCQAtEkC0CQJ0G5MAJokAbQTEwDaJAG0ExMA2iQBoJ2YANAmCQDtxASANkkAaCcmALRJAkA7MQGgTRIA2okJAG2SANBOTABokwSAdmICQJskALQTEwDaJAGgnZgA0CYJAO3EBIA2SQBoJyYAtEkCQDsxAaBNEgDaiQkAbZIA0E5MAGiTBIB2YgJAm9ZgAu4iIiIiIiIiIiIiorT5BhhRc/mby1jOAAAAAElFTkSuQmCC">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #2d1b4e 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 1.5rem;
+        }
+
+        .home-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .welcome-header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        .welcome-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid #E2E8F0;
+            text-align: center;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);
+            border-color: #8b5cf6;
+        }
+        
+        /* Image icon styling */
+        .module-icon-img {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1rem auto;
+            display: block;
+            object-fit: contain;
+        }
+        
+        .module-card h3 {
+            color: #1E293B;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .module-card p {
+            color: #64748B;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #F8FAFE, #FFFFFF);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #E2E8F0;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+        
+        .stat-label {
+            color: #64748B;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        .logo-img {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        button {
+            background: #EF4444;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        button:hover {
+            background: #DC2626;
+            transform: scale(0.98);
+        }
+        
+        @media (max-width: 768px) {
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <!-- Top Navigation with Logo Image (Base64) -->
+        <div class="top-nav">
+            <div class="logo">
+                <img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234f46e5' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='white' font-size='50'%3E📋%3C/text%3E%3C/svg%3E" alt="Logo">
+                EduLeave System
+            </div>
+            <div class="user-info">
+                <span id="userNameDisplay"></span>
+                <div class="user-avatar" id="userAvatar"></div>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <!-- Welcome Section -->
+        <div class="welcome-header">
+            <h1 id="welcomeMessage">Welcome back! 👋</h1>
+            <p>Manage your leaves, track requests, and stay organized from one place.</p>
+        </div>
+        
+        <!-- Module Cards with Base64 Images -->
+        <div class="module-grid">
+            <div class="module-card" onclick="navigateTo('dashboard')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📋%3C/text%3E%3C/svg%3E" alt="Dashboard">
+                <h3>Leave Dashboard</h3>
+                <p>Apply for new leaves, view your leave history, and track pending requests.</p>
+            </div>
+            
+            <div class="module-card" onclick="navigateTo('profile')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E👤%3C/text%3E%3C/svg%3E" alt="Profile">
+                <h3>My Profile</h3>
+                <p>Update your personal information, change password, and manage account settings.</p>
+            </div>
+            
+            <div class="module-card" onclick="navigateTo('calendar')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📅%3C/text%3E%3C/svg%3E" alt="Calendar">
+                <h3>Leave Calendar</h3>
+                <p>View your leave schedule and upcoming holidays in an interactive calendar.</p>
+            </div>
+            
+            <div class="module-card" onclick="navigateTo('history')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📜%3C/text%3E%3C/svg%3E" alt="History">
+                <h3>Request History</h3>
+                <p>Check all your previous leave requests and their approval status.</p>
+            </div>
+        </div>
+        
+        <!-- Statistics Section -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalLeaves">0</div>
+                <div class="stat-label">Total Leaves Taken</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pendingLeaves">0</div>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="approvedLeaves">0</div>
+                <div class="stat-label">Approved Leaves</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="remainingLeaves">12</div>
+                <div class="stat-label">Remaining Leaves</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        function navigateTo(module) {
+            switch(module) {
+                case 'dashboard':
+                    window.location.href = 'dashboard.html';
+                    break;
+                case 'profile':
+                    alert('📝 Profile module coming soon!');
+                    break;
+                case 'calendar':
+                    alert('📅 Calendar module coming soon!');
+                    break;
+                case 'history':
+                    alert('📜 History module coming soon!');
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        window.onload = function() {
+            let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (!currentUser) {
+                window.location.href = "index.html";
+                return;
+            }
+            
+            if (currentUser.role === "admin") {
+                window.location.href = "admin.html";
+                return;
+            }
+            
+            document.getElementById("userNameDisplay").innerHTML = currentUser.name;
+            document.getElementById("userAvatar").innerHTML = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById("welcomeMessage").innerHTML = `Welcome back, ${currentUser.name}! 👋`;
+            
+            let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            let userLeaves = allLeaves.filter(l => l.userEmail === currentUser.email);
+            
+            let total = userLeaves.length;
+            let pending = userLeaves.filter(l => l.status === "Pending").length;
+            let approved = userLeaves.filter(l => l.status === "Approved").length;
+            
+            document.getElementById("totalLeaves").innerHTML = total;
+            document.getElementById("pendingLeaves").innerHTML = pending;
+            document.getElementById("approvedLeaves").innerHTML = approved;
+        };
+    </script>
+</body>
+</html>

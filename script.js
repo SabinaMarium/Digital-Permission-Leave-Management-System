@@ -18,7 +18,7 @@ function register() {
         return;
     }
     
-    // Password strength validation (capital, small, digit, special char, min 8)
+    // Password strength validation
     const hasUpper = /[A-Z]/.test(pass);
     const hasLower = /[a-z]/.test(pass);
     const hasDigit = /[0-9]/.test(pass);
@@ -42,7 +42,7 @@ function register() {
     window.location.href = "index.html";
 }
 
-// Login function
+// Login function - now redirects to home.html for users
 function login() {
     let email = document.getElementById("loginEmail")?.value.trim();
     let pass = document.getElementById("loginPassword")?.value;
@@ -56,7 +56,7 @@ function login() {
     if (found.role === "admin") {
         window.location.href = "admin.html";
     } else {
-        window.location.href = "dashboard.html";
+        window.location.href = "home.html";  // Changed from dashboard.html to home.html
     }
 }
 
@@ -66,7 +66,7 @@ function logout() {
     window.location.href = "index.html";
 }
 
-// Auto-setup for dashboard & admin
+// Auto-setup
 window.onload = function() {
     let emailReg = document.getElementById("email");
     let msgSpan = document.getElementById("emailMsg");
