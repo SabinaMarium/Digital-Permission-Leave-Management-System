@@ -5,131 +5,382 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | EduLeave</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E👑%3C/text%3E%3C/svg%3E">
     <style>
-        .admin-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid #8b5cf6;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .admin-header {
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 50%, #2d1b4e 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 1.5rem;
+        }
+
+        .admin-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 0.5rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .admin-name {
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
             font-weight: 700;
-            color: #1E293B;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
         }
-        .admin-email {
-            font-size: 0.7rem;
-            color: #6B7280;
+
+        .logo-img {
+            width: 32px;
+            height: 32px;
         }
-        .admin-dates {
-            font-size: 0.75rem;
+
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: white;
             color: #4B5563;
-            margin: 6px 0;
-        }
-        .admin-reason {
-            background: #F3F4F6;
-            padding: 8px 12px;
-            border-radius: 12px;
-            margin: 8px 0;
-            font-size: 0.85rem;
-            color: #374151;
-        }
-        .status-select {
-            padding: 4px 8px;
-            border-radius: 20px;
-            border: 1px solid #E2E8F0;
-            font-size: 0.75rem;
-        }
-        .action-btn {
-            padding: 4px 12px;
-            border-radius: 20px;
             border: none;
-            font-size: 0.7rem;
+            padding: 12px;
+            border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            margin-left: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .btn-approve { background: #10B981; color: white; }
-        .btn-reject { background: #EF4444; color: white; }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #F3F4F6;
+        }
+
         .filter-bar {
             display: flex;
             gap: 10px;
             margin-bottom: 1rem;
             flex-wrap: wrap;
         }
+
         .filter-bar input, .filter-bar select {
-            width: auto;
             flex: 1;
-            margin: 0;
+            padding: 10px 14px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            outline: none;
+            background: white;
+        }
+
+        .filter-bar input:focus, .filter-bar select:focus {
+            border-color: #8b5cf6;
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #8b5cf6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #1E293B;
+            font-size: 1rem;
+        }
+
+        .user-email {
+            font-size: 0.7rem;
+            color: #6B7280;
+        }
+
+        .request-type {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .type-leave {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .type-permission {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .request-details {
+            font-size: 0.8rem;
+            color: #4B5563;
+            margin: 8px 0;
+        }
+
+        .request-reason {
+            background: #F8FAFE;
             padding: 8px 12px;
+            border-radius: 12px;
+            margin: 8px 0;
+            font-size: 0.8rem;
+            color: #374151;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-approved { background: #D1FAE5; color: #065F46; }
+        .status-rejected { background: #FEE2E2; color: #991B1B; }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .approve-btn {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .reject-btn {
+            background: #EF4444;
+            color: white;
+            border: none;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .logout-btn {
+            background: #EF4444;
+            padding: 8px 20px;
+            margin: 0;
+            width: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6B7280;
+            background: white;
+            border-radius: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .filter-bar {
+                flex-direction: column;
+            }
+            .request-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="box" style="max-width: 750px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2 style="margin: 0;">👑 Admin Panel</h2>
-            <button onclick="logout()" style="width: auto; background: #EF4444; padding: 8px 16px;">Logout</button>
+    <div class="admin-container">
+        <div class="top-bar">
+            <div class="logo">
+                <img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234f46e5' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='white' font-size='50'%3E👑%3C/text%3E%3C/svg%3E" alt="Admin">
+                Admin Dashboard
+            </div>
+            <button onclick="logout()" class="logout-btn">Logout</button>
         </div>
-        <p style="margin-bottom: 1rem;">Manage all leave requests</p>
-        
+
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('leave')">📋 Leave Requests</button>
+            <button class="tab-btn" onclick="switchTab('permission')">🔐 Permission Requests</button>
+        </div>
+
         <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="🔍 Search by name or email" onkeyup="filterRequests()">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or email..." onkeyup="filterRequests()">
             <select id="statusFilter" onchange="filterRequests()">
                 <option value="all">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
+                <option value="Pending">⏳ Pending</option>
+                <option value="Approved">✅ Approved</option>
+                <option value="Rejected">❌ Rejected</option>
             </select>
         </div>
-        
-        <div id="adminList"></div>
+
+        <div id="requestsList"></div>
     </div>
+
     <script src="script.js"></script>
     <script>
-        let allRequests = [];
-        
-        function renderAdminRequests(requestsToShow) {
-            let container = document.getElementById("adminList");
+        let currentTab = 'leave';
+        let allLeaves = [];
+        let allPermissions = [];
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            if(tab === 'leave') {
+                document.querySelector('.tab-btn:first-child').classList.add('active');
+            } else {
+                document.querySelector('.tab-btn:last-child').classList.add('active');
+            }
+            loadData();
+            filterRequests();
+        }
+
+        function loadData() {
+            allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            allPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
+        }
+
+        function getCurrentRequests() {
+            return currentTab === 'leave' ? [...allLeaves] : [...allPermissions];
+        }
+
+        function updateRequestStatus(index, newStatus) {
+            if(currentTab === 'leave') {
+                if(allLeaves[index]) {
+                    allLeaves[index].status = newStatus;
+                    localStorage.setItem("leaves", JSON.stringify(allLeaves));
+                }
+            } else {
+                if(allPermissions[index]) {
+                    allPermissions[index].status = newStatus;
+                    localStorage.setItem("permissions", JSON.stringify(allPermissions));
+                }
+            }
+            loadData();
+            filterRequests();
+            alert(`✅ Request marked as ${newStatus}`);
+        }
+
+        function filterRequests() {
+            let searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
+            let statusFilter = document.getElementById("statusFilter")?.value || "all";
+            let requests = getCurrentRequests();
+            
+            let filtered = requests.filter((req, idx) => {
+                let matchesSearch = (req.userName || "").toLowerCase().includes(searchTerm) || 
+                                   (req.userEmail || "").toLowerCase().includes(searchTerm);
+                let matchesStatus = statusFilter === "all" || req.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            
+            renderRequests(filtered);
+        }
+
+        function renderRequests(requests) {
+            let container = document.getElementById("requestsList");
             if(!container) return;
             container.innerHTML = "";
-            if(requestsToShow.length === 0){
-                container.innerHTML = "<div style='text-align:center; padding: 2rem;'>✨ No leave requests found.</div>";
+            
+            if(requests.length === 0) {
+                container.innerHTML = `<div class="empty-state">✨ No ${currentTab} requests found.</div>`;
                 return;
             }
-            requestsToShow.forEach((req, idx) => {
+            
+            requests.forEach((req, idx) => {
+                let originalIndex = (currentTab === 'leave' ? allLeaves : allPermissions).findIndex((r, i) => 
+                    r.timestamp === req.timestamp && r.userEmail === req.userEmail
+                );
+                
                 let div = document.createElement("div");
-                div.className = "admin-card";
+                div.className = "request-card";
+                
+                let statusClass = "status-pending";
+                if(req.status === "Approved") statusClass = "status-approved";
+                if(req.status === "Rejected") statusClass = "status-rejected";
+                
+                let typeClass = currentTab === 'leave' ? "type-leave" : "type-permission";
+                let typeText = currentTab === 'leave' ? "📋 Leave" : "🔐 Permission";
+                
+                let detailsHtml = "";
+                if(currentTab === 'leave') {
+                    detailsHtml = `
+                        <div class="request-details">📅 ${req.from} → ${req.to}</div>
+                        <div class="request-reason">📝 Reason: ${req.reason || "No reason provided"}</div>
+                    `;
+                } else {
+                    detailsHtml = `
+                        <div class="request-details">
+                            📅 ${req.date} | ⏰ ${req.startTime} → ${req.endTime} | ⏱️ ${req.duration}
+                        </div>
+                        <div class="request-details">🎯 Purpose: ${req.purpose}</div>
+                        <div class="request-reason">📝 Reason: ${req.reason || "No reason provided"}</div>
+                    `;
+                }
+                
                 div.innerHTML = `
-                    <div class="admin-header">
+                    <div class="request-header">
                         <div>
-                            <span class="admin-name">${escapeHtml(req.userName || req.name)}</span>
-                            <div class="admin-email">${req.userEmail}</div>
+                            <span class="user-name">${escapeHtml(req.userName || req.name)}</span>
+                            <div class="user-email">${req.userEmail}</div>
                         </div>
                         <div>
-                            <select id="status-${idx}" class="status-select" onchange="updateStatus(${idx}, this.value)">
-                                <option value="Pending" ${req.status === "Pending" ? "selected" : ""}>⏳ Pending</option>
-                                <option value="Approved" ${req.status === "Approved" ? "selected" : ""}>✅ Approved</option>
-                                <option value="Rejected" ${req.status === "Rejected" ? "selected" : ""}>❌ Rejected</option>
-                            </select>
+                            <span class="request-type ${typeClass}">${typeText}</span>
+                            <span class="status-badge ${statusClass}">${req.status || "Pending"}</span>
                         </div>
                     </div>
-                    <div class="admin-dates">📅 ${req.from} → ${req.to}</div>
-                    <div class="admin-reason">📝 Reason: ${escapeHtml(req.reason || "No reason provided")}</div>
-                    <div style="font-size:0.7rem; color:#8B5CF6; margin-top:6px;">Type: ${req.type}</div>
+                    ${detailsHtml}
+                    <div class="action-buttons">
+                        ${req.status !== "Approved" ? `<button class="approve-btn" onclick="updateRequestStatus(${originalIndex}, 'Approved')">✓ Approve</button>` : ""}
+                        ${req.status !== "Rejected" ? `<button class="reject-btn" onclick="updateRequestStatus(${originalIndex}, 'Rejected')">✗ Reject</button>` : ""}
+                    </div>
                 `;
                 container.appendChild(div);
             });
         }
-        
+
         function escapeHtml(str) {
             if(!str) return "";
             return str.replace(/[&<>]/g, function(m) {
@@ -139,44 +390,16 @@
                 return m;
             });
         }
-        
-        function updateStatus(index, newStatus) {
-            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
-            if(leaves[index]) {
-                leaves[index].status = newStatus;
-                localStorage.setItem("leaves", JSON.stringify(leaves));
-                loadAndFilter();
-                alert(`✅ Request marked as ${newStatus}`);
-            }
-        }
-        
-        function loadAndFilter() {
-            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
-            allRequests = leaves;
-            filterRequests();
-        }
-        
-        function filterRequests() {
-            let searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
-            let statusFilter = document.getElementById("statusFilter")?.value || "all";
-            
-            let filtered = allRequests.filter(req => {
-                let matchesSearch = (req.userName || "").toLowerCase().includes(searchTerm) || 
-                                   (req.userEmail || "").toLowerCase().includes(searchTerm);
-                let matchesStatus = statusFilter === "all" || req.status === statusFilter;
-                return matchesSearch && matchesStatus;
-            });
-            renderAdminRequests(filtered);
-        }
-        
+
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current || current.role !== "admin"){
+            if(!current || current.role !== "admin") {
                 alert("Admin access only!");
                 window.location.href = "index.html";
                 return;
             }
-            loadAndFilter();
+            loadData();
+            filterRequests();
         };
     </script>
 </body>

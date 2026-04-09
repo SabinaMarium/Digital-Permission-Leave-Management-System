@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | EduLeave</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Data URI Favicon (emoji as fallback) -->
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABnElEQVR4nO2WvUoDQRSFv4mKpRBB0EIKCwuLNIJYBRsbCxtfQhAfQh9AUF/AR/ABbGxsLARrGxsLUbSwsLAQRRAEQf9xM2SYzUw2O4usBw7Mzm7uPffs3NldIYSAiIiIiIiIiIiIiIiIKCGd+AF6QFE/5pRcoI+6Jp5rSjGQV/ALfV3P1AHyihmUgG72AANZ+UJYAS/AtSlsghfgaArb4AU4nsIueAFOprAPXoDTKArBwAlwEUUpeJ00gDgDehMoMwA6pQHfUQB4nDSApZQCoG8K4FUKQFVJAH2TBnBv8gB1YhJQNQkArpMA0OQEDcBJogDqnAQATZIGUOckAWhCGgDtSAKokwTQjCQAtEkC0CQJ0G5MAJokAbQTEwDaJAG0ExMA2iQBoJ2YANAmCQDtxASANkkAaCcmALRJAkA7MQGgTRIA2okJAG2SANBOTABokwSAdmICQJskALQTEwDaJAGgnZgA0CYJAO3EBIA2SQBoJyYAtEkCQDsxAaBNEgDaiQkAbZIA0E5MAGiTBIB2YgJAm9ZgAu4iIiIiIiIiIiIiorT5BhhRc/mby1jOAAAAAElFTkSuQmCC">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🏠%3C/text%3E%3C/svg%3E">
     <style>
         * {
             margin: 0;
@@ -65,7 +64,6 @@
             border-color: #8b5cf6;
         }
         
-        /* Image icon styling */
         .module-icon-img {
             width: 70px;
             height: 70px;
@@ -193,7 +191,6 @@
 </head>
 <body>
     <div class="home-container">
-        <!-- Top Navigation with Logo Image (Base64) -->
         <div class="top-nav">
             <div class="logo">
                 <img class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%234f46e5' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='white' font-size='50'%3E📋%3C/text%3E%3C/svg%3E" alt="Logo">
@@ -206,18 +203,22 @@
             </div>
         </div>
         
-        <!-- Welcome Section -->
         <div class="welcome-header">
             <h1 id="welcomeMessage">Welcome back! 👋</h1>
             <p>Manage your leaves, track requests, and stay organized from one place.</p>
         </div>
         
-        <!-- Module Cards with Base64 Images -->
         <div class="module-grid">
             <div class="module-card" onclick="navigateTo('dashboard')">
                 <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📋%3C/text%3E%3C/svg%3E" alt="Dashboard">
-                <h3>Leave Dashboard</h3>
+                <h3>Leave Management</h3>
                 <p>Apply for new leaves, view your leave history, and track pending requests.</p>
+            </div>
+            
+            <div class="module-card" onclick="navigateTo('permission')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E🔐%3C/text%3E%3C/svg%3E" alt="Permission">
+                <h3>Permission Management</h3>
+                <p>Request instant permission with purpose, time, and duration.</p>
             </div>
             
             <div class="module-card" onclick="navigateTo('profile')">
@@ -226,36 +227,29 @@
                 <p>Update your personal information, change password, and manage account settings.</p>
             </div>
             
-            <div class="module-card" onclick="navigateTo('calendar')">
-                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📅%3C/text%3E%3C/svg%3E" alt="Calendar">
-                <h3>Leave Calendar</h3>
-                <p>View your leave schedule and upcoming holidays in an interactive calendar.</p>
-            </div>
-            
             <div class="module-card" onclick="navigateTo('history')">
                 <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📜%3C/text%3E%3C/svg%3E" alt="History">
                 <h3>Request History</h3>
-                <p>Check all your previous leave requests and their approval status.</p>
+                <p>Check all your previous leave and permission requests with approval status.</p>
             </div>
         </div>
         
-        <!-- Statistics Section -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number" id="totalLeaves">0</div>
-                <div class="stat-label">Total Leaves Taken</div>
+                <div class="stat-label">Total Leaves</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="pendingLeaves">0</div>
-                <div class="stat-label">Pending Requests</div>
+                <div class="stat-label">Pending Leaves</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number" id="approvedLeaves">0</div>
                 <div class="stat-label">Approved Leaves</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="remainingLeaves">12</div>
-                <div class="stat-label">Remaining Leaves</div>
+                <div class="stat-number" id="totalPermissions">0</div>
+                <div class="stat-label">Total Permissions</div>
             </div>
         </div>
     </div>
@@ -267,11 +261,11 @@
                 case 'dashboard':
                     window.location.href = 'dashboard.html';
                     break;
+                case 'permission':
+                    window.location.href = 'permission.html';
+                    break;
                 case 'profile':
                     alert('📝 Profile module coming soon!');
-                    break;
-                case 'calendar':
-                    alert('📅 Calendar module coming soon!');
                     break;
                 case 'history':
                     alert('📜 History module coming soon!');
@@ -298,7 +292,9 @@
             document.getElementById("welcomeMessage").innerHTML = `Welcome back, ${currentUser.name}! 👋`;
             
             let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            let allPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
             let userLeaves = allLeaves.filter(l => l.userEmail === currentUser.email);
+            let userPermissions = allPermissions.filter(p => p.userEmail === currentUser.email);
             
             let total = userLeaves.length;
             let pending = userLeaves.filter(l => l.status === "Pending").length;
@@ -307,6 +303,7 @@
             document.getElementById("totalLeaves").innerHTML = total;
             document.getElementById("pendingLeaves").innerHTML = pending;
             document.getElementById("approvedLeaves").innerHTML = approved;
+            document.getElementById("totalPermissions").innerHTML = userPermissions.length;
         };
     </script>
 </body>
