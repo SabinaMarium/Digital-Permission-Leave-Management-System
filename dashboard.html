@@ -1,31 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | EduLeave</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="box" style="max-width: 500px;">
+        <h2>📋 User Dashboard</h2>
+        <p id="welcomeUser" style="color: #2C7DA0; font-weight: 500;"></p>
 
-<div class="box">
-    <h2>User Dashboard</h2>
+        <input type="text" id="studentName" placeholder="Your full name">
+        
+        <select id="leaveType">
+            <option>Sick Leave</option>
+            <option>Casual Leave</option>
+            <option>Emergency Leave</option>
+        </select>
 
-    <input type="text" id="studentName" placeholder="Your Name">
+        <div style="display: flex; gap: 12px;">
+            <input type="date" id="fromDate" placeholder="From date">
+            <input type="date" id="toDate" placeholder="To date">
+        </div>
 
-    <select id="leaveType">
-        <option>Sick Leave</option>
-        <option>Casual Leave</option>
-    </select>
+        <button onclick="submitLeave()">📨 Submit Leave Request</button>
 
-    <input type="date" id="fromDate">
-    <input type="date" id="toDate">
+        <h3>📌 My Leave History</h3>
+        <ul id="userLeaveList"></ul>
 
-    <button onclick="submitLeave()">Submit Leave</button>
-
-    <ul id="list"></ul>
-
-    <button onclick="logout()">Logout</button>
-</div>
-
-<script src="script.js"></script>
+        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        window.onload = function() {
+            let current = JSON.parse(localStorage.getItem("currentUser"));
+            if(current && current.name) {
+                document.getElementById("welcomeUser").innerHTML = `Welcome, ${current.name} ✨`;
+                if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
+            }
+            showMyLeaves();
+        };
+        function showMyLeaves() {
+            let current = JSON.parse(localStorage.getItem("currentUser"));
+            if(!current) return;
+            let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            let myLeaves = allLeaves.filter(l => l.userEmail === current.email);
+            let list = document.getElementById("userLeaveList");
+            if(!list) return;
+            list.innerHTML = "";
+            if(myLeaves.length === 0) {
+                list.innerHTML = "<li style='text-align:center;'>No leave requests yet.</li>";
+                return;
+            }
+            myLeaves.forEach(l => {
+                let li = document.createElement("li");
+                li.innerHTML = `<strong>${l.type}</strong> — ${l.from} to ${l.to} <span style="font-size:0.7rem; background:#E2E8F0; padding:2px 8px; border-radius:20px;">${l.status || "Pending"}</span>`;
+                list.appendChild(li);
+            });
+        }
+        window.submitLeave = function() {
+            let current = JSON.parse(localStorage.getItem("currentUser"));
+            if(!current){ alert("Please login again"); window.location.href="index.html"; return; }
+            let name = document.getElementById("studentName").value.trim();
+            let type = document.getElementById("leaveType").value;
+            let from = document.getElementById("fromDate").value;
+            let to = document.getElementById("toDate").value;
+            if(!name || !type || !from || !to){
+                alert("Please fill all fields");
+                return;
+            }
+            if(new Date(from) > new Date(to)){
+                alert("From date cannot be after To date");
+                return;
+            }
+            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            leaves.push({
+                userName: name,
+                userEmail: current.email,
+                type: type,
+                from: from,
+                to: to,
+                status: "Pending",
+                timestamp: Date.now()
+            });
+            localStorage.setItem("leaves", JSON.stringify(leaves));
+            alert("Leave request submitted!");
+            showMyLeaves();
+            document.getElementById("fromDate").value = "";
+            document.getElementById("toDate").value = "";
+        };
+    </script>
 </body>
 </html>

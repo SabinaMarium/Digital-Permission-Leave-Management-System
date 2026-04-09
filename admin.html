@@ -1,20 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | EduLeave</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-actions button {
+            background: #F59E0B;
+            margin-right: 8px;
+            width: auto;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+        }
+        .admin-actions button.approve { background: #10B981; }
+        .admin-actions button.reject { background: #EF4444; }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .req-info { flex: 1; }
+    </style>
 </head>
 <body>
-
-<div class="box">
-    <h2>Admin Panel</h2>
-
-    <h3>All Leave Requests</h3>
-    <ul id="adminList"></ul>
-
-    <button onclick="logout()">Logout</button>
-</div>
-
-<script src="script.js"></script>
+    <div class="box" style="max-width: 650px;">
+        <h2>👑 Admin Control</h2>
+        <p style="margin-bottom: 0.5rem;">Manage all leave requests</p>
+        <ul id="adminList"></ul>
+        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        function renderAdminRequests() {
+            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            let container = document.getElementById("adminList");
+            if(!container) return;
+            container.innerHTML = "";
+            if(leaves.length === 0){
+                container.innerHTML = "<li>✨ No leave requests yet.</li>";
+                return;
+            }
+            leaves.forEach((req, idx) => {
+                let li = document.createElement("li");
+                li.style.marginBottom = "12px";
+                li.style.flexWrap = "wrap";
+                li.innerHTML = `
+                    <div class="req-info">
+                        <strong>${req.userName || req.name}</strong> (${req.userEmail})<br>
+                        ${req.type} · ${req.from} → ${req.to}<br>
+                        <span style="background:#EFF6FF; padding:2px 8px; border-radius:40px; font-size:0.7rem;">${req.status || "Pending"}</span>
+                    </div>
+                    <div class="admin-actions">
+                        ${req.status !== "Approved" ? `<button class="approve" onclick="updateRequestStatus(${idx}, 'Approved')">✓ Approve</button>` : ""}
+                        ${req.status !== "Rejected" ? `<button class="reject" onclick="updateRequestStatus(${idx}, 'Rejected')">✗ Reject</button>` : ""}
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+        }
+        window.updateRequestStatus = function(index, newStatus) {
+            let leaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            if(leaves[index]) {
+                leaves[index].status = newStatus;
+                localStorage.setItem("leaves", JSON.stringify(leaves));
+                renderAdminRequests();
+                alert(`Request ${newStatus.toLowerCase()} successfully.`);
+            }
+        };
+        window.onload = function() {
+            let current = JSON.parse(localStorage.getItem("currentUser"));
+            if(!current || current.role !== "admin"){
+                alert("Admin access only!");
+                window.location.href = "index.html";
+                return;
+            }
+            renderAdminRequests();
+        };
+    </script>
 </body>
 </html>
