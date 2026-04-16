@@ -111,7 +111,7 @@
     <div class="box" style="max-width: 600px;">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
             <button onclick="goHome()" style="width: auto; background: #6B7280; margin: 0; padding: 8px 16px;">← Home</button>
-            <h2 style="margin: 0; flex: 1;">🔐 Permission Management</h2>
+            <h2 style="margin: 0; flex: 1;"> Permission Form</h2>
         </div>
         
         <p id="welcomeUser" style="color: #10B981; font-weight: 500; margin-bottom: 1rem;"></p>
@@ -125,13 +125,13 @@
             
             <select id="purposeType">
                 <option value="">Select Purpose *</option>
-                <option value="Medical Emergency">🏥 Medical Emergency</option>
-                <option value="Personal Work">👤 Personal Work</option>
-                <option value="Family Event">👨‍👩‍👧 Family Event</option>
-                <option value="Official Work">💼 Official Work</option>
-                <option value="Late Arrival">⏰ Late Arrival</option>
-                <option value="Early Departure">🏃 Early Departure</option>
-                <option value="Other">📌 Other</option>
+                <option value="Medical Emergency"> Medical Emergency</option>
+                <option value="Personal Work"> Personal Work</option>
+                <option value="Family Event">Family Event</option>
+                <option value="Official Work"> Official Work</option>
+                <option value="Late Arrival"> Late Arrival</option>
+                <option value="Early Departure"> Early Departure</option>
+                <option value="Other"> Other</option>
             </select>
 
             <div class="time-group">
@@ -163,10 +163,10 @@
 
             <textarea id="permissionReason" placeholder="📝 Detailed reason for permission..."></textarea>
 
-            <button onclick="submitPermission()">🚀 Submit Permission Request</button>
+            <button onclick="submitPermission()"> Submit Permission Request</button>
         </div>
 
-        <h3>📋 My Permission History</h3>
+        <h3> Permission History</h3>
         <div id="permissionList" style="max-height: 350px; overflow-y: auto;"></div>
         
         <button onclick="logout()" class="logout-btn" style="margin-top: 1rem;">🚪 Logout</button>
@@ -385,7 +385,7 @@
                 else window.location.href = "index.html";
                 return;
             }
-            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
+            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${current.name}`;
             if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
             showMyPermissions();
         };
