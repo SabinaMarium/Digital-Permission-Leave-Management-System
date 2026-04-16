@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Records & History | EduLeave</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📊%3C/text%3E%3C/svg%3E">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 1.5rem;
+        }
+
+        .records-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e1e1e;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #a1a1aa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .back-btn {
+            background: #4f46e5;
+            padding: 8px 20px;
+            width: auto;
+            margin: 0;
+        }
+
+        .back-btn:hover {
+            background: #4338ca;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: #1e1e1e;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .filter-bar input, .filter-bar select {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1.5px solid #333333;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            background: #2a2a2a;
+            color: white;
+            outline: none;
+        }
+
+        .filter-bar input:focus, .filter-bar select:focus {
+            border-color: #048428;
+        }
+
+        .download-btn {
+            background: #029f2e;
+            width: auto;
+            padding: 10px 24px;
+            margin: 0;
+        }
+
+        .download-btn:hover {
+            background: #049d2f;
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: #1e1e1e;
+            color: #a1a1aa;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: #029f2e;
+            color: white;
+            border-color: #029f2e;
+        }
+
+        .records-table {
+            background: #1e1e1e;
+            border-radius: 1rem;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #333333;
+            color: #e5e5e5;
+        }
+
+        th {
+            background: #2a2a2a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .status-approved { color: #4ade80; }
+        .status-pending { color: #fbbf24; }
+        .status-rejected { color: #f87171; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            .filter-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="records-container">
+        <div class="top-bar">
+            <div class="logo">
+                📊 Records & History
+            </div>
+            <button class="back-btn" onclick="goBack()">← Back</button>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or email..." onkeyup="filterRecords()">
+            <select id="typeFilter" onchange="filterRecords()">
+                <option value="all">All Types</option>
+                <option value="leave">Leave Requests</option>
+                <option value="permission">Permission Requests</option>
+            </select>
+            <select id="statusFilter" onchange="filterRecords()">
+                <option value="all">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+            <button class="download-btn" onclick="downloadReport()">📥 Download Report (PDF)</button>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('all')">📋 All Records</button>
+            <button class="tab-btn" onclick="switchTab('leave')">📋 Leave Records</button>
+            <button class="tab-btn" onclick="switchTab('permission')">🔐 Permission Records</button>
+        </div>
+
+        <div class="records-table">
+            <div id="recordsList"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let isAdmin = false;
+        let currentTab = 'all';
+        let allLeaves = [];
+        let allPermissions = [];
+
+        function goBack() {
+            if(isAdmin) {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'home.html';
+            }
+        }
+
+        function loadData() {
+            allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
+            allPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
+        }
+
+        function getFilteredRecords() {
+            let searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
+            let typeFilter = document.getElementById("typeFilter")?.value || "all";
+            let statusFilter = document.getElementById("statusFilter")?.value || "all";
+            
+            let records = [];
+            
+            // Add leaves
+            if(typeFilter === 'all' || typeFilter === 'leave') {
+                allLeaves.forEach(leave => {
+                    if(isAdmin || leave.userEmail === currentUser.email) {
+                        records.push({
+                            ...leave,
+                            recordType: 'leave',
+                            typeLabel: '📋 Leave',
+                            displayDate: `${leave.from} → ${leave.to}`,
+                            details: leave.reason || 'No reason'
+                        });
+                    }
+                });
+            }
+            
+            // Add permissions
+            if(typeFilter === 'all' || typeFilter === 'permission') {
+                allPermissions.forEach(perm => {
+                    if(isAdmin || perm.userEmail === currentUser.email) {
+                        records.push({
+                            ...perm,
+                            recordType: 'permission',
+                            typeLabel: '🔐 Permission',
+                            displayDate: `${perm.date} | ${perm.startTime} → ${perm.endTime}`,
+                            details: perm.reason || 'No reason'
+                        });
+                    }
+                });
+            }
+            
+            // Apply filters
+            records = records.filter(record => {
+                let matchesSearch = (record.userName || "").toLowerCase().includes(searchTerm) || 
+                                   (record.userEmail || "").toLowerCase().includes(searchTerm);
+                let matchesStatus = statusFilter === "all" || record.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+            
+            // Sort by timestamp (newest first)
+            records.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            
+            return records;
+        }
+
+        function filterRecords() {
+            let records = getFilteredRecords();
+            
+            // Apply tab filter
+            if(currentTab === 'leave') {
+                records = records.filter(r => r.recordType === 'leave');
+            } else if(currentTab === 'permission') {
+                records = records.filter(r => r.recordType === 'permission');
+            }
+            
+            renderRecords(records);
+        }
+
+        function renderRecords(records) {
+            const container = document.getElementById("recordsList");
+            
+            if(records.length === 0) {
+                container.innerHTML = `<div class="empty-state">📭 No records found.</div>`;
+                return;
+            }
+            
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Details</th>
+                            <th>Date/Time</th>
+                            <th>Status</th>
+                            <th>Admin Comment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            records.forEach(record => {
+                let statusClass = "";
+                if(record.status === "Approved") statusClass = "status-approved";
+                else if(record.status === "Rejected") statusClass = "status-rejected";
+                else statusClass = "status-pending";
+                
+                let adminComment = record.adminComment || "—";
+                let detailsHtml = "";
+                
+                if(record.recordType === 'leave') {
+                    detailsHtml = `${record.type}<br><small>Reason: ${record.reason || '—'}</small>`;
+                } else {
+                    detailsHtml = `${record.purpose}<br><small>Duration: ${record.duration}<br>Reason: ${record.reason || '—'}</small>`;
+                }
+                
+                tableHtml += `
+                    <tr>
+                        <td>${record.typeLabel}</td>
+                        <td>${escapeHtml(record.userName)}</td>
+                        <td>${record.userEmail}</td>
+                        <td>${detailsHtml}</td>
+                        <td>${record.displayDate}</td>
+                        <td class="${statusClass}">${record.status || "Pending"}</td>
+                        <td><small>${escapeHtml(adminComment)}</small></td>
+                    </tr>
+                `;
+            });
+            
+            tableHtml += `</tbody></table>`;
+            container.innerHTML = tableHtml;
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            if(tab === 'all') document.querySelector('.tab-btn:first-child').classList.add('active');
+            else if(tab === 'leave') document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+            else document.querySelector('.tab-btn:last-child').classList.add('active');
+            filterRecords();
+        }
+
+        function downloadReport() {
+            let records = getFilteredRecords();
+            
+            if(records.length === 0) {
+                alert("No records to download!");
+                return;
+            }
+            
+            let reportContent = "EDULEAVE - RECORDS & HISTORY REPORT\n";
+            reportContent += "=".repeat(60) + "\n";
+            reportContent += `Generated: ${new Date().toLocaleString()}\n`;
+            reportContent += `User: ${currentUser.name} (${currentUser.email})\n`;
+            reportContent += `Role: ${isAdmin ? 'Administrator' : 'User'}\n`;
+            reportContent += "=".repeat(60) + "\n\n";
+            
+            records.forEach((record, idx) => {
+                reportContent += `${idx + 1}. [${record.typeLabel}] ${record.status || "Pending"}\n`;
+                reportContent += `   User: ${record.userName} (${record.userEmail})\n`;
+                if(record.recordType === 'leave') {
+                    reportContent += `   Type: ${record.type}\n`;
+                    reportContent += `   Date: ${record.from} → ${record.to}\n`;
+                    reportContent += `   Reason: ${record.reason || '—'}\n`;
+                } else {
+                    reportContent += `   Purpose: ${record.purpose}\n`;
+                    reportContent += `   Date: ${record.date}\n`;
+                    reportContent += `   Time: ${record.startTime} → ${record.endTime}\n`;
+                    reportContent += `   Duration: ${record.duration}\n`;
+                    reportContent += `   Reason: ${record.reason || '—'}\n`;
+                }
+                if(record.adminComment) {
+                    reportContent += `   Admin Comment: ${record.adminComment}\n`;
+                }
+                reportContent += "\n";
+            });
+            
+            reportContent += "=".repeat(60) + "\n";
+            reportContent += `Total Records: ${records.length}\n`;
+            reportContent += "End of Report";
+            
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eduleave_report_${new Date().toISOString().slice(0,19)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert("✅ Report downloaded successfully!");
+        }
+
+        function escapeHtml(str) {
+            if(!str) return "";
+            return str.replace(/[&<>]/g, function(m) {
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        window.onload = function() {
+            currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            if (!currentUser) {
+                window.location.href = "index.html";
+                return;
+            }
+            
+            isAdmin = currentUser.role === "admin";
+            loadData();
+            filterRecords();
+        };
+    </script>
+</body>
+</html>
