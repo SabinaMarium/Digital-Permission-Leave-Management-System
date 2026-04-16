@@ -81,9 +81,9 @@
             emailjs.init("mZbglbhb9gK8rsSLM");
         })();
 
-        // Function to send email to admin
+    
         function sendEmailToAdmin(userName, userEmail, type, from, to, reason) {
-            // Email content as HTML
+            
             let emailContent = `
                 <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden;">
                     <div style="background: #029f2e; padding: 20px; text-align: center; color: white;">
@@ -108,8 +108,8 @@
                 message: emailContent
             };
             
-            // Using send method with service_id and template_id
-            // Note: You need to create a simple template in EmailJS first
+            
+            
             emailjs.send("service_4t1o4bt", "template_leave_request", {
                 to_email: "admin@eduleave.com",
                 user_name: userName,
@@ -161,7 +161,7 @@
             leaves.push({ userName: name, userEmail: current.email, type, from, to, reason, status: "Pending", timestamp: Date.now() });
             localStorage.setItem("leaves", JSON.stringify(leaves));
             
-            // Save notification for admin
+        
             let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
             notifications.push({
                 id: Date.now(),
@@ -176,7 +176,7 @@
             });
             localStorage.setItem("notifications", JSON.stringify(notifications));
             
-            // Send email to admin
+            
             sendEmailToAdmin(name, current.email, type, from, to, reason);
             
             alert("✅ Leave request submitted! Admin will be notified via email.");
