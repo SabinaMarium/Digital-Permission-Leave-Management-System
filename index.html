@@ -4,47 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | EduLeave</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 1.5rem;
         }
-
         .box {
             width: 100%;
             max-width: 420px;
             background: #1e1e1e;
             border-radius: 2rem;
             padding: 2rem 1.8rem;
-            transition: transform 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255,255,255,0.08);
         }
-
-        .box:hover {
-            transform: translateY(-3px);
-        }
-
-        .form-icon {
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
+        .form-icon { text-align: center; margin-bottom: 1rem; }
         .icon-circle {
-            width: 80px;
-            height: 80px;
+            width: 80px; height: 80px;
             background: linear-gradient(135deg, #2da44e, #216e39);
             border-radius: 50%;
             display: inline-flex;
@@ -52,7 +34,6 @@
             justify-content: center;
             font-size: 2.5rem;
         }
-
         h2 {
             font-size: 1.8rem;
             font-weight: 700;
@@ -63,36 +44,19 @@
             color: transparent;
             margin-bottom: 0.5rem;
         }
-
-        .subtitle {
-            text-align: center;
-            color: #a1a1aa;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
+        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem; }
         input {
             width: 100%;
             padding: 12px 16px;
             margin: 8px 0;
-            border: 1.5px solid #333333;
+            border: 1.5px solid #333;
             border-radius: 40px;
             font-size: 0.95rem;
             background: #2a2a2a;
-            color: #ffffff;
-            transition: all 0.2s;
+            color: #fff;
             outline: none;
         }
-
-        input::placeholder {
-            color: #6b7280;
-        }
-
-        input:focus {
-            border-color: #048428;
-            background: #333333;
-        }
-
+        input:focus { border-color: #048428; }
         button {
             width: 100%;
             padding: 12px;
@@ -104,46 +68,20 @@
             font-size: 1rem;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
         }
-
-        button:hover {
-            background: #049d2f;
-            transform: scale(0.98);
-        }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #6b7280;
-            font-size: 0.85rem;
-        }
-
-        .footer-text a {
-            color: #037a25;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-            color: #029f2e;
-        }
+        button:hover { background: #049d2f; transform: scale(0.98); }
+        .footer-text { text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.85rem; }
+        .footer-text a { color: #037a25; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="box">
-        <div class="form-icon">
-            <div class="icon-circle">🔐</div>
-        </div>
+        <div class="form-icon"><div class="icon-circle">🔐</div></div>
         <h2>Welcome Back</h2>
         <p class="subtitle">Sign in to manage leaves</p>
-
         <input type="email" id="loginEmail" placeholder="Email address">
         <input type="password" id="loginPassword" placeholder="Password">
-
         <button onclick="login()">Login →</button>
-
         <p class="footer-text">Don't have an account? <a href="register.html">Create account</a></p>
     </div>
     <script src="script.js"></script>

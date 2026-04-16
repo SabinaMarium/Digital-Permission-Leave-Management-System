@@ -4,39 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | EduLeave</title>
-    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📝%3C/text%3E%3C/svg%3E">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 1.5rem;
         }
-
         .box {
             width: 100%;
             max-width: 460px;
             background: #1e1e1e;
             border-radius: 2rem;
             padding: 2rem 1.8rem;
-            transition: transform 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255,255,255,0.08);
         }
-
-        .box:hover {
-            transform: translateY(-3px);
-        }
-
         h2 {
             font-size: 1.8rem;
             font-weight: 700;
@@ -47,71 +35,28 @@
             color: transparent;
             margin-bottom: 0.5rem;
         }
-
-        .subtitle {
-            text-align: center;
-            color: #a1a1aa;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-
-        .input-group {
-            position: relative;
-            margin: 8px 0;
-        }
-
+        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        .input-group { position: relative; margin: 8px 0; }
         input, select {
             width: 100%;
             padding: 12px 16px;
-            border: 1.5px solid #333333;
+            border: 1.5px solid #333;
             border-radius: 40px;
             font-size: 0.95rem;
             background: #2a2a2a;
-            color: #ffffff;
-            transition: all 0.2s;
+            color: #fff;
             outline: none;
         }
-
-        .input-group input {
-            padding-right: 50px;
-        }
-
-        input::placeholder {
-            color: #6b7280;
-        }
-
-        select option {
-            background: #2a2a2a;
-            color: #ffffff;
-        }
-
-        input:focus, select:focus {
-            border-color: #048428;
-            background: #333333;
-        }
-
-
+        .input-group input { padding-right: 50px; }
+        input:focus, select:focus { border-color: #048428; }
         .password-toggle {
             position: absolute;
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            width: 22px;
-            height: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
         }
-
-        .eye-icon {
-            position: relative;
-            width: 20px;
-            height: 20px;
-            display: block;
-        }
-        
+        .eye-icon { position: relative; width: 20px; height: 20px; display: block; }
         .eye-icon .eye-outline {
             position: absolute;
             width: 18px;
@@ -121,7 +66,6 @@
             top: 4px;
             left: 1px;
         }
-        
         .eye-icon .eye-pupil {
             position: absolute;
             width: 6px;
@@ -131,7 +75,6 @@
             top: 7px;
             left: 7px;
         }
-        
         .eye-icon .eye-line {
             position: absolute;
             width: 20px;
@@ -139,32 +82,11 @@
             background: #8b949e;
             top: 9px;
             left: 0;
-            transform: rotate(0deg);
             display: none;
         }
-
-        .eye-icon.closed .eye-outline {
-            border-color: #029f2e;
-        }
-        
-        .eye-icon.closed .eye-pupil {
-            background: #029f2e;
-        }
-        
-        .eye-icon.closed .eye-line {
-            display: block;
-            background: #029f2e;
-            transform: rotate(45deg);
-        }
-
-        .password-toggle:hover .eye-outline {
-            border-color: #029f2e;
-        }
-        
-        .password-toggle:hover .eye-pupil {
-            background: #029f2e;
-        }
-
+        .eye-icon.closed .eye-outline { border-color: #029f2e; }
+        .eye-icon.closed .eye-pupil { background: #029f2e; }
+        .eye-icon.closed .eye-line { display: block; background: #029f2e; transform: rotate(45deg); }
         button {
             width: 100%;
             padding: 12px;
@@ -176,345 +98,121 @@
             font-size: 1rem;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
         }
-
-        button:hover {
-            background: #049d2f;
-            transform: scale(0.98);
-        }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #6b7280;
-            font-size: 0.85rem;
-        }
-
-        .footer-text a {
-            color: #037a25;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer-text a:hover {
-            text-decoration: underline;
-            color: #029f2e;
-        }
-
+        button:hover { background: #049d2f; }
+        .footer-text { text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.85rem; }
+        .footer-text a { color: #037a25; text-decoration: none; font-weight: 600; }
         .suggestions-box {
             background: #2a2a2a;
             border-radius: 1rem;
-            border: 1px solid #333333;
+            border: 1px solid #333;
             margin-top: -5px;
             margin-bottom: 8px;
             max-height: 140px;
             overflow-y: auto;
-            position: relative;
-            z-index: 10;
         }
-
-        .suggestion-item {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.1s;
-            border-bottom: 1px solid #333333;
-            color: #e5e5e5;
-        }
-
-        .suggestion-item:hover {
-            background: #3a3a3a;
-            font-weight: 500;
-        }
-
-        .password-strength {
-            font-size: 0.7rem;
-            margin-top: 5px;
-            margin-bottom: 8px;
-            padding: 6px 12px;
-            border-radius: 40px;
-            background: #2a2a2a;
-            transition: all 0.2s;
-        }
-
+        .suggestion-item { padding: 8px 16px; cursor: pointer; border-bottom: 1px solid #333; color: #e5e5e5; }
+        .suggestion-item:hover { background: #3a3a3a; }
+        .password-strength { font-size: 0.7rem; margin-top: 5px; margin-bottom: 8px; padding: 6px 12px; border-radius: 40px; background: #2a2a2a; }
         .strength-weak { background: #7f1a1a; color: #fca5a5; }
         .strength-medium { background: #78350f; color: #fde68a; }
         .strength-strong { background: #064e3b; color: #6ee7b7; }
-
-        .req-list {
-            font-size: 0.7rem;
-            margin: 8px 0 0 0;
-            padding-left: 20px;
-            color: #a1a1aa;
-            list-style: none;
-        }
-
-        .req-list li {
-            margin: 4px 0;
-            background: none;
-            padding: 0;
-            border-left: none;
-            font-size: 0.7rem;
-        }
-
-        .msg-helper {
-            font-size: 0.7rem;
-            display: block;
-            margin-top: -4px;
-            margin-bottom: 6px;
-            color: #a1a1aa;
-        }
-
-        .error-msg {
-            color: #f87171;
-            font-size: 0.7rem;
-            margin-top: 4px;
-            display: block;
-        }
-
-        .success-msg {
-            color: #4ade80;
-            font-size: 0.7rem;
-            margin-top: 4px;
-            display: block;
-        }
+        .req-list { font-size: 0.7rem; margin: 8px 0 0 0; padding-left: 20px; color: #a1a1aa; list-style: none; }
+        .req-list li { margin: 4px 0; }
+        .error-msg { color: #f87171; font-size: 0.7rem; margin-top: 4px; }
+        .success-msg { color: #4ade80; font-size: 0.7rem; margin-top: 4px; }
     </style>
 </head>
 <body>
     <div class="box">
         <h2>Create Account</h2>
         <p class="subtitle">Join the leave management system</p>
-
         <input type="text" id="name" placeholder="Full name">
-        
         <input type="email" id="email" placeholder="Email address" autocomplete="off">
         <div id="emailSuggestions" class="suggestions-box" style="display: none;"></div>
-        <small id="emailMsg" class="msg-helper"></small>
-
-        <!-- Password Field -->
         <div class="input-group">
             <input type="password" id="password" placeholder="Create password">
-            <div class="password-toggle" id="togglePasswordBtn" onclick="togglePassword('password', 'togglePasswordBtn')">
-                <div class="eye-icon" id="eyeIcon1">
-                    <div class="eye-outline"></div>
-                    <div class="eye-pupil"></div>
-                    <div class="eye-line"></div>
-                </div>
+            <div class="password-toggle" onclick="togglePassword('password', this)">
+                <div class="eye-icon"><div class="eye-outline"></div><div class="eye-pupil"></div><div class="eye-line"></div></div>
             </div>
         </div>
-        
-        <!-- Confirm Password Field -->
         <div class="input-group">
             <input type="password" id="confirmPassword" placeholder="Confirm password">
-            <div class="password-toggle" id="toggleConfirmBtn" onclick="togglePassword('confirmPassword', 'toggleConfirmBtn')">
-                <div class="eye-icon" id="eyeIcon2">
-                    <div class="eye-outline"></div>
-                    <div class="eye-pupil"></div>
-                    <div class="eye-line"></div>
-                </div>
+            <div class="password-toggle" onclick="togglePassword('confirmPassword', this)">
+                <div class="eye-icon"><div class="eye-outline"></div><div class="eye-pupil"></div><div class="eye-line"></div></div>
             </div>
         </div>
         <div id="confirmError" class="error-msg"></div>
-        <div id="confirmSuccess" class="success-msg"></div>
-
         <div id="passwordStrength" class="password-strength">🔒 Password strength: </div>
-        <ul class="req-list" id="passwordReqs">
-            <li id="reqUpper">🔤 At least 1 uppercase letter (A-Z)</li>
-            <li id="reqLower">🔡 At least 1 lowercase letter (a-z)</li>
-            <li id="reqDigit">🔢 At least 1 digit (0-9)</li>
-            <li id="reqSpecial">✨ At least 1 special character (@$!%*?&)</li>
-            <li id="reqLength">📏 Minimum 8 characters long</li>
+        <ul class="req-list">
+            <li id="reqUpper">🔤 Uppercase (A-Z)</li>
+            <li id="reqLower">🔡 Lowercase (a-z)</li>
+            <li id="reqDigit">🔢 Digit (0-9)</li>
+            <li id="reqSpecial">✨ Special (@$!%*?&)</li>
+            <li id="reqLength">📏 Min 8 characters</li>
         </ul>
-
         <select id="role">
             <option value="">Select role</option>
-            <option value="user">👤 User (Student/Employee)</option>
+            <option value="user">👤 User</option>
             <option value="admin">👑 Administrator</option>
         </select>
-
         <button onclick="register()">Create Account →</button>
-
         <p class="footer-text">Already have account? <a href="index.html">Sign in</a></p>
     </div>
     <script src="script.js"></script>
     <script>
-        // Password Show/Hide Function 
-        function togglePassword(fieldId, toggleBtnId) {
+        // EmailJS Initialization with your Public Key
+        (function() {
+            emailjs.init("mZbglbhb9gK8rsSLM");
+        })();
+
+        function togglePassword(fieldId, btn) {
             const field = document.getElementById(fieldId);
-            const eyeIcon = document.querySelector(`#${toggleBtnId} .eye-icon`);
-            
-            if (field.type === 'password') {
-                field.type = 'text';
-                eyeIcon.classList.add('closed');
-            } else {
-                field.type = 'password';
-                eyeIcon.classList.remove('closed');
-            }
+            const eyeIcon = btn.querySelector('.eye-icon');
+            if (field.type === 'password') { field.type = 'text'; eyeIcon.classList.add('closed'); }
+            else { field.type = 'password'; eyeIcon.classList.remove('closed'); }
         }
-
-        // Confirm Password Validation
-        const passwordInput = document.getElementById("password");
-        const confirmInput = document.getElementById("confirmPassword");
-        const confirmError = document.getElementById("confirmError");
-        const confirmSuccess = document.getElementById("confirmSuccess");
-
-        function validateConfirmPassword() {
-            const password = passwordInput.value;
-            const confirm = confirmInput.value;
-            
-            if(confirm === "") {
-                confirmError.innerHTML = "";
-                confirmSuccess.innerHTML = "";
-                return;
-            }
-            
-            if(password !== confirm) {
-                confirmError.innerHTML = "❌ Passwords do not match!";
-                confirmSuccess.innerHTML = "";
-                return false;
-            } else {
-                confirmError.innerHTML = "";
-                confirmSuccess.innerHTML = "✅ Passwords match!";
-                return true;
-            }
-        }
-
-        passwordInput?.addEventListener("input", function() {
-            checkPasswordStrength(passwordInput.value);
-            validateConfirmPassword();
-        });
         
-        confirmInput?.addEventListener("input", validateConfirmPassword);
-
-        // Email suggestion feature
-        const commonDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "protonmail.com", "edu.bd", "university.edu", "office.com"];
+        const domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"];
         const emailField = document.getElementById("email");
         const suggBox = document.getElementById("emailSuggestions");
-
         emailField?.addEventListener("input", function() {
-            let value = emailField.value;
-            let atIndex = value.indexOf('@');
+            let val = emailField.value;
+            let atIdx = val.indexOf('@');
             let suggestions = [];
-
-            if (atIndex === -1 && value.length > 1) {
-                let local = value;
-                suggestions = commonDomains.map(dom => `${local}@${dom}`);
-            } 
-            else if (atIndex > 0) {
-                let local = value.substring(0, atIndex);
-                let domainPart = value.substring(atIndex + 1);
-                if (domainPart === "") {
-                    suggestions = commonDomains.map(dom => `${local}@${dom}`);
-                } else {
-                    suggestions = commonDomains.filter(dom => dom.toLowerCase().startsWith(domainPart.toLowerCase()))
-                                               .map(dom => `${local}@${dom}`);
-                }
+            if (atIdx === -1 && val.length > 1) suggestions = domains.map(d => `${val}@${d}`);
+            else if (atIdx > 0) {
+                let local = val.substring(0, atIdx);
+                let domain = val.substring(atIdx + 1);
+                if (domain === "") suggestions = domains.map(d => `${local}@${d}`);
+                else suggestions = domains.filter(d => d.startsWith(domain)).map(d => `${local}@${d}`);
             }
             suggestions = suggestions.slice(0, 5);
-            if (suggestions.length === 0) {
-                suggBox.style.display = "none";
-                return;
-            }
+            if (!suggestions.length) { suggBox.style.display = "none"; return; }
             suggBox.style.display = "block";
-            suggBox.innerHTML = "";
-            suggestions.forEach(sug => {
-                let div = document.createElement("div");
-                div.className = "suggestion-item";
-                div.textContent = sug;
-                div.onclick = () => {
-                    emailField.value = sug;
-                    suggBox.style.display = "none";
-                    emailField.dispatchEvent(new Event("input"));
-                };
-                suggBox.appendChild(div);
-            });
+            suggBox.innerHTML = suggestions.map(sug => `<div class="suggestion-item" onclick="document.getElementById('email').value='${sug}'; suggBox.style.display='none';">${sug}</div>`).join('');
         });
+        document.addEventListener("click", (e) => { if (!suggBox.contains(e.target) && e.target !== emailField) suggBox.style.display = "none"; });
         
-        document.addEventListener("click", (e) => {
-            if (!suggBox.contains(e.target) && e.target !== emailField) suggBox.style.display = "none";
-        });
-
-        // Password strength checker
-        const strengthDiv = document.getElementById("passwordStrength");
-        
-        function checkPasswordStrength(pwd) {
-            const hasUpper = /[A-Z]/.test(pwd);
-            const hasLower = /[a-z]/.test(pwd);
-            const hasDigit = /[0-9]/.test(pwd);
-            const hasSpecial = /[@$!%*?&#]/.test(pwd);
-            const isLong = pwd.length >= 8;
-            
-            document.getElementById("reqUpper").style.color = hasUpper ? "#4ade80" : "#f87171";
-            document.getElementById("reqLower").style.color = hasLower ? "#4ade80" : "#f87171";
-            document.getElementById("reqDigit").style.color = hasDigit ? "#4ade80" : "#f87171";
-            document.getElementById("reqSpecial").style.color = hasSpecial ? "#4ade80" : "#f87171";
-            document.getElementById("reqLength").style.color = isLong ? "#4ade80" : "#f87171";
-            
-            if(hasUpper && hasLower && hasDigit && hasSpecial && isLong) {
-                strengthDiv.innerHTML = "✅ Strong Password! Great job!";
-                strengthDiv.className = "password-strength strength-strong";
-                return "strong";
-            } else if((hasUpper || hasLower) && (hasDigit || hasSpecial) && pwd.length >= 6) {
-                strengthDiv.innerHTML = "⚠️ Medium Password - Add more variety";
-                strengthDiv.className = "password-strength strength-medium";
-                return "medium";
-            } else {
-                strengthDiv.innerHTML = "❌ Weak Password - Follow requirements above";
-                strengthDiv.className = "password-strength strength-weak";
-                return "weak";
-            }
+        const pwd = document.getElementById("password");
+        const confirm = document.getElementById("confirmPassword");
+        function checkStrength() {
+            let val = pwd.value;
+            document.getElementById("reqUpper").style.color = /[A-Z]/.test(val) ? "#4ade80" : "#f87171";
+            document.getElementById("reqLower").style.color = /[a-z]/.test(val) ? "#4ade80" : "#f87171";
+            document.getElementById("reqDigit").style.color = /[0-9]/.test(val) ? "#4ade80" : "#f87171";
+            document.getElementById("reqSpecial").style.color = /[@$!%*?&#]/.test(val) ? "#4ade80" : "#f87171";
+            document.getElementById("reqLength").style.color = val.length >= 8 ? "#4ade80" : "#f87171";
+            let div = document.getElementById("passwordStrength");
+            if (/[A-Z]/.test(val) && /[a-z]/.test(val) && /[0-9]/.test(val) && /[@$!%*?&#]/.test(val) && val.length >= 8) {
+                div.innerHTML = "✅ Strong Password!"; div.className = "password-strength strength-strong";
+            } else if (val.length >= 6) { div.innerHTML = "⚠️ Medium Password"; div.className = "password-strength strength-medium"; }
+            else { div.innerHTML = "❌ Weak Password"; div.className = "password-strength strength-weak"; }
+            if (confirm.value && pwd.value !== confirm.value) document.getElementById("confirmError").innerHTML = "❌ Passwords do not match!";
+            else if (confirm.value) document.getElementById("confirmError").innerHTML = "";
         }
-        
-        
-        window.register = function() {
-            let name = document.getElementById("name")?.value.trim();
-            let email = document.getElementById("email")?.value.trim();
-            let pwd = document.getElementById("password")?.value;
-            let confirmPwd = document.getElementById("confirmPassword")?.value;
-            let role = document.getElementById("role")?.value;
-
-            if (!name || !email || !pwd || !confirmPwd || !role) {
-                alert("Please fill all fields!");
-                return;
-            }
-            
-            // Email validation
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                alert("Enter a valid email address!");
-                return;
-            }
-            
-            // Password match validation
-            if(pwd !== confirmPwd) {
-                alert("❌ Passwords do not match!");
-                return;
-            }
-            
-            // Password strength validation
-            const hasUpper = /[A-Z]/.test(pwd);
-            const hasLower = /[a-z]/.test(pwd);
-            const hasDigit = /[0-9]/.test(pwd);
-            const hasSpecial = /[@$!%*?&#]/.test(pwd);
-            const isLong = pwd.length >= 8;
-            
-            if(!hasUpper || !hasLower || !hasDigit || !hasSpecial || !isLong) {
-                alert("❌ Password must contain: Uppercase, Lowercase, Digit, Special character (@$!%*?&#) and min 8 characters!");
-                return;
-            }
-            
-            let users = JSON.parse(localStorage.getItem("users")) || [];
-            if (users.find(u => u.email === email)) {
-                alert("Email already exists! Try login.");
-                return;
-            }
-            
-            users.push({ name, email, pass: pwd, role });
-            localStorage.setItem("users", JSON.stringify(users));
-            alert("Registration successful! Please login.");
-            window.location.href = "index.html";
-        };
+        pwd?.addEventListener("input", checkStrength);
+        confirm?.addEventListener("input", checkStrength);
     </script>
 </body>
 </html>

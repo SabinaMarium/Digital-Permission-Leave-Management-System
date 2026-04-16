@@ -3,252 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permission Management | EduLeave</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Permission | EduLeave</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
     <style>
-        .time-group {
-            display: flex;
-            gap: 15px;
-            margin: 10px 0;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 1.5rem;
         }
-        .time-field {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .time-field label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #4B5563;
-            margin-bottom: 4px;
-            margin-left: 4px;
-        }
-        .time-field input {
+        .box { max-width: 580px; margin: 0 auto; background: #1e1e1e; border-radius: 2rem; padding: 2rem; border: 1px solid rgba(255,255,255,0.08); }
+        .time-group { display: flex; gap: 15px; margin: 10px 0; }
+        .time-field { flex: 1; display: flex; flex-direction: column; }
+        .time-field label { font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px; }
+        input, select, textarea {
             width: 100%;
-            margin: 0;
-        }
-        textarea {
-            width: 100%;
-            padding: 12px 14px;
-            margin: 8px 0;
-            border: 1.5px solid #E2E8F0;
-            border-radius: 20px;
+            padding: 12px 16px;
+            border: 1.5px solid #333;
+            border-radius: 40px;
             font-size: 0.95rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 80px;
+            background: #2a2a2a;
+            color: #fff;
+            outline: none;
         }
-        .error-msg {
-            color: #EF4444;
-            font-size: 0.75rem;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            display: block;
-            font-weight: 500;
-        }
-        .success-msg {
-            color: #10B981;
-            font-size: 0.75rem;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            display: block;
-        }
-        .permission-card {
-            background: #F8FAFE;
-            border-radius: 16px;
+        textarea { border-radius: 20px; min-height: 80px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { border-color: #048428; }
+        button {
+            background: #029f2e;
+            border: none;
+            border-radius: 40px;
             padding: 12px;
-            margin-bottom: 10px;
-            border-left: 4px solid #10B981;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
             font-weight: 600;
-            margin-left: 8px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
         }
-        .status-pending { background: #FEF3C7; color: #92400E; }
-        .status-approved { background: #D1FAE5; color: #065F46; }
-        .status-rejected { background: #FEE2E2; color: #991B1B; }
-        .purpose-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-right: 8px;
-            background: #E0E7FF;
-            color: #4338CA;
-        }
-        .form-section {
-            background: #F9FAFB;
-            padding: 1.2rem;
-            border-radius: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-        .quick-btn {
-            background: #E0E7FF;
-            color: #4338CA;
-            padding: 6px 12px;
-            font-size: 0.75rem;
-            width: auto;
-            margin: 0;
-        }
-        .quick-btn:hover {
-            background: #C7D2FE;
-            transform: scale(0.96);
-        }
+        .logout-btn { background: #EF4444; margin-top: 1rem; }
+        .permission-card { background: #2a2a2a; border-radius: 16px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #10b981; }
+        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; margin-left: 8px; }
+        .status-pending { background: #78350f; color: #fde68a; }
+        .status-approved { background: #064e3b; color: #6ee7b7; }
+        .status-rejected { background: #7f1a1a; color: #fca5a5; }
+        .admin-comment { background: #78350f; padding: 10px; border-radius: 12px; margin-top: 10px; font-size: 0.75rem; border-left: 3px solid #f59e0b; color: #fde68a; }
+        h2, h3 { color: white; margin-bottom: 1rem; }
+        .back-home { background: #4f46e5; width: auto; padding: 8px 16px; margin-bottom: 1rem; display: inline-block; }
+        .quick-actions { display: flex; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
+        .quick-btn { background: #2a2a2a; color: #029f2e; border: 1px solid #029f2e; width: auto; padding: 6px 12px; font-size: 0.75rem; margin: 0; }
+        .quick-btn:hover { background: #029f2e; color: white; }
     </style>
 </head>
 <body>
-    <div class="box" style="max-width: 600px;">
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
-            <button onclick="goHome()" style="width: auto; background: #6B7280; margin: 0; padding: 8px 16px;">← Home</button>
-            <h2 style="margin: 0; flex: 1;"> Permission Form</h2>
-        </div>
+    <div class="box">
+        <button class="back-home" onclick="location.href='home.html'">← Home</button>
+        <h2>🔐 Permission Management</h2>
+        <p id="welcomeUser" style="color: #4ade80; margin-bottom: 1rem;"></p>
         
-        <p id="welcomeUser" style="color: #10B981; font-weight: 500; margin-bottom: 1rem;"></p>
-
-        <div class="form-section">
-            <div class="section-title">
-                <span>⚡ Instant Permission Request</span>
-            </div>
-            
-            <input type="text" id="studentName" placeholder="Your full name *">
-            
+        <div style="background: #2a2a2a; padding: 1.2rem; border-radius: 1rem; margin-bottom: 1.5rem;">
+            <h3 style="margin-top: 0;">⚡ Instant Permission Request</h3>
+            <input type="text" id="studentName" placeholder="Full name">
             <select id="purposeType">
-                <option value="">Select Purpose *</option>
-                <option value="Medical Emergency"> Medical Emergency</option>
-                <option value="Personal Work"> Personal Work</option>
-                <option value="Family Event">Family Event</option>
-                <option value="Official Work"> Official Work</option>
-                <option value="Late Arrival"> Late Arrival</option>
-                <option value="Early Departure"> Early Departure</option>
-                <option value="Other"> Other</option>
+                <option value="">Select Purpose</option>
+                <option>Medical Emergency</option><option>Personal Work</option><option>Family Event</option><option>Official Work</option>
             </select>
-
             <div class="time-group">
-                <div class="time-field">
-                    <label>⏰ Start Time <span class="required-star">*</span></label>
-                    <input type="time" id="startTime">
-                </div>
-                <div class="time-field">
-                    <label>⏰ End Time <span class="required-star">*</span></label>
-                    <input type="time" id="endTime">
-                </div>
+                <div class="time-field"><label>⏰ Start Time</label><input type="time" id="startTime"></div>
+                <div class="time-field"><label>⏰ End Time</label><input type="time" id="endTime"></div>
             </div>
-            
-            <div id="timeError" class="error-msg"></div>
-            <div id="timeSuccess" class="success-msg"></div>
-            
-            <div class="time-field" style="margin: 10px 0;">
-                <label>📅 Permission Date <span class="required-star">*</span></label>
-                <input type="date" id="permissionDate">
-            </div>
-
+            <div class="time-field"><label>📅 Permission Date</label><input type="date" id="permissionDate"></div>
             <div class="quick-actions">
                 <button type="button" class="quick-btn" onclick="setDuration(1)">1 Hour</button>
                 <button type="button" class="quick-btn" onclick="setDuration(2)">2 Hours</button>
                 <button type="button" class="quick-btn" onclick="setDuration(3)">3 Hours</button>
-                <button type="button" class="quick-btn" onclick="setDuration(4)">Half Day (4h)</button>
-                <button type="button" class="quick-btn" onclick="setDuration(8)">Full Day (8h)</button>
+                <button type="button" class="quick-btn" onclick="setDuration(4)">Half Day</button>
+                <button type="button" class="quick-btn" onclick="setDuration(8)">Full Day</button>
             </div>
-
-            <textarea id="permissionReason" placeholder="📝 Detailed reason for permission..."></textarea>
-
-            <button onclick="submitPermission()"> Submit Permission Request</button>
+            <textarea id="permissionReason" placeholder="Reason for permission..."></textarea>
+            <button onclick="submitPermission()">🚀 Submit Permission Request</button>
         </div>
-
-        <h3> Permission History</h3>
-        <div id="permissionList" style="max-height: 350px; overflow-y: auto;"></div>
         
-        <button onclick="logout()" class="logout-btn" style="margin-top: 1rem;">🚪 Logout</button>
+        <h3>📋 My Permission History</h3>
+        <div id="permissionList"></div>
+        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
     </div>
-    
     <script src="script.js"></script>
     <script>
-        function goHome() {
-            window.location.href = "home.html";
+        // EmailJS Initialization
+        (function() { emailjs.init("mZbglbhb9gK8rsSLM"); })();
+
+        function sendEmailToAdmin(userName, userEmail, purpose, date, startTime, endTime, duration, reason) {
+            let templateParams = {
+                to_email: "admin@eduleave.com",
+                user_name: userName,
+                user_email: userEmail,
+                request_type: "Permission Request",
+                purpose: purpose,
+                date: date,
+                start_time: startTime,
+                end_time: endTime,
+                duration: duration,
+                reason: reason,
+                admin_name: "Admin"
+            };
+            
+            emailjs.send("service_4t1o4bt", "template_permission_request", templateParams)
+                .then(function(response) {
+                    console.log("Email sent to admin!", response);
+                }, function(error) {
+                    console.log("Email failed:", error);
+                });
         }
 
-        
-        function validateTimes(startTime, endTime) {
-            if(!startTime || !endTime) {
-                document.getElementById("timeError").innerHTML = "";
-                document.getElementById("timeSuccess").innerHTML = "";
-                return true;
-            }
-            
-           
-            let [startHour, startMinute] = startTime.split(':').map(Number);
-            let [endHour, endMinute] = endTime.split(':').map(Number);
-            
-            let startTotalMinutes = (startHour * 60) + startMinute;
-            let endTotalMinutes = (endHour * 60) + endMinute;
-            
-            console.log("Start:", startTotalMinutes, "End:", endTotalMinutes);
-            
-            if(startTotalMinutes >= endTotalMinutes) {
-                document.getElementById("timeError").innerHTML = "❌ End time must be after start time! End time cannot be earlier or equal to start time.";
-                document.getElementById("timeSuccess").innerHTML = "";
-                return false;
-            } else {
-                let diffMinutes = endTotalMinutes - startTotalMinutes;
-                let hours = Math.floor(diffMinutes / 60);
-                let minutes = diffMinutes % 60;
-                let durationText = "";
-                if(hours > 0 && minutes > 0) durationText = `${hours} hour${hours > 1 ? 's' : ''} ${minutes} minute${minutes > 1 ? 's' : ''}`;
-                else if(hours > 0) durationText = `${hours} hour${hours > 1 ? 's' : ''}`;
-                else durationText = `${minutes} minute${minutes > 1 ? 's' : ''}`;
-                
-                document.getElementById("timeError").innerHTML = "";
-                document.getElementById("timeSuccess").innerHTML = `✅ Valid time range! Duration: ${durationText}`;
-                return true;
-            }
-        }
-        
         function setDuration(hours) {
             let startTime = document.getElementById("startTime").value;
-            
-            if(!startTime) {
-                alert("❌ Please select Start Time first!");
-                return;
-            }
-            
+            if(!startTime) { alert("Please select start time first!"); return; }
             let [startHour, startMinute] = startTime.split(':').map(Number);
             let endHour = startHour + hours;
             let endMinute = startMinute;
-            
-            if(endHour >= 24) {
-                endHour = 23;
-                endMinute = 59;
-                alert("⚠️ Note: Time exceeds midnight, set to 23:59");
-            }
-            
+            if(endHour >= 24) { endHour = 23; endMinute = 59; alert("Time exceeds midnight, set to 23:59"); }
             let formattedEnd = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
             document.getElementById("endTime").value = formattedEnd;
-            validateTimes(startTime, formattedEnd);
         }
-
-        
-        document.getElementById("startTime")?.addEventListener("change", function() {
-            let start = document.getElementById("startTime").value;
-            let end = document.getElementById("endTime").value;
-            validateTimes(start, end);
-        });
-        
-        document.getElementById("endTime")?.addEventListener("change", function() {
-            let start = document.getElementById("startTime").value;
-            let end = document.getElementById("endTime").value;
-            validateTimes(start, end);
-        });
 
         function showMyPermissions() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
@@ -257,136 +133,76 @@
             let myPermissions = allPermissions.filter(p => p.userEmail === current.email).reverse();
             let container = document.getElementById("permissionList");
             if(!container) return;
-            container.innerHTML = "";
-            if(myPermissions.length === 0) {
-                container.innerHTML = "<div style='text-align:center; padding: 2rem; color: #6B7280;'>🔐 No permission requests yet.</div>";
-                return;
-            }
+            container.innerHTML = myPermissions.length === 0 ? "<div style='text-align:center; padding:2rem; color:#6b7280;'>🔐 No permission requests yet.</div>" : "";
             myPermissions.forEach(p => {
-                let div = document.createElement("div");
-                div.className = "permission-card";
-                
-                let statusClass = "status-pending";
-                if(p.status === "Approved") statusClass = "status-approved";
-                if(p.status === "Rejected") statusClass = "status-rejected";
-                
-                div.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                        <div>
-                            <span class="purpose-badge">${p.purpose}</span>
-                            <strong>${p.duration}</strong>
-                        </div>
-                        <span class="status-badge ${statusClass}">${p.status || "Pending"}</span>
-                    </div>
-                    <div style="font-size: 0.75rem; color: #6B7280; margin-top: 6px;">
-                        📅 ${p.date} | ⏰ ${p.startTime} → ${p.endTime}
-                    </div>
-                    <div style="font-size: 0.8rem; color: #4B5563; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #E2E8F0;">
-                        📝 ${p.reason || "No reason provided"}
+                let statusClass = p.status === "Approved" ? "status-approved" : (p.status === "Rejected" ? "status-rejected" : "status-pending");
+                let adminHtml = p.adminComment ? `<div class="admin-comment">💬 Admin (${p.adminName || 'Admin'}): ${p.adminComment}</div>` : "";
+                container.innerHTML += `
+                    <div class="permission-card">
+                        <div style="display:flex; justify-content:space-between;"><strong>${p.purpose}</strong><span class="status-badge ${statusClass}">${p.status || "Pending"}</span></div>
+                        <div style="font-size:0.75rem; color:#9ca3af;">📅 ${p.date} | ⏰ ${p.startTime} → ${p.endTime} | ⏱️ ${p.duration}</div>
+                        <div style="font-size:0.8rem; margin-top:6px;">📝 ${p.reason || "No reason"}</div>
+                        ${adminHtml}
                     </div>
                 `;
-                container.appendChild(div);
             });
-        }
-        
-        function calculateDuration(startTime, endTime) {
-            if(!startTime || !endTime) return "Not specified";
-            let [startHour, startMinute] = startTime.split(':').map(Number);
-            let [endHour, endMinute] = endTime.split(':').map(Number);
-            let startTotal = startHour * 60 + startMinute;
-            let endTotal = endHour * 60 + endMinute;
-            let diffMinutes = endTotal - startTotal;
-            let hours = Math.floor(diffMinutes / 60);
-            let minutes = diffMinutes % 60;
-            if(hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
-            if(hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`;
-            return `${minutes} minutes`;
         }
         
         window.submitPermission = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current){ 
-                alert("Please login again"); 
-                window.location.href="index.html"; 
-                return; 
-            }
-            
+            if(!current){ alert("Please login"); location.href="index.html"; return; }
             let name = document.getElementById("studentName").value.trim();
             let purpose = document.getElementById("purposeType").value;
             let startTime = document.getElementById("startTime").value;
             let endTime = document.getElementById("endTime").value;
             let date = document.getElementById("permissionDate").value;
             let reason = document.getElementById("permissionReason").value.trim();
+            if(!name || !purpose || !startTime || !endTime || !date || !reason) { alert("Please fill all fields!"); return; }
+            if(startTime >= endTime) { alert("End time must be after start time!"); return; }
             
-            if(!name){
-                alert("❌ Please enter your full name!");
-                return;
-            }
-            if(!purpose){
-                alert("❌ Please select a purpose!");
-                return;
-            }
-            if(!startTime){
-                alert("❌ Please select start time!");
-                return;
-            }
-            if(!endTime){
-                alert("❌ Please select end time!");
-                return;
-            }
-            if(!date){
-                alert("❌ Please select permission date!");
-                return;
-            }
-            
-            if(!validateTimes(startTime, endTime)) {
-                alert("❌ Please fix the time error! End time must be after start time.");
-                return;
-            }
-            
-            if(!reason) {
-                alert("⚠️ Please provide a reason for your permission request.");
-                return;
-            }
-            
-            let duration = calculateDuration(startTime, endTime);
+            let duration = (() => {
+                let [sh, sm] = startTime.split(':').map(Number);
+                let [eh, em] = endTime.split(':').map(Number);
+                let diff = (eh*60+em) - (sh*60+sm);
+                let h = Math.floor(diff/60), m = diff%60;
+                if(h>0 && m>0) return `${h}h ${m}m`;
+                if(h>0) return `${h} hour${h>1?'s':''}`;
+                return `${m} minutes`;
+            })();
             
             let permissions = JSON.parse(localStorage.getItem("permissions")) || [];
-            permissions.push({
-                userName: name,
-                userEmail: current.email,
-                purpose: purpose,
-                startTime: startTime,
-                endTime: endTime,
-                date: date,
-                duration: duration,
-                reason: reason,
-                status: "Pending",
-                timestamp: Date.now()
-            });
+            permissions.push({ userName: name, userEmail: current.email, purpose, startTime, endTime, date, duration, reason, status: "Pending", timestamp: Date.now() });
             localStorage.setItem("permissions", JSON.stringify(permissions));
             
-            alert("✅ Permission request submitted successfully!");
+            let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
+            notifications.push({
+                id: Date.now(),
+                type: "permission",
+                userName: name,
+                userEmail: current.email,
+                details: `${purpose} | ${date} | ${startTime} → ${endTime}`,
+                reason: reason,
+                status: "pending",
+                read: false,
+                timestamp: Date.now()
+            });
+            localStorage.setItem("notifications", JSON.stringify(notifications));
             
+            sendEmailToAdmin(name, current.email, purpose, date, startTime, endTime, duration, reason);
+            
+            alert("✅ Permission request submitted! Admin will be notified via email.");
             document.getElementById("startTime").value = "";
             document.getElementById("endTime").value = "";
             document.getElementById("permissionDate").value = "";
             document.getElementById("permissionReason").value = "";
-            document.getElementById("timeError").innerHTML = "";
-            document.getElementById("timeSuccess").innerHTML = "";
-            
             showMyPermissions();
         };
         
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current || current.role === "admin"){
-                if(current && current.role === "admin") window.location.href = "admin.html";
-                else window.location.href = "index.html";
-                return;
-            }
-            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${current.name}`;
-            if(document.getElementById("studentName")) document.getElementById("studentName").value = current.name;
+            if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
+            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
+            document.getElementById("studentName").value = current.name;
             showMyPermissions();
         };
     </script>
