@@ -292,7 +292,7 @@
         <div id="emailSuggestions" class="suggestions-box" style="display: none;"></div>
         <small id="emailMsg" class="msg-helper"></small>
 
-        <!-- Password Field with Pure CSS Eye Icon -->
+        <!-- Password Field -->
         <div class="input-group">
             <input type="password" id="password" placeholder="Create password">
             <div class="password-toggle" id="togglePasswordBtn" onclick="togglePassword('password', 'togglePasswordBtn')">
@@ -304,7 +304,7 @@
             </div>
         </div>
         
-        <!-- Confirm Password Field with Pure CSS Eye Icon -->
+        <!-- Confirm Password Field -->
         <div class="input-group">
             <input type="password" id="confirmPassword" placeholder="Confirm password">
             <div class="password-toggle" id="toggleConfirmBtn" onclick="togglePassword('confirmPassword', 'toggleConfirmBtn')">
@@ -339,7 +339,7 @@
     </div>
     <script src="script.js"></script>
     <script>
-        // Password Show/Hide Function with Pure CSS Icon Toggle
+        // Password Show/Hide Function 
         function togglePassword(fieldId, toggleBtnId) {
             const field = document.getElementById(fieldId);
             const eyeIcon = document.querySelector(`#${toggleBtnId} .eye-icon`);
