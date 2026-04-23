@@ -201,7 +201,7 @@
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
             if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
-            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
+            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${current.name}`;
             document.getElementById("studentName").value = current.name;
             showMyPermissions();
         };
