@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Permission | EduLeave</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -224,7 +225,7 @@
             
             <textarea id="permissionReason" placeholder="Reason for permission..." class="input-field" style="min-height: 100px;"></textarea>
             
-            <button class="btn-submit" onclick="submitPermission()">🚀 Submit Permission Request</button>
+            <button class="btn-submit" id="submitBtn" onclick="submitPermission()">🚀 Submit Permission Request</button>
         </div>
         
         <button class="btn-logout" onclick="logout()">🚪 Logout</button>
@@ -253,6 +254,16 @@
             if(!name || !purpose || !startTime || !endTime || !date || !reason) { alert("Please fill all fields!"); return; }
             if(startTime >= endTime) { alert("End time must be after start time!"); return; }
             
+            // GSAP Button Click Animation
+            let btn = document.getElementById("submitBtn");
+            gsap.to(btn, {
+                duration: 0.15,
+                scale: 0.95,
+                yoyo: true,
+                repeat: 1,
+                ease: "power1.inOut"
+            });
+            
             let duration = (() => {
                 let [sh, sm] = startTime.split(':').map(Number);
                 let [eh, em] = endTime.split(':').map(Number);
@@ -271,17 +282,19 @@
             notifications.push({ id: Date.now(), type: "permission", userName: name, userEmail: current.email, details: `${purpose} | ${date} | ${startTime} → ${endTime}`, reason: reason, status: "pending", read: false, timestamp: Date.now() });
             localStorage.setItem("notifications", JSON.stringify(notifications));
             
-            alert("✅ Permission request submitted!");
-            document.getElementById("startTime").value = "";
-            document.getElementById("endTime").value = "";
-            document.getElementById("permissionDate").value = "";
-            document.getElementById("permissionReason").value = "";
+            setTimeout(() => {
+                alert("✅ Permission request submitted!");
+                document.getElementById("startTime").value = "";
+                document.getElementById("endTime").value = "";
+                document.getElementById("permissionDate").value = "";
+                document.getElementById("permissionReason").value = "";
+            }, 150);
         };
         
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
             if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
-            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
+            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${current.name}`;
             document.getElementById("studentName").value = current.name;
         };
     </script>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Login | EduLeave</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -120,7 +121,7 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="box">
+        <div class="box" id="loginBox">
             <div class="text-center">
                 <div class="icon-circle">🔐</div>
             </div>
@@ -137,6 +138,14 @@
         </div>
     </div>
     <script>
+        
+        gsap.from("#loginBox", {
+            duration: 0.6,
+            y: 50,
+            opacity: 0,
+            ease: "power2.out"
+        });
+        
         async function login() {
             let email = document.getElementById("loginEmail").value.trim();
             let password = document.getElementById("loginPassword").value;
