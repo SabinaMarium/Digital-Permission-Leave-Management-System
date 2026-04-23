@@ -221,7 +221,7 @@
 <body>
     <div class="admin-container">
         <div class="top-bar">
-            <div class="logo">👑 Admin Dashboard</div>
+            <div class="logo"> Admin Dashboard</div>
             <div class="flex">
                 <div class="position-relative">
                     <button class="notification-icon" onclick="toggleNotifications()">🔔</button>
@@ -251,6 +251,12 @@
         <div id="requestsList"></div>
     </div>
     <script>
+        // Logout function
+        function logout() {
+            localStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        }
+        
         let currentTab = 'leave';
         let allLeaves = [], allPermissions = [];
         

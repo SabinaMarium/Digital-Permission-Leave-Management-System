@@ -200,6 +200,13 @@
         <button class="btn-logout" onclick="logout()">🚪 Logout</button>
     </div>
     <script>
+        
+        function logout() {
+            console.log("Logout button clicked - dashboard");
+            localStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        }
+        
         function validateDates(from, to) {
             if(!from || !to) return true;
             if(new Date(from) > new Date(to)) {
@@ -256,7 +263,14 @@
         
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
+            if(!current || current.role === "admin") { 
+                if(current?.role === "admin") {
+                    window.location.href = "admin.html";
+                } else {
+                    window.location.href = "index.html";
+                }
+                return; 
+            }
             document.getElementById("welcomeUser").innerHTML = ` Welcome, ${current.name}`;
             document.getElementById("studentName").value = current.name;
         };
