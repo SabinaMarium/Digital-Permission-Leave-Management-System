@@ -4,141 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Home | EduLeave</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🏠%3C/text%3E%3C/svg%3E">
     <style>
-        .module-icon-img {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem auto;
-            display: block;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .welcome-header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            border-radius: 1.5rem;
-            padding: 2rem;
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+        
+        .home-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
             margin-bottom: 2rem;
-            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+        
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        #userNameDisplay {
+            color: #333;
+            font-weight: 500;
+        }
+        
         .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #029f2e, #028a27);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 600;
+            font-size: 1.1rem;
         }
-        @media (max-width: 480px) {
-            .welcome-header {
-                padding: 1.25rem;
+        
+        .logout-btn {
+            background: #dc3545;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+            transform: scale(0.98);
+        }
+        
+        /* Welcome Header */
+        .welcome-header {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .welcome-header h1 {
+            color: #1a1a2e;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-header p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        /* Module Grid */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .module-icon-img {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem auto;
+            display: block;
+        }
+        
+        .module-card h3 {
+            color: #1a1a2e;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .module-card p {
+            color: #6c757d;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        /* Statistics Grid - 8 cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Color classes for stats */
+        .stat-total { color: #4f46e5; }
+        .stat-pending { color: #f59e0b; }
+        .stat-approved { color: #10b981; }
+        .stat-rejected { color: #ef4444; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
             }
-            .module-icon-img {
-                width: 50px;
-                height: 50px;
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-header h1 {
+                font-size: 1.3rem;
+            }
+            .top-nav {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .user-info {
+                justify-content: center;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="home-container">
         <!-- Top Navigation -->
-        <div class="flex-between flex-wrap gap-2" style="background: #1e1e1e; padding: 1rem 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem;">
-            <div class="logo" style="font-size: 1.3rem; font-weight: 700; color: white;">
-                📋 EduLeave System
-            </div>
-            <div class="flex gap-2">
-                <span id="userNameDisplay" style="color: #9ca3af;"></span>
+        <div class="top-nav">
+            <div class="logo">📋 EduLeave System</div>
+            <div class="user-info">
+                <span id="userNameDisplay"></span>
                 <div class="user-avatar" id="userAvatar"></div>
-                <button onclick="logout()" class="btn-danger" style="width: auto; padding: 0.5rem 1rem;">Logout</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
         
         <!-- Welcome Section -->
         <div class="welcome-header">
             <h1 id="welcomeMessage">Welcome back! 👋</h1>
-            <p>Manage your leaves, track requests, and stay organized.</p>
+            <p>Manage your leaves, track requests, and stay organized from one place.</p>
         </div>
         
         <!-- Module Cards -->
-        <div class="grid">
-            <div class="card text-center" onclick="navigateTo('dashboard')">
-                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📋%3C/text%3E%3C/svg%3E" alt="Dashboard">
-                <h3>Leave Management</h3>
-                <p class="text-gray">Apply for new leaves, view your leave history.</p>
+        <div class="module-grid">
+            <!-- Leave Management Card -->
+            <div class="module-card" onclick="navigateTo('dashboard')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📋%3C/text%3E%3C/svg%3E" alt="Leave Management">
+                <h3>📋 Leave Management</h3>
+                <p>Apply for new leaves, view your leave history, and track pending requests.</p>
             </div>
             
-            <div class="card text-center" onclick="navigateTo('permission')">
-                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E🔐%3C/text%3E%3C/svg%3E" alt="Permission">
-                <h3>Permission Management</h3>
-                <p class="text-gray">Request instant permission with time.</p>
+            <!-- Permission Management Card -->
+            <div class="module-card" onclick="navigateTo('permission')">
+                <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E🔐%3C/text%3E%3C/svg%3E" alt="Permission Management">
+                <h3>🔐 Permission Management</h3>
+                <p>Request instant permission with purpose, time, and duration.</p>
             </div>
             
-            <div class="card text-center" onclick="navigateTo('records')">
+            <!-- Records & History Card -->
+            <div class="module-card" onclick="navigateTo('records')">
                 <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E📊%3C/text%3E%3C/svg%3E" alt="Records">
-                <h3>Records & History</h3>
-                <p class="text-gray">View all your leave and permission history.</p>
+                <h3>📊 Records & History</h3>
+                <p>View all your leave and permission requests with approval status.</p>
             </div>
             
-            <div class="card text-center" onclick="navigateTo('profile')">
+            <!-- My Profile Card -->
+            <div class="module-card" onclick="navigateTo('profile')">
                 <img class="module-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23EFF6FF' rx='20'/%3E%3Ctext x='50' y='68' text-anchor='middle' fill='%234f46e5' font-size='45'%3E👤%3C/text%3E%3C/svg%3E" alt="Profile">
-                <h3>My Profile</h3>
-                <p class="text-gray">Update your personal information.</p>
+                <h3>👤 My Profile</h3>
+                <p>Update your personal information, change password, and manage account settings.</p>
             </div>
         </div>
         
-        <!-- Statistics Section -->
+        <!-- Statistics Section - 8 Cards -->
+        <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">📊 Your Statistics</h3>
         <div class="stats-grid">
+            <!-- Leave Statistics -->
             <div class="stat-card">
-                <div class="stat-number" id="totalLeaves">0</div>
-                <div class="text-gray">Total Leaves</div>
+                <div class="stat-number stat-total" id="totalLeaves">0</div>
+                <div class="stat-label">📋 Total Leaves</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="pendingLeaves">0</div>
-                <div class="text-gray">Pending Leaves</div>
+                <div class="stat-number stat-pending" id="pendingLeaves">0</div>
+                <div class="stat-label">⏳ Pending Leaves</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="approvedLeaves">0</div>
-                <div class="text-gray">Approved Leaves</div>
+                <div class="stat-number stat-approved" id="approvedLeaves">0</div>
+                <div class="stat-label">✅ Approved Leaves</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="totalPermissions">0</div>
-                <div class="text-gray">Total Permissions</div>
+                <div class="stat-number stat-rejected" id="rejectedLeaves">0</div>
+                <div class="stat-label">❌ Rejected Leaves</div>
+            </div>
+            
+            <!-- Permission Statistics -->
+            <div class="stat-card">
+                <div class="stat-number stat-total" id="totalPermissions">0</div>
+                <div class="stat-label">🔐 Total Permissions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-pending" id="pendingPermissions">0</div>
+                <div class="stat-label">⏳ Pending Permissions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-approved" id="approvedPermissions">0</div>
+                <div class="stat-label">✅ Approved Permissions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-rejected" id="rejectedPermissions">0</div>
+                <div class="stat-label">❌ Rejected Permissions</div>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    
     <script>
         function navigateTo(module) {
-            switch(module) {
-                case 'dashboard': window.location.href = 'dashboard.html'; break;
-                case 'permission': window.location.href = 'permission.html'; break;
-                case 'records': window.location.href = 'records.html'; break;
-                case 'profile': alert('📝 Profile module coming soon!'); break;
-                default: break;
+            if(module === 'dashboard') {
+                window.location.href = 'dashboard.html';
+            } else if(module === 'permission') {
+                window.location.href = 'permission.html';
+            } else if(module === 'records') {
+                window.location.href = 'records.html';
+            } else if(module === 'profile') {
+                alert('📝 Profile module coming soon!');
             }
         }
         
         window.onload = function() {
             let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            if (!currentUser) { window.location.href = "index.html"; return; }
-            if (currentUser.role === "admin") { window.location.href = "admin.html"; return; }
+            if (!currentUser) {
+                window.location.href = "index.html";
+                return;
+            }
+            if (currentUser.role === "admin") {
+                window.location.href = "admin.html";
+                return;
+            }
             
             document.getElementById("userNameDisplay").innerHTML = currentUser.name;
             document.getElementById("userAvatar").innerHTML = currentUser.name.charAt(0).toUpperCase();
             document.getElementById("welcomeMessage").innerHTML = `Welcome back, ${currentUser.name}! 👋`;
             
+            // Load all data
             let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
             let allPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
+            
+            // Filter user's data
             let userLeaves = allLeaves.filter(l => l.userEmail === currentUser.email);
             let userPermissions = allPermissions.filter(p => p.userEmail === currentUser.email);
             
-            document.getElementById("totalLeaves").innerHTML = userLeaves.length;
-            document.getElementById("pendingLeaves").innerHTML = userLeaves.filter(l => l.status === "Pending").length;
-            document.getElementById("approvedLeaves").innerHTML = userLeaves.filter(l => l.status === "Approved").length;
-            document.getElementById("totalPermissions").innerHTML = userPermissions.length;
+            // Leave Statistics
+            let totalLeaves = userLeaves.length;
+            let pendingLeaves = userLeaves.filter(l => l.status === "Pending").length;
+            let approvedLeaves = userLeaves.filter(l => l.status === "Approved").length;
+            let rejectedLeaves = userLeaves.filter(l => l.status === "Rejected").length;
+            
+            // Permission Statistics
+            let totalPermissions = userPermissions.length;
+            let pendingPermissions = userPermissions.filter(p => p.status === "Pending").length;
+            let approvedPermissions = userPermissions.filter(p => p.status === "Approved").length;
+            let rejectedPermissions = userPermissions.filter(p => p.status === "Rejected").length;
+            
+            // Update Leave Stats
+            document.getElementById("totalLeaves").innerHTML = totalLeaves;
+            document.getElementById("pendingLeaves").innerHTML = pendingLeaves;
+            document.getElementById("approvedLeaves").innerHTML = approvedLeaves;
+            document.getElementById("rejectedLeaves").innerHTML = rejectedLeaves;
+            
+            // Update Permission Stats
+            document.getElementById("totalPermissions").innerHTML = totalPermissions;
+            document.getElementById("pendingPermissions").innerHTML = pendingPermissions;
+            document.getElementById("approvedPermissions").innerHTML = approvedPermissions;
+            document.getElementById("rejectedPermissions").innerHTML = rejectedPermissions;
         };
     </script>
 </body>

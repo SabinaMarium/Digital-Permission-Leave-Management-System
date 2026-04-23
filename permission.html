@@ -2,76 +2,218 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Permission | EduLeave</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            font-family: 'Inter', system-ui, sans-serif;
             padding: 1.5rem;
+            min-height: 100vh;
         }
-        .box { max-width: 580px; margin: 0 auto; background: #1e1e1e; border-radius: 2rem; padding: 2rem; border: 1px solid rgba(255,255,255,0.08); }
-        .time-group { display: flex; gap: 15px; margin: 10px 0; }
-        .time-field { flex: 1; display: flex; flex-direction: column; }
-        .time-field label { font-size: 0.75rem; color: #9ca3af; margin-bottom: 4px; }
-        input, select, textarea {
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
             width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #333;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            background: #2a2a2a;
-            color: #fff;
-            outline: none;
         }
-        textarea { border-radius: 20px; min-height: 80px; resize: vertical; }
-        input:focus, select:focus, textarea:focus { border-color: #048428; }
-        button {
-            background: #029f2e;
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
             border: none;
-            border-radius: 40px;
-            padding: 12px;
+            border-radius: 2rem;
+            padding: 0.6rem 1.2rem;
             font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            cursor: pointer;
+            width: auto;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+        }
+        h2 {
+            color: #1a1a2e;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .welcome-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .welcome-text {
+            color: #029f2e;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .form-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .form-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: #1a1a2e;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 2px solid #029f2e;
+            padding-bottom: 0.75rem;
+            display: inline-block;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            background: white;
+            color: #1a1a2e;
+            outline: none;
+            margin-bottom: 1rem;
+        }
+        .input-field:focus {
+            border-color: #029f2e;
+            box-shadow: 0 0 0 3px rgba(2,159,46,0.1);
+        }
+        .time-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .time-field {
+            flex: 1;
+            min-width: 120px;
+        }
+        .time-field label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+        .quick-actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .quick-btn {
+            background: #f8f9fa;
+            color: #029f2e;
+            border: 2px solid #e9ecef;
+            border-radius: 2rem;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quick-btn:hover {
+            background: #029f2e;
+            color: white;
+            border-color: #029f2e;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #029f2e, #028a27);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.9rem;
+            font-weight: 700;
+            font-size: 1rem;
             color: white;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 0.5rem;
         }
-        .logout-btn { background: #EF4444; margin-top: 1rem; }
-        .permission-card { background: #2a2a2a; border-radius: 16px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #10b981; }
-        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; margin-left: 8px; }
-        .status-pending { background: #78350f; color: #fde68a; }
-        .status-approved { background: #064e3b; color: #6ee7b7; }
-        .status-rejected { background: #7f1a1a; color: #fca5a5; }
-        .admin-comment { background: #78350f; padding: 10px; border-radius: 12px; margin-top: 10px; font-size: 0.75rem; border-left: 3px solid #f59e0b; color: #fde68a; }
-        h2, h3 { color: white; margin-bottom: 1rem; }
-        .back-home { background: #4f46e5; width: auto; padding: 8px 16px; margin-bottom: 1rem; display: inline-block; }
-        .quick-actions { display: flex; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
-        .quick-btn { background: #2a2a2a; color: #029f2e; border: 1px solid #029f2e; width: auto; padding: 6px 12px; font-size: 0.75rem; margin: 0; }
-        .quick-btn:hover { background: #029f2e; color: white; }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2,159,46,0.3);
+        }
+        .btn-logout {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.9rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-logout:hover {
+            transform: translateY(-2px);
+        }
+        @media (max-width: 480px) {
+            body { padding: 1rem; }
+            .form-card { padding: 1.2rem; }
+            .time-group { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <button class="back-home" onclick="location.href='home.html'">← Home</button>
-        <h2>🔐 Permission Management</h2>
-        <p id="welcomeUser" style="color: #4ade80; margin-bottom: 1rem;"></p>
+    <div class="container">
+        <div class="header-section">
+            <button class="btn-home" onclick="location.href='home.html'">← Home</button>
+            <h2>🔐 Permission Management</h2>
+            <div style="width: 70px;"></div>
+        </div>
         
-        <div style="background: #2a2a2a; padding: 1.2rem; border-radius: 1rem; margin-bottom: 1.5rem;">
-            <h3 style="margin-top: 0;">⚡ Instant Permission Request</h3>
-            <input type="text" id="studentName" placeholder="Full name">
-            <select id="purposeType">
+        <div class="welcome-card">
+            <div class="welcome-text" id="welcomeUser"></div>
+        </div>
+        
+        <div class="form-card">
+            <div class="form-title">Instant Permission Request</div>
+            
+            <input type="text" id="studentName" placeholder="Full name" class="input-field">
+            
+            <select id="purposeType" class="input-field">
                 <option value="">Select Purpose</option>
-                <option>Medical Emergency</option><option>Personal Work</option><option>Family Event</option><option>Official Work</option>
+                <option>Medical Emergency</option>
+                <option>Personal Work</option>
+                <option>Family Event</option>
+                <option>Official Work</option>
+                <option>Late Arrival</option>
+                <option>Early Departure</option>
             </select>
+            
             <div class="time-group">
-                <div class="time-field"><label>⏰ Start Time</label><input type="time" id="startTime"></div>
-                <div class="time-field"><label>⏰ End Time</label><input type="time" id="endTime"></div>
+                <div class="time-field">
+                    <label>⏰ Start Time</label>
+                    <input type="time" id="startTime" class="input-field" style="margin-bottom: 0;">
+                </div>
+                <div class="time-field">
+                    <label>⏰ End Time</label>
+                    <input type="time" id="endTime" class="input-field" style="margin-bottom: 0;">
+                </div>
             </div>
-            <div class="time-field"><label>📅 Permission Date</label><input type="date" id="permissionDate"></div>
+            
+            <div class="time-field" style="margin: 0.5rem 0;">
+                <label>📅 Permission Date</label>
+                <input type="date" id="permissionDate" class="input-field" style="margin-bottom: 0;">
+            </div>
+            
             <div class="quick-actions">
                 <button type="button" class="quick-btn" onclick="setDuration(1)">1 Hour</button>
                 <button type="button" class="quick-btn" onclick="setDuration(2)">2 Hours</button>
@@ -79,42 +221,15 @@
                 <button type="button" class="quick-btn" onclick="setDuration(4)">Half Day</button>
                 <button type="button" class="quick-btn" onclick="setDuration(8)">Full Day</button>
             </div>
-            <textarea id="permissionReason" placeholder="Reason for permission..."></textarea>
-            <button onclick="submitPermission()">🚀 Submit Permission Request</button>
+            
+            <textarea id="permissionReason" placeholder="Reason for permission..." class="input-field" style="min-height: 100px;"></textarea>
+            
+            <button class="btn-submit" onclick="submitPermission()">🚀 Submit Permission Request</button>
         </div>
         
-        <h3>📋 My Permission History</h3>
-        <div id="permissionList"></div>
-        <button onclick="logout()" class="logout-btn">🚪 Logout</button>
+        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
     </div>
-    <script src="script.js"></script>
     <script>
-        // EmailJS Initialization
-        (function() { emailjs.init("mZbglbhb9gK8rsSLM"); })();
-
-        function sendEmailToAdmin(userName, userEmail, purpose, date, startTime, endTime, duration, reason) {
-            let templateParams = {
-                to_email: "admin@eduleave.com",
-                user_name: userName,
-                user_email: userEmail,
-                request_type: "Permission Request",
-                purpose: purpose,
-                date: date,
-                start_time: startTime,
-                end_time: endTime,
-                duration: duration,
-                reason: reason,
-                admin_name: "Admin"
-            };
-            
-            emailjs.send("service_4t1o4bt", "template_permission_request", templateParams)
-                .then(function(response) {
-                    console.log("Email sent to admin!", response);
-                }, function(error) {
-                    console.log("Email failed:", error);
-                });
-        }
-
         function setDuration(hours) {
             let startTime = document.getElementById("startTime").value;
             if(!startTime) { alert("Please select start time first!"); return; }
@@ -124,28 +239,6 @@
             if(endHour >= 24) { endHour = 23; endMinute = 59; alert("Time exceeds midnight, set to 23:59"); }
             let formattedEnd = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
             document.getElementById("endTime").value = formattedEnd;
-        }
-
-        function showMyPermissions() {
-            let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current) return;
-            let allPermissions = JSON.parse(localStorage.getItem("permissions")) || [];
-            let myPermissions = allPermissions.filter(p => p.userEmail === current.email).reverse();
-            let container = document.getElementById("permissionList");
-            if(!container) return;
-            container.innerHTML = myPermissions.length === 0 ? "<div style='text-align:center; padding:2rem; color:#6b7280;'>🔐 No permission requests yet.</div>" : "";
-            myPermissions.forEach(p => {
-                let statusClass = p.status === "Approved" ? "status-approved" : (p.status === "Rejected" ? "status-rejected" : "status-pending");
-                let adminHtml = p.adminComment ? `<div class="admin-comment">💬 Admin (${p.adminName || 'Admin'}): ${p.adminComment}</div>` : "";
-                container.innerHTML += `
-                    <div class="permission-card">
-                        <div style="display:flex; justify-content:space-between;"><strong>${p.purpose}</strong><span class="status-badge ${statusClass}">${p.status || "Pending"}</span></div>
-                        <div style="font-size:0.75rem; color:#9ca3af;">📅 ${p.date} | ⏰ ${p.startTime} → ${p.endTime} | ⏱️ ${p.duration}</div>
-                        <div style="font-size:0.8rem; margin-top:6px;">📝 ${p.reason || "No reason"}</div>
-                        ${adminHtml}
-                    </div>
-                `;
-            });
         }
         
         window.submitPermission = function() {
@@ -175,35 +268,21 @@
             localStorage.setItem("permissions", JSON.stringify(permissions));
             
             let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-            notifications.push({
-                id: Date.now(),
-                type: "permission",
-                userName: name,
-                userEmail: current.email,
-                details: `${purpose} | ${date} | ${startTime} → ${endTime}`,
-                reason: reason,
-                status: "pending",
-                read: false,
-                timestamp: Date.now()
-            });
+            notifications.push({ id: Date.now(), type: "permission", userName: name, userEmail: current.email, details: `${purpose} | ${date} | ${startTime} → ${endTime}`, reason: reason, status: "pending", read: false, timestamp: Date.now() });
             localStorage.setItem("notifications", JSON.stringify(notifications));
             
-            sendEmailToAdmin(name, current.email, purpose, date, startTime, endTime, duration, reason);
-            
-            alert("✅ Permission request submitted! Admin will be notified via email.");
+            alert("✅ Permission request submitted!");
             document.getElementById("startTime").value = "";
             document.getElementById("endTime").value = "";
             document.getElementById("permissionDate").value = "";
             document.getElementById("permissionReason").value = "";
-            showMyPermissions();
         };
         
         window.onload = function() {
             let current = JSON.parse(localStorage.getItem("currentUser"));
             if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
-            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${current.name}`;
+            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
             document.getElementById("studentName").value = current.name;
-            showMyPermissions();
         };
     </script>
 </body>

@@ -4,24 +4,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Dashboard | EduLeave</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📋%3C/text%3E%3C/svg%3E">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            font-family: 'Inter', system-ui, sans-serif;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            border: none;
+            border-radius: 2rem;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            cursor: pointer;
+            width: auto;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+        }
+        h2 {
+            color: #1a1a2e;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+        .welcome-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .welcome-text {
+            color: #029f2e;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .form-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .form-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: #1a1a2e;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-bottom: 2px solid #029f2e;
+            padding-bottom: 0.75rem;
+            display: inline-block;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 2px solid #e9ecef;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            background: white;
+            color: #1a1a2e;
+            outline: none;
+            margin-bottom: 1rem;
+        }
+        .input-field:focus {
+            border-color: #029f2e;
+            box-shadow: 0 0 0 3px rgba(2,159,46,0.1);
+        }
+        .date-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .date-field {
+            flex: 1;
+            min-width: 120px;
+        }
+        .date-field label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #029f2e, #028a27);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.9rem;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2,159,46,0.3);
+        }
+        .btn-logout {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            border-radius: 1rem;
+            padding: 0.9rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-logout:hover {
+            transform: translateY(-2px);
+        }
+        .error-msg {
+            color: #dc3545;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        @media (max-width: 480px) {
+            body { padding: 1rem; }
+            .form-card { padding: 1.2rem; }
+            .date-group { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container" style="max-width: 650px;">
-        <div class="flex-between flex-wrap gap-2 mb-2">
-            <button onclick="location.href='home.html'" class="btn-secondary" style="width: auto; padding: 0.5rem 1rem;">← Home</button>
-            <h2 style="margin: 0;">📋 Leave Management</h2>
+    <div class="container">
+        <div class="header-section">
+            <button class="btn-home" onclick="location.href='home.html'">← Home</button>
+            <h2>📋 Leave Management</h2>
+            <div style="width: 70px;"></div>
         </div>
         
-        <p id="welcomeUser" class="text-green mb-2"></p>
+        <div class="welcome-card">
+            <div class="welcome-text" id="welcomeUser"></div>
+        </div>
         
-        <!-- Leave Application Form -->
-        <div class="card mb-3">
-            <h3>✍️ Apply for Leave</h3>
-            <input type="text" id="studentName" placeholder="Full name" class="mb-2">
+        <div class="form-card">
+            <div class="form-title">Apply for Leave</div>
             
-            <select id="leaveType" class="mb-2">
+            <input type="text" id="studentName" placeholder="Full name" class="input-field">
+            
+            <select id="leaveType" class="input-field">
                 <option>Sick Leave</option>
                 <option>Casual Leave</option>
                 <option>Emergency Leave</option>
@@ -31,52 +182,23 @@
             <div class="date-group">
                 <div class="date-field">
                     <label>📅 Start Date</label>
-                    <input type="date" id="fromDate">
+                    <input type="date" id="fromDate" class="input-field" style="margin-bottom: 0;">
                 </div>
                 <div class="date-field">
                     <label>📅 End Date</label>
-                    <input type="date" id="toDate">
+                    <input type="date" id="toDate" class="input-field" style="margin-bottom: 0;">
                 </div>
             </div>
             <div id="dateError" class="error-msg"></div>
             
-            <textarea id="leaveReason" placeholder="Reason for leave..."></textarea>
+            <textarea id="leaveReason" placeholder="Reason for leave..." class="input-field" style="min-height: 100px;"></textarea>
             
-            <button onclick="submitLeave()">📨 Submit Leave Request</button>
+            <button class="btn-submit" onclick="submitLeave()">📨 Submit Leave Request</button>
         </div>
         
-        <h3>📌 My Leave History</h3>
-        <div id="userLeaveList"></div>
-        
-        <button onclick="logout()" class="btn-danger mt-3">🚪 Logout</button>
+        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
     </div>
-    <script src="script.js"></script>
     <script>
-        function showMyLeaves() {
-            let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current) return;
-            let allLeaves = JSON.parse(localStorage.getItem("leaves")) || [];
-            let myLeaves = allLeaves.filter(l => l.userEmail === current.email).reverse();
-            let container = document.getElementById("userLeaveList");
-            if(!container) return;
-            container.innerHTML = myLeaves.length === 0 ? "<div class='empty-state'>📭 No leave requests yet.</div>" : "";
-            myLeaves.forEach(l => {
-                let statusClass = l.status === "Approved" ? "status-approved" : (l.status === "Rejected" ? "status-rejected" : "status-pending");
-                let adminHtml = l.adminComment ? `<div class="admin-comment">💬 Admin (${l.adminName || 'Admin'}): ${l.adminComment}</div>` : "";
-                container.innerHTML += `
-                    <div class="leave-card">
-                        <div class="flex-between flex-wrap">
-                            <strong>${l.type}</strong>
-                            <span class="status-badge ${statusClass}">${l.status || "Pending"}</span>
-                        </div>
-                        <div class="text-gray" style="font-size:0.75rem;">📅 ${l.from} → ${l.to}</div>
-                        <div class="mt-1">📝 ${l.reason || "No reason"}</div>
-                        ${adminHtml}
-                    </div>
-                `;
-            });
-        }
-        
         function validateDates(from, to) {
             if(!from || !to) return true;
             if(new Date(from) > new Date(to)) {
@@ -117,7 +239,6 @@
             document.getElementById("fromDate").value = "";
             document.getElementById("toDate").value = "";
             document.getElementById("leaveReason").value = "";
-            showMyLeaves();
         };
         
         window.onload = function() {
@@ -125,7 +246,6 @@
             if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
             document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
             document.getElementById("studentName").value = current.name;
-            showMyLeaves();
         };
     </script>
 </body>
