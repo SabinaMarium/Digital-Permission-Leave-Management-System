@@ -2,87 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Login | EduLeave</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            font-family: 'Inter', system-ui, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-        }
-        .box {
-            width: 100%;
+        /* Login page specific */
+        .login-container {
             max-width: 420px;
-            background: #1e1e1e;
-            border-radius: 2rem;
-            padding: 2rem 1.8rem;
-            border: 1px solid rgba(255,255,255,0.08);
+            margin: 0 auto;
+            width: 100%;
         }
-        .form-icon { text-align: center; margin-bottom: 1rem; }
         .icon-circle {
-            width: 80px; height: 80px;
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, #2da44e, #216e39);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-align: center;
-            background: linear-gradient(135deg, #ffffff, #a1a1aa);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
+        @media (max-width: 480px) {
+            .icon-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+            }
         }
-        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem; }
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 8px 0;
-            border: 1.5px solid #333;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            background: #2a2a2a;
-            color: #fff;
-            outline: none;
-        }
-        input:focus { border-color: #048428; }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 18px;
-            background: #029f2e;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover { background: #049d2f; transform: scale(0.98); }
-        .footer-text { text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.85rem; }
-        .footer-text a { color: #037a25; text-decoration: none; font-weight: 600; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <div class="form-icon"><div class="icon-circle">🔐</div></div>
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Sign in to manage leaves</p>
-        <input type="email" id="loginEmail" placeholder="Email address">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <button onclick="login()">Login →</button>
-        <p class="footer-text">Don't have an account? <a href="register.html">Create account</a></p>
+    <div class="login-container">
+        <div class="box text-center">
+            <div class="form-icon mb-2">
+                <div class="icon-circle">🔐</div>
+            </div>
+            <h2 class="mb-1">Welcome Back</h2>
+            <p class="text-gray mb-3">Sign in to manage leaves</p>
+            
+            <input type="email" id="loginEmail" placeholder="Email address" class="mb-2">
+            <input type="password" id="loginPassword" placeholder="Password" class="mb-2">
+            <div id="loginError" class="error-msg"></div>
+            
+            <button onclick="login()" class="mt-2">Login →</button>
+            
+            <p class="text-gray mt-3">Don't have an account? <a href="register.html">Create account</a></p>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

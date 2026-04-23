@@ -2,217 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Register | EduLeave</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📝%3C/text%3E%3C/svg%3E">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-        }
-        .box {
+        .register-container {
+            max-width: 500px;
+            margin: 0 auto;
             width: 100%;
-            max-width: 460px;
-            background: #1e1e1e;
-            border-radius: 2rem;
-            padding: 2rem 1.8rem;
-            border: 1px solid rgba(255,255,255,0.08);
         }
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-align: center;
-            background: linear-gradient(135deg, #ffffff, #a1a1aa);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
+        @media (max-width: 480px) {
+            .register-container {
+                max-width: 100%;
+            }
         }
-        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem; }
-        .input-group { position: relative; margin: 8px 0; }
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #333;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            background: #2a2a2a;
-            color: #fff;
-            outline: none;
-        }
-        .input-group input { padding-right: 50px; }
-        input:focus, select:focus { border-color: #048428; }
-        .password-toggle {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-        .eye-icon { position: relative; width: 20px; height: 20px; display: block; }
-        .eye-icon .eye-outline {
-            position: absolute;
-            width: 18px;
-            height: 12px;
-            border: 2px solid #8b949e;
-            border-radius: 50%;
-            top: 4px;
-            left: 1px;
-        }
-        .eye-icon .eye-pupil {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #8b949e;
-            border-radius: 50%;
-            top: 7px;
-            left: 7px;
-        }
-        .eye-icon .eye-line {
-            position: absolute;
-            width: 20px;
-            height: 2px;
-            background: #8b949e;
-            top: 9px;
-            left: 0;
-            display: none;
-        }
-        .eye-icon.closed .eye-outline { border-color: #029f2e; }
-        .eye-icon.closed .eye-pupil { background: #029f2e; }
-        .eye-icon.closed .eye-line { display: block; background: #029f2e; transform: rotate(45deg); }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 18px;
-            background: #029f2e;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover { background: #049d2f; }
-        .footer-text { text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.85rem; }
-        .footer-text a { color: #037a25; text-decoration: none; font-weight: 600; }
-        .suggestions-box {
-            background: #2a2a2a;
-            border-radius: 1rem;
-            border: 1px solid #333;
-            margin-top: -5px;
-            margin-bottom: 8px;
-            max-height: 140px;
-            overflow-y: auto;
-        }
-        .suggestion-item { padding: 8px 16px; cursor: pointer; border-bottom: 1px solid #333; color: #e5e5e5; }
-        .suggestion-item:hover { background: #3a3a3a; }
-        .password-strength { font-size: 0.7rem; margin-top: 5px; margin-bottom: 8px; padding: 6px 12px; border-radius: 40px; background: #2a2a2a; }
-        .strength-weak { background: #7f1a1a; color: #fca5a5; }
-        .strength-medium { background: #78350f; color: #fde68a; }
-        .strength-strong { background: #064e3b; color: #6ee7b7; }
-        .req-list { font-size: 0.7rem; margin: 8px 0 0 0; padding-left: 20px; color: #a1a1aa; list-style: none; }
-        .req-list li { margin: 4px 0; }
-        .error-msg { color: #f87171; font-size: 0.7rem; margin-top: 4px; }
-        .success-msg { color: #4ade80; font-size: 0.7rem; margin-top: 4px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>Create Account</h2>
-        <p class="subtitle">Join the leave management system</p>
-        <input type="text" id="name" placeholder="Full name">
-        <input type="email" id="email" placeholder="Email address" autocomplete="off">
-        <div id="emailSuggestions" class="suggestions-box" style="display: none;"></div>
-        <div class="input-group">
-            <input type="password" id="password" placeholder="Create password">
-            <div class="password-toggle" onclick="togglePassword('password', this)">
-                <div class="eye-icon"><div class="eye-outline"></div><div class="eye-pupil"></div><div class="eye-line"></div></div>
+    <div class="register-container">
+        <div class="box">
+            <h2 class="text-center mb-1">Create Account</h2>
+            <p class="text-gray text-center mb-3">Join the leave management system</p>
+            
+            <input type="text" id="name" placeholder="Full name" class="mb-2">
+            <input type="email" id="email" placeholder="Email address" class="mb-1">
+            <div id="emailSuggestions" class="suggestions-box" style="display: none;"></div>
+            
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Create password">
             </div>
+            <div id="passwordStrength" class="password-strength">🔒 Password strength:</div>
+            <ul class="req-list mb-2">
+                <li id="reqUpper">🔤 Uppercase (A-Z)</li>
+                <li id="reqLower">🔡 Lowercase (a-z)</li>
+                <li id="reqDigit">🔢 Digit (0-9)</li>
+                <li id="reqSpecial">✨ Special (@$!%*?&)</li>
+                <li id="reqLength">📏 Min 8 characters</li>
+            </ul>
+            
+            <input type="password" id="confirmPassword" placeholder="Confirm password" class="mb-1">
+            <div id="confirmError" class="error-msg"></div>
+            <div id="confirmSuccess" class="success-msg"></div>
+            
+            <select id="role" class="mb-2">
+                <option value="">Select role</option>
+                <option value="user">👤 User</option>
+                <option value="admin">👑 Administrator</option>
+            </select>
+            
+            <div id="registerError" class="error-msg"></div>
+            <div id="registerSuccess" class="success-msg"></div>
+            
+            <button onclick="register()" class="mt-2">Create Account →</button>
+            
+            <p class="text-gray text-center mt-3">Already have account? <a href="index.html">Sign in</a></p>
         </div>
-        <div class="input-group">
-            <input type="password" id="confirmPassword" placeholder="Confirm password">
-            <div class="password-toggle" onclick="togglePassword('confirmPassword', this)">
-                <div class="eye-icon"><div class="eye-outline"></div><div class="eye-pupil"></div><div class="eye-line"></div></div>
-            </div>
-        </div>
-        <div id="confirmError" class="error-msg"></div>
-        <div id="passwordStrength" class="password-strength">🔒 Password strength: </div>
-        <ul class="req-list">
-            <li id="reqUpper">🔤 Uppercase (A-Z)</li>
-            <li id="reqLower">🔡 Lowercase (a-z)</li>
-            <li id="reqDigit">🔢 Digit (0-9)</li>
-            <li id="reqSpecial">✨ Special (@$!%*?&)</li>
-            <li id="reqLength">📏 Min 8 characters</li>
-        </ul>
-        <select id="role">
-            <option value="">Select role</option>
-            <option value="user">👤 User</option>
-            <option value="admin">👑 Administrator</option>
-        </select>
-        <button onclick="register()">Create Account →</button>
-        <p class="footer-text">Already have account? <a href="index.html">Sign in</a></p>
     </div>
     <script src="script.js"></script>
-    <script>
-        // EmailJS Initialization with your Public Key
-        (function() {
-            emailjs.init("mZbglbhb9gK8rsSLM");
-        })();
-
-        function togglePassword(fieldId, btn) {
-            const field = document.getElementById(fieldId);
-            const eyeIcon = btn.querySelector('.eye-icon');
-            if (field.type === 'password') { field.type = 'text'; eyeIcon.classList.add('closed'); }
-            else { field.type = 'password'; eyeIcon.classList.remove('closed'); }
-        }
-        
-        const domains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com"];
-        const emailField = document.getElementById("email");
-        const suggBox = document.getElementById("emailSuggestions");
-        emailField?.addEventListener("input", function() {
-            let val = emailField.value;
-            let atIdx = val.indexOf('@');
-            let suggestions = [];
-            if (atIdx === -1 && val.length > 1) suggestions = domains.map(d => `${val}@${d}`);
-            else if (atIdx > 0) {
-                let local = val.substring(0, atIdx);
-                let domain = val.substring(atIdx + 1);
-                if (domain === "") suggestions = domains.map(d => `${local}@${d}`);
-                else suggestions = domains.filter(d => d.startsWith(domain)).map(d => `${local}@${d}`);
-            }
-            suggestions = suggestions.slice(0, 5);
-            if (!suggestions.length) { suggBox.style.display = "none"; return; }
-            suggBox.style.display = "block";
-            suggBox.innerHTML = suggestions.map(sug => `<div class="suggestion-item" onclick="document.getElementById('email').value='${sug}'; suggBox.style.display='none';">${sug}</div>`).join('');
-        });
-        document.addEventListener("click", (e) => { if (!suggBox.contains(e.target) && e.target !== emailField) suggBox.style.display = "none"; });
-        
-        const pwd = document.getElementById("password");
-        const confirm = document.getElementById("confirmPassword");
-        function checkStrength() {
-            let val = pwd.value;
-            document.getElementById("reqUpper").style.color = /[A-Z]/.test(val) ? "#4ade80" : "#f87171";
-            document.getElementById("reqLower").style.color = /[a-z]/.test(val) ? "#4ade80" : "#f87171";
-            document.getElementById("reqDigit").style.color = /[0-9]/.test(val) ? "#4ade80" : "#f87171";
-            document.getElementById("reqSpecial").style.color = /[@$!%*?&#]/.test(val) ? "#4ade80" : "#f87171";
-            document.getElementById("reqLength").style.color = val.length >= 8 ? "#4ade80" : "#f87171";
-            let div = document.getElementById("passwordStrength");
-            if (/[A-Z]/.test(val) && /[a-z]/.test(val) && /[0-9]/.test(val) && /[@$!%*?&#]/.test(val) && val.length >= 8) {
-                div.innerHTML = "✅ Strong Password!"; div.className = "password-strength strength-strong";
-            } else if (val.length >= 6) { div.innerHTML = "⚠️ Medium Password"; div.className = "password-strength strength-medium"; }
-            else { div.innerHTML = "❌ Weak Password"; div.className = "password-strength strength-weak"; }
-            if (confirm.value && pwd.value !== confirm.value) document.getElementById("confirmError").innerHTML = "❌ Passwords do not match!";
-            else if (confirm.value) document.getElementById("confirmError").innerHTML = "";
-        }
-        pwd?.addEventListener("input", checkStrength);
-        confirm?.addEventListener("input", checkStrength);
-    </script>
 </body>
 </html>
