@@ -2,73 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Records & History | EduLeave</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📊%3C/text%3E%3C/svg%3E">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #f5f7fa; font-family: 'Inter', sans-serif; padding: 1.5rem; min-height: 100vh; }
-        .records-container { max-width: 1200px; margin: 0 auto; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem 1.5rem; border-radius: 1rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .logo { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; }
-        .back-btn { background: #4f46e5; border: none; border-radius: 2rem; padding: 0.5rem 1.25rem; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .back-btn:hover { background: #4338ca; transform: scale(0.98); }
-        .filter-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; background: white; padding: 1rem; border-radius: 1rem; }
-        .filter-bar input, .filter-bar select { flex: 1; padding: 0.75rem 1rem; border: 1.5px solid #dee2e6; border-radius: 2rem; font-size: 0.85rem; outline: none; }
-        .download-btn { background: #029f2e; border: none; border-radius: 2rem; padding: 0.75rem 1.5rem; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .download-btn:hover { transform: scale(0.98); }
-        .records-table { background: white; border-radius: 1rem; overflow-x: auto; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; }
+        .container { max-width: 1300px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .btn { padding: 8px 16px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
+        .btn-logout { background: #dc3545; color: white; }
+        .btn-back { background: #4f46e5; color: white; margin-bottom: 20px; }
+        .btn-download { background: #2da44e; color: white; }
+        .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .filter-bar input, .filter-bar select { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .records-table { background: white; border-radius: 12px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
         th { background: #f8f9fa; font-weight: 600; }
-        .status-approved { color: #10b981; font-weight: 600; }
         .status-pending { color: #f59e0b; font-weight: 600; }
+        .status-approved { color: #10b981; font-weight: 600; }
         .status-rejected { color: #ef4444; font-weight: 600; }
-        .empty-state { text-align: center; padding: 3rem; color: #6c757d; }
-        @media (max-width: 768px) { th, td { padding: 8px 12px; font-size: 0.8rem; } .filter-bar { flex-direction: column; } }
+        .empty-state { text-align: center; padding: 50px; color: #888; }
+        .dept-info { background: #e8f5e9; padding: 8px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; color: #2e7d32; }
+        @media (max-width: 768px) { .filter-bar { flex-direction: column; } th, td { padding: 8px 10px; font-size: 12px; } }
     </style>
 </head>
 <body>
-    <div class="records-container">
-        <div class="top-bar">
+    <div class="container">
+        <div class="header">
             <div class="logo"><i class="fas fa-history"></i> Records & History</div>
-            <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">U</div>
+                <button class="btn btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
         </div>
+        
+        <button class="btn btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+        
+        <div id="deptInfo" class="dept-info" style="display:none;">Loading...</div>
+        
         <div class="filter-bar">
-            <input type="text" id="searchInput" placeholder="Search by name or email..." onkeyup="filterRecords()">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or email..." onkeyup="filterRecords()">
             <select id="typeFilter" onchange="filterRecords()">
-                <option value="all">All Types</option>
-                <option value="leave">Leave Requests</option>
-                <option value="permission">Permission Requests</option>
+                <option value="all">📋 All Types</option>
+                <option value="leave">📋 Leave Requests</option>
+                <option value="permission">🔐 Permission Requests</option>
             </select>
             <select id="statusFilter" onchange="filterRecords()">
-                <option value="all">All Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
+                <option value="all">📊 All Status</option>
+                <option value="Pending">⏳ Pending</option>
+                <option value="Approved">✅ Approved</option>
+                <option value="Rejected">❌ Rejected</option>
             </select>
-            <button class="download-btn" onclick="downloadReport()"><i class="fas fa-download"></i> Download Report</button>
+            <button class="btn btn-download" onclick="downloadReport()"><i class="fas fa-download"></i> Download Report</button>
         </div>
-        <div class="records-table"><div id="recordsList"></div></div>
+        
+        <div class="records-table">
+            <div id="recordsList" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading records...</div>
+        </div>
     </div>
+    
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg", authDomain: "eduleave-system.firebaseapp.com", projectId: "eduleave-system", storageBucket: "eduleave-system.firebasestorage.app", messagingSenderId: "311349906309", appId: "1:311349906309:web:bf5391e233cd186943d2ec" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg",
+            authDomain: "eduleave-system.firebaseapp.com",
+            projectId: "eduleave-system",
+            storageBucket: "eduleave-system.firebasestorage.app",
+            messagingSenderId: "311349906309",
+            appId: "1:311349906309:web:bf5391e233cd186943d2ec"
+        };
+        
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         
+        let allRecords = [];
         let currentUserRole = null;
         let currentUserEmail = null;
-        let allRecords = [];
+        let currentUserName = null;
+        let adminDepartment = null;
+        
+        window.logout = async function() {
+            try { await auth.signOut(); } catch(e) {}
+            sessionStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        };
         
         function goBack() {
-            // Check user role from sessionStorage or Firebase
-            let currentUser = JSON.parse(sessionStorage.getItem("currentUser"));
-            if (currentUser && currentUser.role === "admin") {
+            let user = JSON.parse(sessionStorage.getItem("currentUser"));
+            if (user && user.role === "admin") {
                 window.location.href = "admin.html";
             } else {
                 window.location.href = "home.html";
@@ -78,87 +107,212 @@
         async function loadRecords() {
             const user = auth.currentUser;
             if (!user) { window.location.href = "index.html"; return; }
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            const userData = userDoc.data();
-            currentUserRole = userData?.role;
-            currentUserEmail = user.email;
             
-            // Store in sessionStorage for goBack function
-            sessionStorage.setItem("currentUser", JSON.stringify({
-                id: user.uid, name: userData?.name, email: user.email, role: currentUserRole
-            }));
-            
-            let leaves = [], permissions = [];
-            if (currentUserRole === "admin") {
-                const leavesSnap = await db.collection("leaves").orderBy("timestamp", "desc").get();
-                const permsSnap = await db.collection("permissions").orderBy("timestamp", "desc").get();
-                leavesSnap.forEach(d => leaves.push({ ...d.data(), recordType: "leave", typeLabel: '<i class="fas fa-clipboard-list"></i> Leave' }));
-                permsSnap.forEach(d => permissions.push({ ...d.data(), recordType: "permission", typeLabel: '<i class="fas fa-key"></i> Permission' }));
-            } else {
-                const leavesSnap = await db.collection("leaves").where("userEmail", "==", user.email).orderBy("timestamp", "desc").get();
-                const permsSnap = await db.collection("permissions").where("userEmail", "==", user.email).orderBy("timestamp", "desc").get();
-                leavesSnap.forEach(d => leaves.push({ ...d.data(), recordType: "leave", typeLabel: '<i class="fas fa-clipboard-list"></i> Leave' }));
-                permsSnap.forEach(d => permissions.push({ ...d.data(), recordType: "permission", typeLabel: '<i class="fas fa-key"></i> Permission' }));
+            try {
+                const userDoc = await db.collection("users").doc(user.uid).get();
+                const userData = userDoc.data();
+                currentUserRole = userData?.role;
+                currentUserEmail = user.email;
+                currentUserName = userData?.name;
+                adminDepartment = userData?.department;
+                
+                document.getElementById("userAvatar").innerHTML = currentUserName?.charAt(0).toUpperCase() || "U";
+                
+                let leaves = [];
+                let permissions = [];
+                
+                if (currentUserRole === "admin") {
+                    document.getElementById("deptInfo").style.display = "block";
+                    document.getElementById("deptInfo").innerHTML = `<i class="fas fa-building"></i> Your Department: <strong>${adminDepartment}</strong> | Showing records from <strong>${adminDepartment}</strong> department only`;
+                    
+                    // ✅ No orderBy here - we'll sort manually
+                    const leavesSnapshot = await db.collection("leaves")
+                        .where("department", "==", adminDepartment)
+                        .get();
+                    leavesSnapshot.forEach(doc => {
+                        leaves.push({ id: doc.id, ...doc.data(), recordType: "leave", typeLabel: "📋 Leave" });
+                    });
+                    
+                    const permissionsSnapshot = await db.collection("permissions")
+                        .where("department", "==", adminDepartment)
+                        .get();
+                    permissionsSnapshot.forEach(doc => {
+                        permissions.push({ id: doc.id, ...doc.data(), recordType: "permission", typeLabel: "🔐 Permission" });
+                    });
+                } else {
+                    document.getElementById("deptInfo").style.display = "none";
+                    
+                    // ✅ No orderBy here - we'll sort manually
+                    const leavesSnapshot = await db.collection("leaves")
+                        .where("userEmail", "==", user.email)
+                        .get();
+                    leavesSnapshot.forEach(doc => {
+                        leaves.push({ id: doc.id, ...doc.data(), recordType: "leave", typeLabel: "📋 Leave" });
+                    });
+                    
+                    const permissionsSnapshot = await db.collection("permissions")
+                        .where("userEmail", "==", user.email)
+                        .get();
+                    permissionsSnapshot.forEach(doc => {
+                        permissions.push({ id: doc.id, ...doc.data(), recordType: "permission", typeLabel: "🔐 Permission" });
+                    });
+                }
+                
+                allRecords = [...leaves, ...permissions];
+                // ✅ Manual sorting - no index needed
+                allRecords.sort((a, b) => {
+                    const dateA = a.timestamp ? (a.timestamp.toDate ? a.timestamp.toDate() : new Date(a.timestamp)) : new Date(0);
+                    const dateB = b.timestamp ? (b.timestamp.toDate ? b.timestamp.toDate() : new Date(b.timestamp)) : new Date(0);
+                    return dateB - dateA;
+                });
+                
+                console.log("Total records loaded:", allRecords.length);
+                
+                if (allRecords.length === 0) {
+                    document.getElementById("recordsList").innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i> No records found.</div>';
+                } else {
+                    renderRecords(allRecords);
+                }
+            } catch (error) {
+                console.error("Error loading records:", error);
+                document.getElementById("recordsList").innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</div>`;
             }
-            allRecords = [...leaves, ...permissions].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            filterRecords();
         }
         
         function filterRecords() {
             let searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
             let typeFilter = document.getElementById("typeFilter")?.value || "all";
             let statusFilter = document.getElementById("statusFilter")?.value || "all";
-            let filtered = allRecords.filter(r => {
-                let matchSearch = (r.userName || "").toLowerCase().includes(searchTerm) || (r.userEmail || "").toLowerCase().includes(searchTerm);
-                let matchType = typeFilter === "all" || r.recordType === typeFilter;
-                let matchStatus = statusFilter === "all" || r.status === statusFilter;
+            
+            let filtered = allRecords.filter(record => {
+                let matchSearch = (record.userName || "").toLowerCase().includes(searchTerm) || 
+                               (record.userEmail || "").toLowerCase().includes(searchTerm);
+                let matchType = typeFilter === "all" || record.recordType === typeFilter;
+                let matchStatus = statusFilter === "all" || record.status === statusFilter;
                 return matchSearch && matchType && matchStatus;
             });
+            
             renderRecords(filtered);
         }
         
         function renderRecords(records) {
-            let container = document.getElementById("recordsList");
-            if (records.length === 0) { container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i> No records found.</div>`; return; }
-            let html = `<table><thead><tr><th>Type</th><th>User</th><th>Email</th><th>Details</th><th>Status</th><th>Admin Comment</th></tr></thead><tbody>`;
-            records.forEach(r => {
-                let statusClass = r.status === "Approved" ? "status-approved" : (r.status === "Rejected" ? "status-rejected" : "status-pending");
-                let statusIcon = r.status === "Approved" ? '<i class="fas fa-check-circle"></i>' : (r.status === "Rejected" ? '<i class="fas fa-times-circle"></i>' : '<i class="fas fa-clock"></i>');
-                let details = r.recordType === "leave" ? `${r.type}<br><small>${r.from} → ${r.to}</small><br><small>${r.reason || ""}</small>` : `${r.purpose}<br><small>${r.date} | ${r.startTime}→${r.endTime}</small><br><small>${r.reason || ""}</small>`;
-                html += `<tr><td>${r.typeLabel}</td><td>${r.userName}</td><td>${r.userEmail}</td><td>${details}</td><td class="${statusClass}">${statusIcon} ${r.status || "Pending"}</td><td><small>${r.adminComment || "—"}</small></td></tr>`;
+            const container = document.getElementById("recordsList");
+            if (!records.length) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i> No matching records found.</div>`;
+                return;
+            }
+            
+            let html = `<table><thead><tr>
+                <th>Type</th><th>User</th><th>Email</th><th>Dept/Batch/ID</th><th>Details</th><th>Status</th><th>Admin Comment</th><th>Date</th>
+            </tr></thead><tbody>`;
+            
+            records.forEach(record => {
+                let statusClass = record.status === "Approved" ? "status-approved" : (record.status === "Rejected" ? "status-rejected" : "status-pending");
+                let deptInfo = `${record.department || "N/A"} | Batch: ${record.batch || "N/A"} | ID: ${record.studentId || "N/A"}`;
+                
+                let details = "";
+                if (record.recordType === "leave") {
+                    details = `<strong>${record.type || "Leave"}</strong><br>
+                              <small>📅 ${record.fromDate || record.from} → ${record.toDate || record.to}</small><br>
+                              <small>📝 ${record.reason || "No reason"}</small>`;
+                } else {
+                    details = `<strong>${record.purpose || "Permission"}</strong><br>
+                              <small>📅 ${record.date || "N/A"}</small><br>
+                              <small>⏰ ${record.startTime || "N/A"} → ${record.endTime || "N/A"}</small><br>
+                              <small>⏱️ Duration: ${record.duration || "N/A"}</small><br>
+                              <small>📝 ${record.reason || "No reason"}</small>`;
+                }
+                
+                let displayDate = "N/A";
+                if (record.timestamp) {
+                    try {
+                        if (record.timestamp.toDate) {
+                            displayDate = record.timestamp.toDate().toLocaleString();
+                        } else {
+                            displayDate = new Date(record.timestamp).toLocaleString();
+                        }
+                    } catch(e) {}
+                }
+                
+                html += `<tr>
+                    <td>${record.typeLabel}</td>
+                    <td>${record.userName || "N/A"}</td>
+                    <td>${record.userEmail || "N/A"}</td>
+                    <td><small>${deptInfo}</small></td>
+                    <td>${details}</td>
+                    <td class="${statusClass}"><strong>${record.status || "Pending"}</strong></td>
+                    <td><small>${record.adminComment || "—"}</small></td>
+                    <td><small>${displayDate}</small></td>
+                </tr>`;
             });
+            
             html += `</tbody></table>`;
             container.innerHTML = html;
         }
         
         function downloadReport() {
-            let records = allRecords;
-            if (records.length === 0) { alert("No records to download!"); return; }
-            let content = "EDULEAVE - RECORDS REPORT\n";
-            content += "=".repeat(60) + "\n";
+            if (allRecords.length === 0) {
+                alert("No records to download!");
+                return;
+            }
+            
+            let content = "========================================\n";
+            content += "        EDULEAVE - RECORDS REPORT\n";
+            content += "========================================\n";
             content += `Generated: ${new Date().toLocaleString()}\n`;
-            content += `User: ${currentUserEmail}\nRole: ${currentUserRole}\n`;
-            content += "=".repeat(60) + "\n\n";
-            records.forEach((r, i) => {
-                content += `${i+1}. [${r.recordType.toUpperCase()}] ${r.status || "Pending"}\n`;
-                content += `   User: ${r.userName} (${r.userEmail})\n`;
-                if (r.recordType === "leave") content += `   Type: ${r.type}\n   Date: ${r.from} → ${r.to}\n   Reason: ${r.reason || "—"}\n`;
-                else content += `   Purpose: ${r.purpose}\n   Date: ${r.date}\n   Time: ${r.startTime} → ${r.endTime}\n   Reason: ${r.reason || "—"}\n`;
-                if (r.adminComment) content += `   Admin Comment: ${r.adminComment}\n`;
-                content += "\n";
+            content += `User: ${currentUserEmail}\n`;
+            content += `Role: ${currentUserRole === "admin" ? "Administrator" : "User"}\n`;
+            if (currentUserRole === "admin") {
+                content += `Department: ${adminDepartment}\n`;
+            }
+            content += "========================================\n\n";
+            
+            allRecords.forEach((record, index) => {
+                content += `${index + 1}. [${record.recordType.toUpperCase()}] - ${record.status || "Pending"}\n`;
+                content += `   User: ${record.userName} (${record.userEmail})\n`;
+                content += `   Department: ${record.department || "N/A"}\n`;
+                content += `   Batch: ${record.batch || "N/A"}\n`;
+                content += `   ID: ${record.studentId || "N/A"}\n`;
+                
+                if (record.recordType === "leave") {
+                    content += `   Type: ${record.type}\n`;
+                    content += `   Date: ${record.fromDate || record.from} → ${record.toDate || record.to}\n`;
+                    content += `   Reason: ${record.reason || "—"}\n`;
+                } else {
+                    content += `   Purpose: ${record.purpose}\n`;
+                    content += `   Date: ${record.date}\n`;
+                    content += `   Time: ${record.startTime} → ${record.endTime}\n`;
+                    content += `   Duration: ${record.duration}\n`;
+                    content += `   Reason: ${record.reason || "—"}\n`;
+                }
+                
+                if (record.adminComment) {
+                    content += `   Admin Comment: ${record.adminComment}\n`;
+                }
+                content += "----------------------------------------\n";
             });
-            content += "=".repeat(60) + `\nTotal Records: ${records.length}\nEnd of Report`;
+            
+            content += "\n========================================\n";
+            content += `Total Records: ${allRecords.length}\n`;
+            content += "========================================\n";
+            
             const blob = new Blob([content], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `eduleave_report_${new Date().toISOString().slice(0,19)}.txt`;
+            a.download = `eduleave_report_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
             a.click();
             URL.revokeObjectURL(url);
-            alert("✅ Report downloaded!");
+            alert("✅ Report downloaded successfully!");
         }
         
-        auth.onAuthStateChanged((user) => { if (user) loadRecords(); else window.location.href = "index.html"; });
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadRecords();
+            } else {
+                window.location.href = "index.html";
+            }
+        });
     </script>
 </body>
 </html>

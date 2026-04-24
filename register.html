@@ -20,14 +20,15 @@
             min-height: 100vh;
             padding: 1rem;
         }
-        .register-container { max-width: 500px; width: 100%; margin: 0 auto; }
+        .register-container { max-width: 550px; width: 100%; margin: 0 auto; }
         .box {
             background: #1e1e1e;
             border-radius: 2rem;
-            padding: 2rem 1.8rem;
+            padding: 2rem;
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.2s ease;
         }
+        .box:hover { transform: translateY(-3px); }
         h2 { font-size: 1.8rem; font-weight: 700; text-align: center; color: #ffffff; margin-bottom: 0.5rem; }
         .subtitle { text-align: center; color: #ffffff; margin-bottom: 1.5rem; font-size: 0.9rem; }
         .input-group { position: relative; margin: 8px 0; }
@@ -87,8 +88,15 @@
         .req-list li { margin: 4px 0; }
         .error-msg { color: #f87171; font-size: 0.75rem; margin-top: 4px; }
         .success-msg { color: #4ade80; font-size: 0.75rem; margin-top: 4px; }
+        .form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+        .form-row .half { flex: 1; min-width: 120px; }
         .mb-2 { margin-bottom: 1rem; }
         .mt-2 { margin-top: 1rem; }
+        .hidden { display: none; }
+        @media (max-width: 550px) {
+            .box { padding: 1.5rem; }
+            .form-row { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -101,17 +109,51 @@
             <input type="email" id="email" placeholder="Email address" class="mb-2">
             <div id="emailSuggestions" class="suggestions-box" style="display: none;"></div>
             
+            <select id="role" class="mb-2">
+                <option value="">Select role</option>
+                <option value="user">User (Student/Employee)</option>
+                <option value="admin">Administrator</option>
+            </select>
+            
+            <div id="userFields">
+                <select id="userDepartment" class="mb-2">
+                    <option value="">Select Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="EEE">EEE</option>
+                    <option value="BBA">BBA</option>
+                    <option value="LLB">LLB</option>
+                    <option value="CEN">CEN</option>
+                    <option value="TEX">TEX</option>
+                </select>
+                <div class="form-row">
+                    <div class="half"><input type="number" id="batch" placeholder="Batch (e.g., 2024)"></div>
+                    <div class="half"><input type="text" id="studentId" placeholder="ID (e.g., CSE 031 08187)"></div>
+                </div>
+            </div>
+            
+            <div id="adminFields" class="hidden">
+                <select id="adminDepartment" class="mb-2">
+                    <option value="">Select Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="EEE">EEE</option>
+                    <option value="BBA">BBA</option>
+                    <option value="LLB">LLB</option>
+                    <option value="CEN">CEN</option>
+                    <option value="TEX">TEX</option>
+                </select>
+            </div>
+            
             <div class="input-group">
                 <input type="password" id="password" placeholder="Create password">
                 <i class="fas fa-eye password-toggle" onclick="togglePassword('password', this)"></i>
             </div>
-            <div id="passwordStrength" class="password-strength"><i class="fas fa-shield-alt"></i> Password strength:</div>
+            <div id="passwordStrength" class="password-strength">Password strength:</div>
             <ul class="req-list mb-2">
-                <li id="reqUpper"><i class="fas fa-arrow-up"></i> Uppercase (A-Z)</li>
-                <li id="reqLower"><i class="fas fa-arrow-down"></i> Lowercase (a-z)</li>
-                <li id="reqDigit"><i class="fas fa-hashtag"></i> Digit (0-9)</li>
-                <li id="reqSpecial"><i class="fas fa-star"></i> Special (@$!%*?&)</li>
-                <li id="reqLength"><i class="fas fa-ruler"></i> Minimum 8 characters</li>
+                <li id="reqUpper">Uppercase (A-Z)</li>
+                <li id="reqLower">Lowercase (a-z)</li>
+                <li id="reqDigit">Digit (0-9)</li>
+                <li id="reqSpecial">Special (@$!%*?&)</li>
+                <li id="reqLength">Minimum 8 characters</li>
             </ul>
             
             <div class="input-group">
@@ -121,16 +163,10 @@
             <div id="confirmError" class="error-msg"></div>
             <div id="confirmSuccess" class="success-msg"></div>
             
-            <select id="role" class="mb-2">
-                <option value="">Select role</option>
-                <option value="user"><i class="fas fa-user"></i> User</option>
-                <option value="admin"><i class="fas fa-crown"></i> Administrator</option>
-            </select>
-            
             <div id="registerError" class="error-msg"></div>
             <div id="registerSuccess" class="success-msg"></div>
             
-            <button onclick="register()" class="mt-2">Create Account <i class="fas fa-user-plus"></i></button>
+            <button onclick="register()" class="mt-2">Create Account</button>
             
             <p class="footer-text">Already have account? <a href="index.html">Sign in</a></p>
         </div>
@@ -149,6 +185,23 @@
                 btn.classList.add('fa-eye');
             }
         }
+        
+        const roleSelect = document.getElementById("role");
+        const userFields = document.getElementById("userFields");
+        const adminFields = document.getElementById("adminFields");
+        
+        roleSelect.addEventListener("change", function() {
+            if (this.value === "user") {
+                userFields.classList.remove("hidden");
+                adminFields.classList.add("hidden");
+            } else if (this.value === "admin") {
+                userFields.classList.add("hidden");
+                adminFields.classList.remove("hidden");
+            } else {
+                userFields.classList.add("hidden");
+                adminFields.classList.add("hidden");
+            }
+        });
         
         const commonDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "protonmail.com"];
         const emailField = document.getElementById("email");
@@ -195,13 +248,13 @@
             
             let div = document.getElementById("passwordStrength");
             if(hasUpper && hasLower && hasDigit && hasSpecial && isLong) {
-                div.innerHTML = '<i class="fas fa-check-circle"></i> Strong Password! Great job!';
+                div.innerHTML = 'Strong Password! Great job!';
                 div.className = "password-strength strength-strong";
             } else if((hasUpper || hasLower) && (hasDigit || hasSpecial) && pwd.length >= 6) {
-                div.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Medium Password - Add more variety';
+                div.innerHTML = 'Medium Password - Add more variety';
                 div.className = "password-strength strength-medium";
             } else {
-                div.innerHTML = '<i class="fas fa-times-circle"></i> Weak Password - Follow requirements above';
+                div.innerHTML = 'Weak Password - Follow requirements above';
                 div.className = "password-strength strength-weak";
             }
         }
@@ -218,12 +271,12 @@
                 return;
             }
             if(password !== confirm) {
-                confirmError.innerHTML = '<i class="fas fa-times-circle"></i> Passwords do not match!';
+                confirmError.innerHTML = 'Passwords do not match!';
                 confirmSuccess.innerHTML = "";
                 return false;
             } else {
                 confirmError.innerHTML = "";
-                confirmSuccess.innerHTML = '<i class="fas fa-check-circle"></i> Passwords match!';
+                confirmSuccess.innerHTML = 'Passwords match!';
                 return true;
             }
         }
