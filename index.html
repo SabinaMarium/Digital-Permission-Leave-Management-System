@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Login | EduLeave</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             font-family: 'Inter', system-ui, sans-serif;
@@ -21,11 +20,7 @@
             min-height: 100vh;
             padding: 1rem;
         }
-        .login-container {
-            max-width: 420px;
-            width: 100%;
-            margin: 0 auto;
-        }
+        .login-container { max-width: 420px; width: 100%; margin: 0 auto; }
         .box {
             background: #1e1e1e;
             border-radius: 2rem;
@@ -33,12 +28,9 @@
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.2s ease;
         }
-        .box:hover {
-            transform: translateY(-3px);
-        }
+        .box:hover { transform: translateY(-3px); }
         .icon-circle {
-            width: 70px;
-            height: 70px;
+            width: 70px; height: 70px;
             background: linear-gradient(135deg, #2da44e, #216e39);
             border-radius: 50%;
             display: inline-flex;
@@ -47,19 +39,8 @@
             font-size: 2rem;
             margin-bottom: 1rem;
         }
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        .subtitle {
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
+        h2 { font-size: 1.8rem; font-weight: 700; text-align: center; color: #ffffff; margin-bottom: 0.5rem; }
+        .subtitle { text-align: center; color: #ffffff; margin-bottom: 1.5rem; font-size: 0.9rem; }
         input {
             width: 100%;
             padding: 12px 16px;
@@ -71,12 +52,8 @@
             color: #ffffff;
             outline: none;
         }
-        input::placeholder {
-            color: #bbbbbb;
-        }
-        input:focus {
-            border-color: #048428;
-        }
+        input::placeholder { color: #bbbbbb; }
+        input:focus { border-color: #048428; }
         button {
             width: 100%;
             padding: 12px;
@@ -90,88 +67,30 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        button:hover {
-            background: #049d2f;
-            transform: scale(0.98);
-        }
-        .footer-text {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #ffffff;
-            font-size: 0.85rem;
-        }
-        .footer-text a {
-            color: #4ade80;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
-        .error-msg {
-            color: #f87171;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 10px;
-        }
-        .text-center {
-            text-align: center;
-        }
+        button:hover { background: #049d2f; transform: scale(0.98); }
+        .footer-text { text-align: center; margin-top: 1.5rem; color: #ffffff; font-size: 0.85rem; }
+        .footer-text a { color: #4ade80; text-decoration: none; font-weight: 600; }
+        .footer-text a:hover { text-decoration: underline; }
+        .error-msg { color: #f87171; font-size: 0.8rem; text-align: center; margin-top: 10px; }
+        .text-center { text-align: center; }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="box" id="loginBox">
-            <div class="text-center">
-                <div class="icon-circle">🔐</div>
-            </div>
+            <div class="text-center"><div class="icon-circle">🔐</div></div>
             <h2>Welcome Back</h2>
             <p class="subtitle">Sign in to manage leaves</p>
-            
             <input type="email" id="loginEmail" placeholder="Email address">
             <input type="password" id="loginPassword" placeholder="Password">
             <div id="loginError" class="error-msg"></div>
-            
             <button onclick="login()">Login →</button>
-            
             <p class="footer-text">Don't have an account? <a href="register.html">Create account</a></p>
         </div>
     </div>
+    <script src="script.js"></script>
     <script>
-        
-        gsap.from("#loginBox", {
-            duration: 0.6,
-            y: 50,
-            opacity: 0,
-            ease: "power2.out"
-        });
-        
-        async function login() {
-            let email = document.getElementById("loginEmail").value.trim();
-            let password = document.getElementById("loginPassword").value;
-            let errorDiv = document.getElementById("loginError");
-            
-            if (!email || !password) {
-                errorDiv.innerText = "Please fill all fields!";
-                return;
-            }
-            errorDiv.innerText = "";
-            
-            let users = JSON.parse(localStorage.getItem("users")) || [];
-            let found = users.find(u => u.email === email && u.pass === password);
-            
-            if (!found) {
-                errorDiv.innerText = "Invalid email or password!";
-                return;
-            }
-            
-            localStorage.setItem("currentUser", JSON.stringify(found));
-            if (found.role === "admin") {
-                window.location.href = "admin.html";
-            } else {
-                window.location.href = "home.html";
-            }
-        }
+        gsap.from("#loginBox", { duration: 0.6, y: 50, opacity: 0, ease: "power2.out" });
     </script>
 </body>
 </html>

@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Register | EduLeave</title>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📝%3C/text%3E%3C/svg%3E">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             font-family: 'Inter', system-ui, sans-serif;
@@ -20,11 +19,7 @@
             min-height: 100vh;
             padding: 1rem;
         }
-        .register-container {
-            max-width: 500px;
-            width: 100%;
-            margin: 0 auto;
-        }
+        .register-container { max-width: 500px; width: 100%; margin: 0 auto; }
         .box {
             background: #1e1e1e;
             border-radius: 2rem;
@@ -32,31 +27,13 @@
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.2s ease;
         }
-        .box:hover {
-            transform: translateY(-3px);
-        }
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
-        }
-        .subtitle {
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .input-group {
-            position: relative;
-            margin: 8px 0;
-        }
-        .input-group input {
+        .box:hover { transform: translateY(-3px); }
+        h2 { font-size: 1.8rem; font-weight: 700; text-align: center; color: #ffffff; margin-bottom: 0.5rem; }
+        .subtitle { text-align: center; color: #ffffff; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        .input-group { position: relative; margin: 8px 0; }
+        input, select {
             width: 100%;
             padding: 12px 16px;
-            padding-right: 50px;
             border: 1.5px solid #333;
             border-radius: 40px;
             font-size: 1rem;
@@ -64,108 +41,45 @@
             color: #ffffff;
             outline: none;
         }
-        .input-group input::placeholder {
-            color: #bbbbbb;
-        }
-        .input-group input:focus {
-            border-color: #048428;
-        }
-        
+        .input-group input { padding-right: 50px; }
+        input::placeholder, select { color: #bbbbbb; }
+        input:focus, select:focus { border-color: #048428; }
         .password-toggle {
             position: absolute;
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: transparent;
-            border: none;
         }
-        
-        .eye-icon {
-            position: relative;
-            width: 22px;
-            height: 22px;
-            display: block;
-        }
-        
+        .eye-icon { position: relative; width: 22px; height: 22px; display: block; }
         .eye-icon .eye-outline {
             position: absolute;
-            width: 20px;
-            height: 13px;
+            width: 20px; height: 13px;
             border: 2px solid #9ca3af;
             border-radius: 50%;
-            top: 4px;
-            left: 1px;
-            transition: border-color 0.2s;
+            top: 4px; left: 1px;
         }
-        
         .eye-icon .eye-pupil {
             position: absolute;
-            width: 7px;
-            height: 7px;
+            width: 7px; height: 7px;
             background: #9ca3af;
             border-radius: 50%;
-            top: 7px;
-            left: 7.5px;
-            transition: background 0.2s;
+            top: 7px; left: 7.5px;
         }
-        
         .eye-icon .eye-line {
             position: absolute;
-            width: 22px;
-            height: 2px;
+            width: 22px; height: 2px;
             background: #9ca3af;
-            top: 10px;
-            left: 0;
-            transform: rotate(0deg);
+            top: 10px; left: 0;
             display: none;
-            transition: background 0.2s;
         }
-        
-        .eye-icon.closed .eye-outline {
-            border-color: #4ade80;
-        }
-        
-        .eye-icon.closed .eye-pupil {
-            background: #4ade80;
-        }
-        
-        .eye-icon.closed .eye-line {
-            display: block;
-            background: #4ade80;
-            transform: rotate(45deg);
-        }
-        
-        .password-toggle:hover .eye-outline {
-            border-color: #4ade80;
-        }
-        
-        .password-toggle:hover .eye-pupil {
-            background: #4ade80;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 8px 0;
-            border: 1.5px solid #333;
-            border-radius: 40px;
-            font-size: 1rem;
-            background: #2a2a2a;
-            color: #ffffff;
-            outline: none;
-        }
-        input::placeholder, select {
-            color: #bbbbbb;
-        }
-        input:focus, select:focus {
-            border-color: #048428;
-        }
+        .eye-icon.closed .eye-outline { border-color: #4ade80; }
+        .eye-icon.closed .eye-pupil { background: #4ade80; }
+        .eye-icon.closed .eye-line { display: block; background: #4ade80; transform: rotate(45deg); }
         button {
             width: 100%;
             padding: 12px;
@@ -177,26 +91,10 @@
             font-size: 1rem;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
         }
-        button:hover {
-            background: #049d2f;
-            transform: scale(0.98);
-        }
-        .footer-text {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #ffffff;
-            font-size: 0.85rem;
-        }
-        .footer-text a {
-            color: #4ade80;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
+        button:hover { background: #049d2f; transform: scale(0.98); }
+        .footer-text { text-align: center; margin-top: 1.5rem; color: #ffffff; font-size: 0.85rem; }
+        .footer-text a { color: #4ade80; text-decoration: none; font-weight: 600; }
         .suggestions-box {
             background: #2a2a2a;
             border-radius: 1rem;
@@ -206,46 +104,16 @@
             max-height: 140px;
             overflow-y: auto;
         }
-        .suggestion-item {
-            padding: 8px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #333;
-            color: #ffffff;
-        }
-        .suggestion-item:hover {
-            background: #3a3a3a;
-        }
-        .password-strength {
-            font-size: 0.7rem;
-            margin-top: 5px;
-            padding: 6px 12px;
-            border-radius: 40px;
-            background: #2a2a2a;
-            color: #ffffff;
-        }
+        .suggestion-item { padding: 8px 16px; cursor: pointer; border-bottom: 1px solid #333; color: #ffffff; }
+        .suggestion-item:hover { background: #3a3a3a; }
+        .password-strength { font-size: 0.7rem; margin-top: 5px; padding: 6px 12px; border-radius: 40px; background: #2a2a2a; color: #ffffff; }
         .strength-weak { background: #7f1a1a; color: #fca5a5; }
         .strength-medium { background: #78350f; color: #fde68a; }
         .strength-strong { background: #064e3b; color: #6ee7b7; }
-        .req-list {
-            font-size: 0.75rem;
-            margin: 10px 0 0 0;
-            padding-left: 20px;
-            color: #ffffff;
-            list-style: none;
-        }
-        .req-list li {
-            margin: 4px 0;
-        }
-        .error-msg {
-            color: #f87171;
-            font-size: 0.75rem;
-            margin-top: 4px;
-        }
-        .success-msg {
-            color: #4ade80;
-            font-size: 0.75rem;
-            margin-top: 4px;
-        }
+        .req-list { font-size: 0.75rem; margin: 10px 0 0 0; padding-left: 20px; color: #ffffff; list-style: none; }
+        .req-list li { margin: 4px 0; }
+        .error-msg { color: #f87171; font-size: 0.75rem; margin-top: 4px; }
+        .success-msg { color: #4ade80; font-size: 0.75rem; margin-top: 4px; }
         .mb-1 { margin-bottom: 0.5rem; }
         .mb-2 { margin-bottom: 1rem; }
         .mt-2 { margin-top: 1rem; }
@@ -266,11 +134,7 @@
             <div class="input-group">
                 <input type="password" id="password" placeholder="Create password">
                 <div class="password-toggle" onclick="togglePassword('password', this)">
-                    <div class="eye-icon">
-                        <div class="eye-outline"></div>
-                        <div class="eye-pupil"></div>
-                        <div class="eye-line"></div>
-                    </div>
+                    <div class="eye-icon"><div class="eye-outline"></div><div class="eye-pupil"></div><div class="eye-line"></div></div>
                 </div>
             </div>
             <div id="passwordStrength" class="password-strength">🔒 Password strength:</div>
@@ -285,11 +149,7 @@
             <div class="input-group">
                 <input type="password" id="confirmPassword" placeholder="Confirm password">
                 <div class="password-toggle" onclick="togglePassword('confirmPassword', this)">
-                    <div class="eye-icon">
-                        <div class="eye-outline"></div>
-                        <div class="eye-pupil"></div>
-                        <div class="eye-line"></div>
-                    </div>
+                    <div class="eye-icon"><div class="eye-outline"></div><div class="eye-pupil"></div><div class="eye-line"></div></div>
                 </div>
             </div>
             <div id="confirmError" class="error-msg"></div>
@@ -298,7 +158,7 @@
             <select id="role" class="mb-2">
                 <option value="">Select role</option>
                 <option value="user"> User</option>
-                <option value="admin"> Administrator</option>
+                <option value="admin">Administrator</option>
             </select>
             
             <div id="registerError" class="error-msg"></div>
@@ -309,11 +169,11 @@
             <p class="footer-text mt-3">Already have account? <a href="index.html">Sign in</a></p>
         </div>
     </div>
+    <script src="script.js"></script>
     <script>
-        function togglePassword(fieldId, toggleBtn) {
+        function togglePassword(fieldId, btn) {
             const field = document.getElementById(fieldId);
-            const eyeIcon = toggleBtn.querySelector('.eye-icon');
-            
+            const eyeIcon = btn.querySelector('.eye-icon');
             if (field.type === 'password') {
                 field.type = 'text';
                 eyeIcon.classList.add('closed');
@@ -323,7 +183,6 @@
             }
         }
         
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const commonDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "protonmail.com"];
         const emailField = document.getElementById("email");
         const suggBox = document.getElementById("emailSuggestions");
@@ -332,7 +191,6 @@
             let value = emailField.value;
             let atIndex = value.indexOf('@');
             let suggestions = [];
-
             if (atIndex === -1 && value.length > 1) {
                 let local = value;
                 suggestions = commonDomains.map(dom => `${local}@${dom}`);
@@ -340,18 +198,11 @@
             else if (atIndex > 0) {
                 let local = value.substring(0, atIndex);
                 let domainPart = value.substring(atIndex + 1);
-                if (domainPart === "") {
-                    suggestions = commonDomains.map(dom => `${local}@${dom}`);
-                } else {
-                    suggestions = commonDomains.filter(dom => dom.toLowerCase().startsWith(domainPart.toLowerCase()))
-                                               .map(dom => `${local}@${dom}`);
-                }
+                if (domainPart === "") suggestions = commonDomains.map(dom => `${local}@${dom}`);
+                else suggestions = commonDomains.filter(dom => dom.toLowerCase().startsWith(domainPart.toLowerCase())).map(dom => `${local}@${dom}`);
             }
             suggestions = suggestions.slice(0, 5);
-            if (suggestions.length === 0) {
-                suggBox.style.display = "none";
-                return;
-            }
+            if (suggestions.length === 0) { suggBox.style.display = "none"; return; }
             suggBox.style.display = "block";
             suggBox.innerHTML = "";
             suggestions.forEach(sug => {
@@ -373,7 +224,6 @@
 
         const passwordInput = document.getElementById("password");
         const confirmInput = document.getElementById("confirmPassword");
-        const strengthDiv = document.getElementById("passwordStrength");
         
         function checkPasswordStrength(pwd) {
             const hasUpper = /[A-Z]/.test(pwd);
@@ -388,18 +238,16 @@
             document.getElementById("reqSpecial").style.color = hasSpecial ? "#4ade80" : "#f87171";
             document.getElementById("reqLength").style.color = isLong ? "#4ade80" : "#f87171";
             
+            let div = document.getElementById("passwordStrength");
             if(hasUpper && hasLower && hasDigit && hasSpecial && isLong) {
-                strengthDiv.innerHTML = "✅ Strong Password! Great job!";
-                strengthDiv.className = "password-strength strength-strong";
-                return "strong";
+                div.innerHTML = "✅ Strong Password! Great job!";
+                div.className = "password-strength strength-strong";
             } else if((hasUpper || hasLower) && (hasDigit || hasSpecial) && pwd.length >= 6) {
-                strengthDiv.innerHTML = "⚠️ Medium Password - Add more variety";
-                strengthDiv.className = "password-strength strength-medium";
-                return "medium";
+                div.innerHTML = "⚠️ Medium Password - Add more variety";
+                div.className = "password-strength strength-medium";
             } else {
-                strengthDiv.innerHTML = "❌ Weak Password - Follow requirements above";
-                strengthDiv.className = "password-strength strength-weak";
-                return "weak";
+                div.innerHTML = "❌ Weak Password - Follow requirements above";
+                div.className = "password-strength strength-weak";
             }
         }
         
@@ -414,7 +262,6 @@
                 confirmSuccess.innerHTML = "";
                 return;
             }
-            
             if(password !== confirm) {
                 confirmError.innerHTML = "❌ Passwords do not match!";
                 confirmSuccess.innerHTML = "";
@@ -430,61 +277,7 @@
             checkPasswordStrength(passwordInput.value);
             validateConfirmPassword();
         });
-        
         confirmInput?.addEventListener("input", validateConfirmPassword);
-        
-        function register() {
-            let name = document.getElementById("name")?.value.trim();
-            let email = document.getElementById("email")?.value.trim();
-            let pass = document.getElementById("password")?.value;
-            let confirmPwd = document.getElementById("confirmPassword")?.value;
-            let role = document.getElementById("role")?.value;
-            let errorDiv = document.getElementById("registerError");
-            let successDiv = document.getElementById("registerSuccess");
-            
-            errorDiv.innerText = "";
-            successDiv.innerText = "";
-            
-            if (!name || !email || !pass || !confirmPwd || !role) {
-                errorDiv.innerText = "Please fill all fields!";
-                return;
-            }
-            
-            if (!emailPattern.test(email)) {
-                errorDiv.innerText = "Enter a valid email address!";
-                return;
-            }
-            
-            if (pass !== confirmPwd) {
-                errorDiv.innerText = "❌ Passwords do not match!";
-                return;
-            }
-            
-            const hasUpper = /[A-Z]/.test(pass);
-            const hasLower = /[a-z]/.test(pass);
-            const hasDigit = /[0-9]/.test(pass);
-            const hasSpecial = /[@$!%*?&#]/.test(pass);
-            const isLong = pass.length >= 8;
-            
-            if (!hasUpper || !hasLower || !hasDigit || !hasSpecial || !isLong) {
-                errorDiv.innerText = "❌ Password must contain: Uppercase, Lowercase, Digit, Special character (@$!%*?&#) and min 8 characters!";
-                return;
-            }
-            
-            let users = JSON.parse(localStorage.getItem("users")) || [];
-            if (users.find(u => u.email === email)) {
-                errorDiv.innerText = "Email already exists! Try login.";
-                return;
-            }
-            
-            users.push({ name, email, pass, role });
-            localStorage.setItem("users", JSON.stringify(users));
-            successDiv.innerText = "✅ Registration successful! Redirecting to login...";
-            
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, 1500);
-        }
     </script>
 </body>
 </html>

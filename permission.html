@@ -4,217 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Permission | EduLeave</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🔐%3C/text%3E%3C/svg%3E">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', sans-serif;
             padding: 1.5rem;
             min-height: 100vh;
         }
-        .container {
-            max-width: 650px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .btn-home {
-            background: linear-gradient(135deg, #6c757d, #5a6268);
-            border: none;
-            border-radius: 2rem;
-            padding: 0.6rem 1.2rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: white;
-            cursor: pointer;
-            width: auto;
-        }
-        .btn-home:hover {
-            transform: translateY(-2px);
-        }
-        h2 {
-            color: #1a1a2e;
-            font-size: 1.6rem;
-            font-weight: 700;
-        }
-        .welcome-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1.2rem 1.8rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .welcome-text {
-            color: #029f2e;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        .form-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1.8rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-        .form-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-        }
-        .form-title {
-            margin-bottom: 1.5rem;
-            color: #1a1a2e;
-            font-size: 1.3rem;
-            font-weight: 600;
-            border-bottom: 2px solid #029f2e;
-            padding-bottom: 0.75rem;
-            display: inline-block;
-        }
-        .input-field {
-            width: 100%;
-            padding: 0.85rem 1.2rem;
-            border: 2px solid #e9ecef;
-            border-radius: 1rem;
-            font-size: 0.95rem;
-            background: white;
-            color: #1a1a2e;
-            outline: none;
-            margin-bottom: 1rem;
-        }
-        .input-field:focus {
-            border-color: #029f2e;
-            box-shadow: 0 0 0 3px rgba(2,159,46,0.1);
-        }
-        .time-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-        }
-        .time-field {
-            flex: 1;
-            min-width: 120px;
-        }
-        .time-field label {
-            font-size: 0.75rem;
-            color: #6c757d;
-            margin-bottom: 0.4rem;
-            display: block;
-        }
-        .quick-actions {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin: 1rem 0;
-        }
-        .quick-btn {
-            background: #f8f9fa;
-            color: #029f2e;
-            border: 2px solid #e9ecef;
-            border-radius: 2rem;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .quick-btn:hover {
-            background: #029f2e;
-            color: white;
-            border-color: #029f2e;
-        }
-        .btn-submit {
-            background: linear-gradient(135deg, #029f2e, #028a27);
-            border: none;
-            border-radius: 1rem;
-            padding: 0.9rem;
-            font-weight: 700;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(2,159,46,0.3);
-        }
-        .btn-logout {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            border: none;
-            border-radius: 1rem;
-            padding: 0.9rem;
-            font-weight: 600;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 1rem;
-        }
-        .btn-logout:hover {
-            transform: translateY(-2px);
-        }
-        @media (max-width: 480px) {
-            body { padding: 1rem; }
-            .form-card { padding: 1.2rem; }
-            .time-group { flex-direction: column; }
-        }
+        .container { max-width: 650px; margin: 0 auto; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
+        .btn-home { background: #6c757d; border: none; border-radius: 2rem; padding: 0.6rem 1.2rem; font-weight: 600; color: white; cursor: pointer; }
+        h2 { color: #1a1a2e; font-size: 1.6rem; font-weight: 700; }
+        .welcome-card { background: white; border-radius: 1.5rem; padding: 1.2rem 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .welcome-text { color: #029f2e; font-weight: 600; font-size: 1.1rem; }
+        .form-card { background: white; border-radius: 1.5rem; padding: 1.8rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .form-title { margin-bottom: 1.5rem; color: #1a1a2e; font-size: 1.3rem; font-weight: 600; border-bottom: 2px solid #029f2e; padding-bottom: 0.75rem; display: inline-block; }
+        .input-field { width: 100%; padding: 0.85rem 1.2rem; border: 2px solid #e9ecef; border-radius: 1rem; font-size: 0.95rem; background: white; color: #1a1a2e; outline: none; margin-bottom: 1rem; }
+        .input-field:focus { border-color: #029f2e; }
+        .time-group { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .time-field { flex: 1; min-width: 120px; }
+        .time-field label { font-size: 0.75rem; color: #6c757d; margin-bottom: 0.4rem; display: block; }
+        .quick-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin: 1rem 0; }
+        .quick-btn { background: #f8f9fa; color: #029f2e; border: 2px solid #e9ecef; border-radius: 2rem; padding: 0.5rem 1.2rem; font-size: 0.8rem; cursor: pointer; }
+        .quick-btn:hover { background: #029f2e; color: white; }
+        .btn-submit { background: linear-gradient(135deg, #029f2e, #028a27); border: none; border-radius: 1rem; padding: 0.9rem; font-weight: 700; font-size: 1rem; color: white; cursor: pointer; width: 100%; margin-top: 0.5rem; }
+        .btn-logout { background: #dc3545; border: none; border-radius: 1rem; padding: 0.9rem; font-weight: 600; font-size: 1rem; color: white; cursor: pointer; width: 100%; margin-top: 1rem; }
+        .permission-card { background: #f8f9fa; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid #029f2e; }
+        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 2rem; font-size: 0.7rem; font-weight: 600; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        @media (max-width: 480px) { body { padding: 1rem; } .time-group { flex-direction: column; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-section">
             <button class="btn-home" onclick="location.href='home.html'">← Home</button>
-            <h2>🔐 Permission Management</h2>
+            <h2> Permission Management</h2>
             <div style="width: 70px;"></div>
         </div>
-        
-        <div class="welcome-card">
-            <div class="welcome-text" id="welcomeUser"></div>
-        </div>
-        
+        <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
         <div class="form-card">
             <div class="form-title">Instant Permission Request</div>
-            
             <input type="text" id="studentName" placeholder="Full name" class="input-field">
-            
             <select id="purposeType" class="input-field">
                 <option value="">Select Purpose</option>
-                <option>Medical Emergency</option>
-                <option>Personal Work</option>
-                <option>Family Event</option>
-                <option>Official Work</option>
-                <option>Late Arrival</option>
-                <option>Early Departure</option>
+                <option>Medical Emergency</option><option>Personal Work</option><option>Family Event</option>
+                <option>Official Work</option><option>Late Arrival</option><option>Early Departure</option>
             </select>
-            
             <div class="time-group">
-                <div class="time-field">
-                    <label>⏰ Start Time</label>
-                    <input type="time" id="startTime" class="input-field" style="margin-bottom: 0;">
-                </div>
-                <div class="time-field">
-                    <label>⏰ End Time</label>
-                    <input type="time" id="endTime" class="input-field" style="margin-bottom: 0;">
-                </div>
+                <div class="time-field"><label>⏰ Start Time</label><input type="time" id="startTime" class="input-field" style="margin-bottom:0;"></div>
+                <div class="time-field"><label>⏰ End Time</label><input type="time" id="endTime" class="input-field" style="margin-bottom:0;"></div>
             </div>
-            
-            <div class="time-field" style="margin: 0.5rem 0;">
-                <label>📅 Permission Date</label>
-                <input type="date" id="permissionDate" class="input-field" style="margin-bottom: 0;">
-            </div>
-            
+            <div class="time-field" style="margin:0.5rem 0;"><label>📅 Permission Date</label><input type="date" id="permissionDate" class="input-field" style="margin-bottom:0;"></div>
             <div class="quick-actions">
                 <button type="button" class="quick-btn" onclick="setDuration(1)">1 Hour</button>
                 <button type="button" class="quick-btn" onclick="setDuration(2)">2 Hours</button>
@@ -222,22 +71,15 @@
                 <button type="button" class="quick-btn" onclick="setDuration(4)">Half Day</button>
                 <button type="button" class="quick-btn" onclick="setDuration(8)">Full Day</button>
             </div>
-            
-            <textarea id="permissionReason" placeholder="Reason for permission..." class="input-field" style="min-height: 100px;"></textarea>
-            
+            <textarea id="permissionReason" placeholder="Reason for permission..." class="input-field" style="min-height:100px;"></textarea>
             <button class="btn-submit" id="submitBtn" onclick="submitPermission()">🚀 Submit Permission Request</button>
         </div>
-        
+        <h3 style="margin: 1rem 0 0.5rem 0;">📋 My Permission History</h3>
+        <div id="permissionList"></div>
         <button class="btn-logout" onclick="logout()">🚪 Logout</button>
     </div>
+    <script src="script.js"></script>
     <script>
-        // Logout function
-        function logout() {
-            console.log("Logout button clicked - permission");
-            localStorage.removeItem("currentUser");
-            window.location.href = "index.html";
-        }
-        
         function setDuration(hours) {
             let startTime = document.getElementById("startTime").value;
             if(!startTime) { alert("Please select start time first!"); return; }
@@ -248,62 +90,6 @@
             let formattedEnd = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
             document.getElementById("endTime").value = formattedEnd;
         }
-        
-        window.submitPermission = function() {
-            let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current){ alert("Please login"); location.href="index.html"; return; }
-            let name = document.getElementById("studentName").value.trim();
-            let purpose = document.getElementById("purposeType").value;
-            let startTime = document.getElementById("startTime").value;
-            let endTime = document.getElementById("endTime").value;
-            let date = document.getElementById("permissionDate").value;
-            let reason = document.getElementById("permissionReason").value.trim();
-            if(!name || !purpose || !startTime || !endTime || !date || !reason) { alert("Please fill all fields!"); return; }
-            if(startTime >= endTime) { alert("End time must be after start time!"); return; }
-            
-            // GSAP Button Click Animation
-            let btn = document.getElementById("submitBtn");
-            gsap.to(btn, {
-                duration: 0.15,
-                scale: 0.95,
-                yoyo: true,
-                repeat: 1,
-                ease: "power1.inOut"
-            });
-            
-            let duration = (() => {
-                let [sh, sm] = startTime.split(':').map(Number);
-                let [eh, em] = endTime.split(':').map(Number);
-                let diff = (eh*60+em) - (sh*60+sm);
-                let h = Math.floor(diff/60), m = diff%60;
-                if(h>0 && m>0) return `${h}h ${m}m`;
-                if(h>0) return `${h} hour${h>1?'s':''}`;
-                return `${m} minutes`;
-            })();
-            
-            let permissions = JSON.parse(localStorage.getItem("permissions")) || [];
-            permissions.push({ userName: name, userEmail: current.email, purpose, startTime, endTime, date, duration, reason, status: "Pending", timestamp: Date.now() });
-            localStorage.setItem("permissions", JSON.stringify(permissions));
-            
-            let notifications = JSON.parse(localStorage.getItem("notifications")) || [];
-            notifications.push({ id: Date.now(), type: "permission", userName: name, userEmail: current.email, details: `${purpose} | ${date} | ${startTime} → ${endTime}`, reason: reason, status: "pending", read: false, timestamp: Date.now() });
-            localStorage.setItem("notifications", JSON.stringify(notifications));
-            
-            setTimeout(() => {
-                alert("✅ Permission request submitted!");
-                document.getElementById("startTime").value = "";
-                document.getElementById("endTime").value = "";
-                document.getElementById("permissionDate").value = "";
-                document.getElementById("permissionReason").value = "";
-            }, 150);
-        };
-        
-        window.onload = function() {
-            let current = JSON.parse(localStorage.getItem("currentUser"));
-            if(!current || current.role === "admin") { if(current?.role === "admin") location.href="admin.html"; else location.href="index.html"; return; }
-            document.getElementById("welcomeUser").innerHTML = `👋 Welcome, ${current.name}`;
-            document.getElementById("studentName").value = current.name;
-        };
     </script>
 </body>
 </html>
