@@ -120,8 +120,14 @@ function getCurrentUser() {
 
 // ============ SUBMIT LEAVE ============
 async function submitLeave() {
-    const user = await getCurrentUser();
-    if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
+    let current = JSON.parse(sessionStorage.getItem("currentUser"));
+    if (!current) {
+        const user = await getCurrentUser();
+        if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        current = { id: user.uid, name: userDoc.data()?.name, email: user.email, role: userDoc.data()?.role };
+        sessionStorage.setItem("currentUser", JSON.stringify(current));
+    }
     
     let name = document.getElementById("studentName")?.value.trim();
     let type = document.getElementById("leaveType")?.value;
@@ -129,71 +135,38 @@ async function submitLeave() {
     let to = document.getElementById("toDate")?.value;
     let reason = document.getElementById("leaveReason")?.value.trim();
     
-    if (!name || !from || !to || !reason) { alert("Please fill all fields!"); return; }
-    if (new Date(from) > new Date(to)) { alert("End date cannot be before start date!"); return; }
+    if (!name || !from || !to || !reason) {
+        alert("Please fill all fields!");
+        return;
+    }
+    if (new Date(from) > new Date(to)) {
+        alert("End date cannot be before start date!");
+        return;
+    }
     
     try {
         await db.collection("leaves").add({
-            userName: name, userEmail: user.email, userId: user.uid,
+            userName: name, userEmail: current.email, userId: current.id,
             type: type, from: from, to: to, reason: reason,
             status: "Pending", timestamp: new Date().toISOString()
         });
         alert("✅ Leave request submitted!");
-        if (document.getElementById("fromDate")) document.getElementById("fromDate").value = "";
-        if (document.getElementById("toDate")) document.getElementById("toDate").value = "";
-        if (document.getElementById("leaveReason")) document.getElementById("leaveReason").value = "";
-        showMyLeaves();
+        document.getElementById("fromDate").value = "";
+        document.getElementById("toDate").value = "";
+        document.getElementById("leaveReason").value = "";
     } catch(e) { alert("Failed to submit!"); }
-}
-
-// ============ SHOW MY LEAVES ============
-async function showMyLeaves() {
-    const user = await getCurrentUser();
-    if (!user) return;
-    let container = document.getElementById("userLeaveList") || document.getElementById("list");
-    if (!container) return;
-    try {
-        const leavesQuery = await db.collection("leaves").where("userEmail", "==", user.email).orderBy("timestamp", "desc").get();
-        container.innerHTML = "";
-        if (leavesQuery.empty) { container.innerHTML = "<div style='text-align:center; padding:2rem; color:#6b7280;'>📭 No leave requests yet.</div>"; return; }
-        leavesQuery.forEach(doc => {
-            const l = doc.data();
-            let statusClass = l.status === "Approved" ? "status-approved" : (l.status === "Rejected" ? "status-rejected" : "status-pending");
-            let adminHtml = l.adminComment ? `<div style="background:#fff8e7; padding:8px; border-radius:12px; margin-top:8px; border-left:3px solid #ffc107;">💬 Admin: ${l.adminComment}</div>` : "";
-            let div = document.createElement("div");
-            div.className = "leave-card";
-            div.innerHTML = `<div style="display:flex; justify-content:space-between;"><strong>${l.type}</strong><span class="status-badge ${statusClass}">${l.status || "Pending"}</span></div><div>📅 ${l.from} → ${l.to}</div><div>📝 ${l.reason || "No reason"}</div>${adminHtml}`;
-            container.appendChild(div);
-        });
-    } catch(e) { console.error(e); }
-}
-
-// ============ SHOW MY PERMISSIONS ============
-async function showMyPermissions() {
-    const user = await getCurrentUser();
-    if (!user) return;
-    let container = document.getElementById("permissionList");
-    if (!container) return;
-    try {
-        const permQuery = await db.collection("permissions").where("userEmail", "==", user.email).orderBy("timestamp", "desc").get();
-        container.innerHTML = "";
-        if (permQuery.empty) { container.innerHTML = "<div style='text-align:center; padding:2rem; color:#6b7280;'>🔐 No permission requests yet.</div>"; return; }
-        permQuery.forEach(doc => {
-            const p = doc.data();
-            let statusClass = p.status === "Approved" ? "status-approved" : (p.status === "Rejected" ? "status-rejected" : "status-pending");
-            let adminHtml = p.adminComment ? `<div style="background:#fff8e7; padding:8px; border-radius:12px; margin-top:8px; border-left:3px solid #ffc107;">💬 Admin: ${p.adminComment}</div>` : "";
-            let div = document.createElement("div");
-            div.className = "permission-card";
-            div.innerHTML = `<div style="display:flex; justify-content:space-between;"><strong>${p.purpose}</strong><span class="status-badge ${statusClass}">${p.status || "Pending"}</span></div><div>📅 ${p.date} | ⏰ ${p.startTime} → ${p.endTime} | ⏱️ ${p.duration}</div><div>📝 ${p.reason || "No reason"}</div>${adminHtml}`;
-            container.appendChild(div);
-        });
-    } catch(e) { console.error(e); }
 }
 
 // ============ SUBMIT PERMISSION ============
 async function submitPermission() {
-    const user = await getCurrentUser();
-    if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
+    let current = JSON.parse(sessionStorage.getItem("currentUser"));
+    if (!current) {
+        const user = await getCurrentUser();
+        if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        current = { id: user.uid, name: userDoc.data()?.name, email: user.email, role: userDoc.data()?.role };
+        sessionStorage.setItem("currentUser", JSON.stringify(current));
+    }
     
     let name = document.getElementById("studentName")?.value.trim();
     let purpose = document.getElementById("purposeType")?.value;
@@ -202,8 +175,14 @@ async function submitPermission() {
     let date = document.getElementById("permissionDate")?.value;
     let reason = document.getElementById("permissionReason")?.value.trim();
     
-    if (!name || !purpose || !startTime || !endTime || !date || !reason) { alert("Please fill all fields!"); return; }
-    if (startTime >= endTime) { alert("End time must be after start time!"); return; }
+    if (!name || !purpose || !startTime || !endTime || !date || !reason) {
+        alert("Please fill all fields!");
+        return;
+    }
+    if (startTime >= endTime) {
+        alert("End time must be after start time!");
+        return;
+    }
     
     let [startHour, startMinute] = startTime.split(':').map(Number);
     let [endHour, endMinute] = endTime.split(':').map(Number);
@@ -214,20 +193,27 @@ async function submitPermission() {
     
     try {
         await db.collection("permissions").add({
-            userName: name, userEmail: user.email, userId: user.uid,
+            userName: name, userEmail: current.email, userId: current.id,
             purpose: purpose, startTime: startTime, endTime: endTime, date: date,
             duration: duration, reason: reason, status: "Pending", timestamp: new Date().toISOString()
         });
         alert("✅ Permission request submitted!");
-        if (document.getElementById("startTime")) document.getElementById("startTime").value = "";
-        if (document.getElementById("endTime")) document.getElementById("endTime").value = "";
-        if (document.getElementById("permissionDate")) document.getElementById("permissionDate").value = "";
-        if (document.getElementById("permissionReason")) document.getElementById("permissionReason").value = "";
-        showMyPermissions();
+        document.getElementById("startTime").value = "";
+        document.getElementById("endTime").value = "";
+        document.getElementById("permissionDate").value = "";
+        document.getElementById("permissionReason").value = "";
     } catch(e) { alert("Failed to submit!"); }
 }
 
-window.onload = function() {
-    if (document.getElementById("userLeaveList") || document.getElementById("list")) showMyLeaves();
-    if (document.getElementById("permissionList")) showMyPermissions();
-};
+// Auth state listener for home page
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
+        const userDoc = await db.collection("users").doc(user.uid).get();
+        const userData = userDoc.data();
+        if (userData) {
+            sessionStorage.setItem("currentUser", JSON.stringify({
+                id: user.uid, name: userData.name, email: user.email, role: userData.role
+            }));
+        }
+    }
+});

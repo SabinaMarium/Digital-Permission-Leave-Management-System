@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Dashboard | EduLeave</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E📋%3C/text%3E%3C/svg%3E">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,7 +19,8 @@
         }
         .container { max-width: 650px; margin: 0 auto; }
         .header-section { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
-        .btn-home { background: #6c757d; border: none; border-radius: 2rem; padding: 0.6rem 1.2rem; font-weight: 600; color: white; cursor: pointer; }
+        .btn-home { background: #4f46e5; border: none; border-radius: 2rem; padding: 0.6rem 1.2rem; font-weight: 600; color: white; cursor: pointer; transition: 0.2s; }
+        .btn-home:hover { background: #4338ca; transform: scale(0.98); }
         h2 { color: #1a1a2e; font-size: 1.6rem; font-weight: 700; }
         .welcome-card { background: white; border-radius: 1.5rem; padding: 1.2rem 1.8rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .welcome-text { color: #029f2e; font-weight: 600; font-size: 1.1rem; }
@@ -30,43 +31,104 @@
         .date-group { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
         .date-field { flex: 1; min-width: 120px; }
         .date-field label { font-size: 0.75rem; color: #6c757d; margin-bottom: 0.4rem; display: block; }
-        .btn-submit { background: linear-gradient(135deg, #029f2e, #028a27); border: none; border-radius: 1rem; padding: 0.9rem; font-weight: 700; font-size: 1rem; color: white; cursor: pointer; width: 100%; margin-top: 0.5rem; }
-        .btn-logout { background: #dc3545; border: none; border-radius: 1rem; padding: 0.9rem; font-weight: 600; font-size: 1rem; color: white; cursor: pointer; width: 100%; margin-top: 1rem; }
+        .btn-submit { background: linear-gradient(135deg, #029f2e, #028a27); border: none; border-radius: 1rem; padding: 0.9rem; font-weight: 700; font-size: 1rem; color: white; cursor: pointer; width: 100%; margin-top: 0.5rem; transition: 0.2s; }
+        .btn-submit:hover { transform: translateY(-2px); }
+        .btn-logout { background: #dc3545; border: none; border-radius: 1rem; padding: 0.9rem; font-weight: 600; font-size: 1rem; color: white; cursor: pointer; width: 100%; margin-top: 1rem; transition: 0.2s; }
+        .btn-logout:hover { transform: translateY(-2px); }
         .error-msg { color: #dc3545; font-size: 0.75rem; margin-bottom: 0.5rem; }
-        .leave-card { background: #f8f9fa; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid #029f2e; }
-        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 2rem; font-size: 0.7rem; font-weight: 600; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-approved { background: #d4edda; color: #155724; }
-        .status-rejected { background: #f8d7da; color: #721c24; }
         @media (max-width: 480px) { body { padding: 1rem; } .date-group { flex-direction: column; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-section">
-            <button class="btn-home" onclick="location.href='home.html'">← Home</button>
-            <h2> Leave Management</h2>
+            <button class="btn-home" onclick="location.href='home.html'"><i class="fas fa-arrow-left"></i> Home</button>
+            <h2><i class="fas fa-clipboard-list"></i> Leave Management</h2>
             <div style="width: 70px;"></div>
         </div>
         <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
         <div class="form-card">
-            <div class="form-title">Apply for Leave</div>
+            <div class="form-title"><i class="fas fa-pen-alt"></i> Apply for Leave</div>
             <input type="text" id="studentName" placeholder="Full name" class="input-field">
             <select id="leaveType" class="input-field">
                 <option>Sick Leave</option><option>Casual Leave</option><option>Emergency Leave</option><option>Annual Leave</option>
             </select>
             <div class="date-group">
-                <div class="date-field"><label>📅 Start Date</label><input type="date" id="fromDate" class="input-field" style="margin-bottom:0;"></div>
-                <div class="date-field"><label>📅 End Date</label><input type="date" id="toDate" class="input-field" style="margin-bottom:0;"></div>
+                <div class="date-field"><label><i class="far fa-calendar-alt"></i> Start Date</label><input type="date" id="fromDate" class="input-field" style="margin-bottom:0;"></div>
+                <div class="date-field"><label><i class="far fa-calendar-alt"></i> End Date</label><input type="date" id="toDate" class="input-field" style="margin-bottom:0;"></div>
             </div>
             <div id="dateError" class="error-msg"></div>
             <textarea id="leaveReason" placeholder="Reason for leave..." class="input-field" style="min-height:100px;"></textarea>
-            <button class="btn-submit" id="submitBtn" onclick="submitLeave()">📨 Submit Leave Request</button>
+            <button class="btn-submit" onclick="submitLeave()"><i class="fas fa-paper-plane"></i> Submit Leave Request</button>
         </div>
-        <h3 style="margin: 1rem 0 0.5rem 0;">📌 My Leave History</h3>
-        <div id="userLeaveList"></div>
-        <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
-    <script src="script.js"></script>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg", authDomain: "eduleave-system.firebaseapp.com", projectId: "eduleave-system", storageBucket: "eduleave-system.firebasestorage.app", messagingSenderId: "311349906309", appId: "1:311349906309:web:bf5391e233cd186943d2ec" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        window.logout = async function() {
+            try { await auth.signOut(); } catch(e) { console.error(e); }
+            sessionStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        };
+        
+        window.submitLeave = async function() {
+            let current = JSON.parse(sessionStorage.getItem("currentUser"));
+            if (!current) {
+                const user = auth.currentUser;
+                if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
+                const userDoc = await db.collection("users").doc(user.uid).get();
+                current = { id: user.uid, name: userDoc.data()?.name, email: user.email, role: userDoc.data()?.role };
+                sessionStorage.setItem("currentUser", JSON.stringify(current));
+            }
+            
+            let name = document.getElementById("studentName").value.trim();
+            let type = document.getElementById("leaveType").value;
+            let from = document.getElementById("fromDate").value;
+            let to = document.getElementById("toDate").value;
+            let reason = document.getElementById("leaveReason").value.trim();
+            
+            if (!name || !from || !to || !reason) { alert("Please fill all fields!"); return; }
+            if (new Date(from) > new Date(to)) { alert("End date cannot be before start date!"); return; }
+            
+            try {
+                await db.collection("leaves").add({
+                    userName: name, userEmail: current.email, userId: current.id,
+                    type: type, from: from, to: to, reason: reason,
+                    status: "Pending", timestamp: new Date().toISOString()
+                });
+                alert("✅ Leave request submitted!");
+                document.getElementById("fromDate").value = "";
+                document.getElementById("toDate").value = "";
+                document.getElementById("leaveReason").value = "";
+            } catch(e) { alert("Failed to submit!"); }
+        };
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            const userData = userDoc.data();
+            
+            if (!userData) { window.location.href = "index.html"; return; }
+            
+            if (userData.role === "admin") { window.location.href = "admin.html"; return; }
+            
+            sessionStorage.setItem("currentUser", JSON.stringify({
+                id: user.uid, name: userData.name, email: user.email, role: userData.role
+            }));
+            
+            // Show welcome message with user name
+            const welcomeDiv = document.getElementById("welcomeUser");
+            if (welcomeDiv) welcomeDiv.innerHTML = `<i class="fas fa-smile-wink"></i> Welcome, ${userData.name}!`;
+            
+            // Also set student name field
+            const studentNameField = document.getElementById("studentName");
+            if (studentNameField) studentNameField.value = userData.name;
+        });
+    </script>
 </body>
 </html>
