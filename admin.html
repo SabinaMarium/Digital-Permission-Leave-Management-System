@@ -10,83 +10,92 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; }
-        .container { max-width: 1300px; margin: 0 auto; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; min-height: 100vh; }
+        .admin-container { max-width: 1300px; margin: 0 auto; }
         
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
         .logo i { color: #2da44e; margin-right: 8px; }
         .header-right { display: flex; align-items: center; gap: 20px; }
+        
+        /* Notification */
         .notification-icon { position: relative; cursor: pointer; font-size: 22px; color: #555; }
         .notification-icon:hover { color: #2da44e; }
-        .notification-badge { position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
+        .notification-badge { position: absolute; top: -8px; right: -10px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; min-width: 18px; text-align: center; }
         .notification-dropdown { position: absolute; right: 0; top: 35px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
         .notification-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
         .notification-item:hover { background: #f8f9fa; }
         .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
+        
         .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-        .btn-logout:hover { opacity: 0.9; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
         
         /* Welcome Card */
-        .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 25px 30px; border-radius: 16px; margin-bottom: 25px; }
-        .welcome-card h2 { font-size: 24px; margin-bottom: 8px; }
-        .welcome-card p { font-size: 14px; opacity: 0.9; }
-        .dept-badge { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: inline-block; margin-top: 12px; }
+        .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
+        .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
+        .welcome-card p { font-size: 13px; opacity: 0.9; }
+        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
         
-        /* Sidebar + Main Layout */
+        /* Dashboard Layout - Sidebar + Main */
         .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
-        .sidebar { flex: 1; min-width: 280px; }
+        .sidebar { flex: 1; min-width: 260px; }
         .main-content { flex: 3; min-width: 300px; }
         
         /* Profile Card */
         .profile-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .profile-avatar { width: 80px; height: 80px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
-        .profile-avatar span { font-size: 32px; color: white; font-weight: bold; }
-        .profile-name { font-size: 18px; font-weight: 600; margin-bottom: 5px; }
-        .profile-email { font-size: 13px; color: #666; margin-bottom: 15px; }
-        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; }
-        .btn-profile:hover { opacity: 0.9; }
+        .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+        .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
+        .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
+        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.2s; }
+        .btn-profile:hover { opacity: 0.9; transform: scale(0.98); }
         
-        /* History Card */
-        .history-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .history-card h3 { font-size: 16px; margin-bottom: 15px; color: #1a1a2e; }
-        .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
-        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-history:hover { opacity: 0.9; }
+        /* Records Card */
+        .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .records-card h3 { font-size: 15px; margin-bottom: 15px; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+        .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
+        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-history:hover { opacity: 0.9; transform: scale(0.98); }
         
         /* Filter Bar */
         .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .filter-btn { background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
+        .filter-btn:hover { opacity: 0.9; transform: scale(0.98); }
         
         /* Requests Container */
         .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
-        .request-card { background: #f8f9fa; border-radius: 12px; padding: 18px; margin-bottom: 15px; border-left: 4px solid #2da44e; }
-        .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
-        .user-name { font-weight: bold; font-size: 16px; }
-        .user-email { font-size: 12px; color: #666; }
-        .user-dept { font-size: 12px; color: #2da44e; margin-top: 3px; }
-        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; transition: 0.2s; }
+        .request-card:hover { transform: translateX(3px); }
+        .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+        .user-name { font-weight: bold; font-size: 15px; }
+        .user-email { font-size: 11px; color: #666; margin-top: 2px; }
+        .user-dept { font-size: 11px; color: #2da44e; margin-top: 2px; }
+        .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; display: inline-block; }
         .status-pending { background: #fff3cd; color: #856404; }
         .status-approved { background: #d4edda; color: #155724; }
         .status-rejected { background: #f8d7da; color: #721c24; }
-        .request-details { font-size: 13px; color: #555; margin: 12px 0; }
-        .comment-input { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 6px 15px; border-radius: 6px; cursor: pointer; }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 15px; border-radius: 6px; cursor: pointer; }
-        .admin-comment { background: #fff8e7; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 12px; border-left: 3px solid #ffc107; }
-        .empty-state { text-align: center; padding: 50px; color: #888; }
+        .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
+        .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; outline: none; }
+        .comment-input input:focus { border-color: #2da44e; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
+        .approve-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
+        .reject-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
+        .empty-state { text-align: center; padding: 40px; color: #888; }
         .position-relative { position: relative; }
         
         @media (max-width: 900px) { .dashboard-layout { flex-direction: column; } }
+        @media (max-width: 600px) { .filter-bar { flex-direction: column; } .comment-input { flex-direction: column; } }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="admin-container">
         <!-- Header -->
         <div class="header">
             <div class="logo"><i class="fas fa-crown"></i> Admin Dashboard</div>
@@ -112,24 +121,24 @@
         
         <!-- Dashboard Layout -->
         <div class="dashboard-layout">
-            <!-- Sidebar -->
+            <!-- Left Sidebar -->
             <div class="sidebar">
                 <!-- Profile Card -->
                 <div class="profile-card">
                     <div class="profile-avatar" id="profileAvatar"><span>A</span></div>
                     <div class="profile-name" id="profileName">Admin User</div>
                     <div class="profile-email" id="profileEmail">admin@example.com</div>
-                    <button class="btn-profile" onclick="location.href='profile.html'"><i class="fas fa-user-edit"></i> Edit Profile</button>
+                    <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
                 </div>
                 
-                <!-- History & Records Card -->
-                <div class="history-card">
-                    <h3><i class="fas fa-history"></i> Records & History</h3>
+                <!-- Records & History Card -->
+                <div class="records-card">
+                    <h3>Records & History</h3>
                     <select id="studentSelect" class="student-select">
                         <option value="all">All Students (Department Wise)</option>
                     </select>
                     <button class="btn-history" onclick="viewHistory()">
-                        <i class="fas fa-chart-line"></i> View History & Records
+                        View History
                     </button>
                 </div>
             </div>
@@ -149,14 +158,14 @@
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                     </select>
-                    <button class="filter-btn" onclick="filterRequests()"><i class="fas fa-search"></i> Apply Filter</button>
+                    <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
                 </div>
                 
                 <!-- Requests Container -->
                 <div class="requests-container">
-                    <div class="section-title"><i class="fas fa-clipboard-list"></i> Pending Requests</div>
-                    <div id="requestsContainer">
-                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div>
+                    <div class="section-title">Pending Requests</div>
+                    <div id="requestsList">
+                        <div class="empty-state">Loading requests...</div>
                     </div>
                 </div>
             </div>
@@ -181,11 +190,9 @@
         let adminDepartment = null;
         let adminName = null;
         let adminEmail = null;
-        let allStudents = [];
         let allNotifications = [];
-        let leavesListener = null;
-        let permissionsListener = null;
         let notificationsListener = null;
+        let allStudents = [];
         
         window.logout = async function() {
             try { await auth.signOut(); } catch(e) {}
@@ -193,7 +200,7 @@
             window.location.href = "index.html";
         };
         
-        // Load all students from same department
+        // Load students for dropdown
         async function loadStudents() {
             const studentsSnapshot = await db.collection("users")
                 .where("role", "==", "user")
@@ -203,17 +210,16 @@
             allStudents = [];
             studentsSnapshot.forEach(doc => {
                 const data = doc.data();
-                allStudents.push({ id: doc.id, name: data.name, email: data.email, batch: data.batch, studentId: data.studentId });
+                allStudents.push({ id: doc.id, name: data.name, email: data.email, batch: data.batch });
             });
             
             const select = document.getElementById("studentSelect");
             select.innerHTML = '<option value="all">All Students (' + adminDepartment + ' Department)</option>';
             allStudents.forEach(student => {
-                select.innerHTML += `<option value="${student.email}">${student.name} (${student.batch || "N/A"} Batch)</option>`;
+                select.innerHTML += `<option value="${student.email}">${student.name} (Batch: ${student.batch || "N/A"})</option>`;
             });
         }
         
-        // View History
         window.viewHistory = function() {
             const selectedStudent = document.getElementById("studentSelect").value;
             if (selectedStudent === "all") {
@@ -227,11 +233,12 @@
             }
         };
         
-        // Setup real-time notifications listener
+        // Setup notifications listener
         function setupNotificationsListener() {
             if (notificationsListener) notificationsListener();
+            
             notificationsListener = db.collection("notifications")
-                .where("department", "==", adminDepartment)
+                .where("adminEmail", "==", adminEmail)
                 .orderBy("timestamp", "desc")
                 .onSnapshot((snapshot) => {
                     let unreadCount = 0;
@@ -266,9 +273,9 @@
                 dropdown.innerHTML = allNotifications.map(n => `
                     <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markNotificationRead('${n.id}')">
                         <strong>${n.type === 'leave' ? 'Leave Request' : 'Permission Request'}</strong><br>
-                        ${n.userName}<br>
-                        ${n.details || ''}<br>
-                        <small>${n.timestamp ? new Date(n.timestamp).toLocaleString() : 'Just now'}</small>
+                        👤 ${n.userName}<br>
+                        📝 ${n.details || ''}<br>
+                        📅 ${n.timestamp ? new Date(n.timestamp).toLocaleString() : 'Just now'}
                     </div>
                 `).join('');
             }
@@ -280,49 +287,50 @@
             document.getElementById("notificationDropdown").style.display = "none";
         }
         
-        function setupRealtimeListeners() {
-            if (leavesListener) leavesListener();
-            if (permissionsListener) permissionsListener();
+        async function loadData() {
+            const user = auth.currentUser;
+            if (!user) { window.location.href = "index.html"; return; }
             
-            leavesListener = db.collection("leaves")
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            const userData = userDoc.data();
+            adminDepartment = userData.department;
+            adminName = userData.name;
+            adminEmail = user.email;
+            
+            document.getElementById("adminName").innerHTML = adminName;
+            document.getElementById("deptName").innerHTML = adminDepartment;
+            document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> Department: ${adminDepartment}`;
+            document.getElementById("adminAvatar").innerHTML = adminName.charAt(0).toUpperCase();
+            document.getElementById("profileAvatar").innerHTML = `<span>${adminName.charAt(0).toUpperCase()}</span>`;
+            document.getElementById("profileName").innerHTML = adminName;
+            document.getElementById("profileEmail").innerHTML = adminEmail;
+            
+            await loadStudents();
+            setupNotificationsListener();
+            
+            const leavesSnapshot = await db.collection("leaves")
                 .where("department", "==", adminDepartment)
-                .onSnapshot(() => { loadAllData(); });
+                .get();
             
-            permissionsListener = db.collection("permissions")
+            const permissionsSnapshot = await db.collection("permissions")
                 .where("department", "==", adminDepartment)
-                .onSnapshot(() => { loadAllData(); });
-        }
-        
-        async function loadAllData() {
-            if (!adminDepartment) return;
+                .get();
             
-            try {
-                const leavesSnapshot = await db.collection("leaves")
-                    .where("department", "==", adminDepartment)
-                    .get();
-                
-                const permissionsSnapshot = await db.collection("permissions")
-                    .where("department", "==", adminDepartment)
-                    .get();
-                
-                allLeaves = [];
-                allPermissions = [];
-                
-                leavesSnapshot.forEach(doc => {
-                    allLeaves.push({ id: doc.id, ...doc.data(), type: "leave" });
-                });
-                
-                permissionsSnapshot.forEach(doc => {
-                    allPermissions.push({ id: doc.id, ...doc.data(), type: "permission" });
-                });
-                
-                allLeaves.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-                allPermissions.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-                
-                filterRequests();
-            } catch (error) {
-                console.error("Error loading data:", error);
-            }
+            allLeaves = [];
+            allPermissions = [];
+            
+            leavesSnapshot.forEach(doc => {
+                allLeaves.push({ id: doc.id, ...doc.data(), type: "leave" });
+            });
+            
+            permissionsSnapshot.forEach(doc => {
+                allPermissions.push({ id: doc.id, ...doc.data(), type: "permission" });
+            });
+            
+            allLeaves.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+            allPermissions.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+            
+            filterRequests();
         }
         
         async function updateRequestStatus(id, type, newStatus, comment) {
@@ -336,6 +344,15 @@
                     adminName: adminName, 
                     actionDate: new Date().toISOString() 
                 });
+                
+                // Mark related notification as read
+                const notifQuery = await db.collection("notifications")
+                    .where("requestId", "==", id)
+                    .get();
+                notifQuery.forEach(async (doc) => {
+                    await db.collection("notifications").doc(doc.id).update({ isRead: true });
+                });
+                
                 alert(`Request ${newStatus} with comment: "${comment}"`);
             } catch(e) { 
                 console.error("Error:", e);
@@ -349,41 +366,31 @@
             
             let requests = [];
             if (typeFilter === "all" || typeFilter === "leave") {
-                let filteredLeaves = [...allLeaves];
+                let filtered = [...allLeaves];
                 if (statusFilter !== "all") {
-                    filteredLeaves = filteredLeaves.filter(l => l.status === statusFilter);
+                    filtered = filtered.filter(r => r.status === statusFilter);
                 }
-                requests.push(...filteredLeaves);
+                requests.push(...filtered);
             }
             if (typeFilter === "all" || typeFilter === "permission") {
-                let filteredPermissions = [...allPermissions];
+                let filtered = [...allPermissions];
                 if (statusFilter !== "all") {
-                    filteredPermissions = filteredPermissions.filter(p => p.status === statusFilter);
+                    filtered = filtered.filter(r => r.status === statusFilter);
                 }
-                requests.push(...filteredPermissions);
+                requests.push(...filtered);
             }
             
             renderRequests(requests);
         }
         
         function renderRequests(requests) {
-            const container = document.getElementById("requestsContainer");
+            const container = document.getElementById("requestsList");
             if (requests.length === 0) {
                 container.innerHTML = `<div class="empty-state">No requests found in ${adminDepartment} department.</div>`;
                 return;
             }
             
-            let pendingCount = requests.filter(r => r.status === "Pending").length;
-            let approvedCount = requests.filter(r => r.status === "Approved").length;
-            let rejectedCount = requests.filter(r => r.status === "Rejected").length;
-            
-            let titleHtml = `<div class="section-title">
-                <i class="fas fa-clipboard-list"></i> Pending Requests (${pendingCount}) | 
-                <span style="color:#10b981">Approved (${approvedCount})</span> | 
-                <span style="color:#ef4444">Rejected (${rejectedCount})</span>
-            </div>`;
-            
-            let requestsHtml = "";
+            container.innerHTML = "";
             requests.forEach(req => {
                 const statusClass = req.status === "Approved" ? "status-approved" : (req.status === "Rejected" ? "status-rejected" : "status-pending");
                 const statusText = req.status || "Pending";
@@ -403,7 +410,7 @@
                     </div>`;
                 }
                 
-                const adminCommentHtml = req.adminComment ? `<div class="admin-comment"><i class="fas fa-comment-dots"></i> ${req.adminComment}</div>` : "";
+                const adminCommentHtml = req.adminComment ? `<div class="admin-comment">${req.adminComment}</div>` : "";
                 const actionHtml = (req.status !== "Approved" && req.status !== "Rejected") ? 
                     `<div class="comment-input">
                         <input type="text" id="comment-${req.id}" placeholder="Write your comment here...">
@@ -411,7 +418,7 @@
                         <button class="reject-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Rejected', document.getElementById('comment-${req.id}').value)">Reject</button>
                     </div>` : "";
                 
-                requestsHtml += `
+                container.innerHTML += `
                     <div class="request-card">
                         <div class="request-header">
                             <div>
@@ -427,31 +434,32 @@
                     </div>
                 `;
             });
+        }
+        
+        // Real-time listeners
+        let leavesUnsubscribe = null;
+        let permissionsUnsubscribe = null;
+        
+        function setupRealtimeListeners() {
+            if (leavesUnsubscribe) leavesUnsubscribe();
+            if (permissionsUnsubscribe) permissionsUnsubscribe();
             
-            container.innerHTML = titleHtml + requestsHtml;
+            leavesUnsubscribe = db.collection("leaves")
+                .where("department", "==", adminDepartment)
+                .onSnapshot(() => loadData());
+            
+            permissionsUnsubscribe = db.collection("permissions")
+                .where("department", "==", adminDepartment)
+                .onSnapshot(() => loadData());
         }
         
         auth.onAuthStateChanged(async (user) => {
-            if (!user) { window.location.href = "index.html"; return; }
-            
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            const userData = userDoc.data();
-            adminDepartment = userData.department;
-            adminName = userData.name;
-            adminEmail = user.email;
-            
-            document.getElementById("adminName").innerHTML = adminName;
-            document.getElementById("deptName").innerHTML = adminDepartment;
-            document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> Department: ${adminDepartment}`;
-            document.getElementById("adminAvatar").innerHTML = adminName.charAt(0).toUpperCase();
-            document.getElementById("profileAvatar").innerHTML = `<span>${adminName.charAt(0).toUpperCase()}</span>`;
-            document.getElementById("profileName").innerHTML = adminName;
-            document.getElementById("profileEmail").innerHTML = adminEmail;
-            
-            await loadStudents();
-            setupNotificationsListener();
-            setupRealtimeListeners();
-            await loadAllData();
+            if (user) {
+                await loadData();
+                setupRealtimeListeners();
+            } else {
+                window.location.href = "index.html";
+            }
         });
     </script>
 </body>

@@ -34,19 +34,19 @@
 <body>
     <div class="container">
         <div class="top-bar">
-            <div class="logo">Leave Management</div>
+            <div class="logo"><i class="fas fa-clipboard-list"></i> Leave Management</div>
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="user-avatar" id="userAvatar"></div>
-                <button class="logout-btn" onclick="logout()">Logout</button>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </div>
         
-        <button class="btn-home" onclick="location.href='home.html'">Back to Home</button>
+        <button class="btn-home" onclick="location.href='home.html'"><i class="fas fa-arrow-left"></i> Home</button>
         
         <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
         
         <div class="form-card">
-            <div class="form-title">Apply for Leave</div>
+            <div class="form-title"><i class="fas fa-pen-alt"></i> Apply for Leave</div>
             
             <select id="department" class="input-field">
                 <option value="">Select Department</option>
@@ -72,7 +72,7 @@
             
             <textarea id="leaveReason" placeholder="Reason for leave..." class="input-field" style="min-height:80px;"></textarea>
             
-            <button class="btn-submit" onclick="submitLeave()">Submit Leave Request</button>
+            <button class="btn-submit" onclick="submitLeave()"><i class="fas fa-paper-plane"></i> Submit Leave Request</button>
         </div>
     </div>
     
@@ -149,8 +149,10 @@
             };
             
             try {
+                // Save leave request
                 await db.collection("leaves").add(requestData);
                 
+                // ✅ Add notification for admin
                 await db.collection("notifications").add({
                     type: "leave",
                     userName: name,
@@ -164,7 +166,7 @@
                     timestamp: new Date().toISOString()
                 });
                 
-                alert("Leave request submitted! Admin will be notified.");
+                alert("✅ Leave request submitted! Admin will be notified.");
                 
                 document.getElementById("fromDate").value = "";
                 document.getElementById("toDate").value = "";
@@ -189,7 +191,7 @@
             if (userData.role === "admin") { window.location.href = "admin.html"; return; }
             
             document.getElementById("userAvatar").innerHTML = userData.name.charAt(0).toUpperCase();
-            document.getElementById("welcomeUser").innerHTML = `Welcome, ${userData.name}!`;
+            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${userData.name}!`;
             document.getElementById("studentName").value = userData.name;
             
             if (userData.department) {
