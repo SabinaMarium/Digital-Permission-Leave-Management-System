@@ -17,30 +17,35 @@
         
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .logo { font-size: 22px; font-weight: bold; color: #1a1a2e; }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; padding: 5px 10px; border-radius: 8px; transition: 0.2s; }
+        .menu-btn:hover { background: #e8f5e9; color: #2da44e; }
+        .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
         .logo i { color: #2da44e; margin-right: 10px; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 14px; transition: 0.2s; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 14px; transition: 0.2s; }
         .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
         
-        /* Welcome Card */
-        .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 25px 30px; border-radius: 16px; margin-bottom: 25px; }
-        .welcome-card h2 { font-size: 24px; margin-bottom: 8px; }
-        .welcome-card p { font-size: 14px; opacity: 0.9; }
+        /* Sidebar Overlay */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; display: none; }
         
-        /* Main Layout - Sidebar + Right Panel */
+        /* Sidebar Menu */
+        .sidebar-menu { position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: white; z-index: 999; transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar-menu.open { left: 0; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h3 { font-size: 18px; color: #1a1a2e; }
+        .close-menu { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; }
+        .menu-list { list-style: none; padding: 0; }
+        .menu-list li { border-bottom: 1px solid #f0f0f0; }
+        .menu-list a { display: flex; align-items: center; gap: 15px; padding: 15px 20px; text-decoration: none; color: #333; font-size: 15px; font-weight: 500; transition: 0.2s; }
+        .menu-list a:hover { background: #e8f5e9; color: #2da44e; padding-left: 25px; }
+        .menu-list a i { width: 25px; color: #2da44e; font-size: 18px; }
+        
+        /* Main Layout */
         .main-layout { display: flex; gap: 25px; flex-wrap: wrap; margin-bottom: 30px; align-items: stretch; }
-        .sidebar { flex: 1; min-width: 300px; display: flex; }
-        .right-panel { flex: 2; min-width: 350px; display: flex; }
-        
-        /* Menu Card */
-        .menu-card { background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); width: 100%; display: flex; flex-direction: column; }
-        .menu-item { display: flex; align-items: center; gap: 18px; padding: 18px 22px; border-radius: 14px; cursor: pointer; transition: 0.2s; margin: 8px 0; }
-        .menu-item:hover { background: #e8f5e9; transform: translateX(8px); }
-        .menu-icon { font-size: 24px; color: #2da44e; width: 35px; text-align: center; }
-        .menu-text { font-size: 17px; font-weight: 600; color: #333; }
+        .right-panel { flex: 1; min-width: 350px; display: flex; }
         
         /* Profile Card */
-        .profile-card { background: white; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); width: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .profile-card { background: white; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); width: 100%; display: flex; flex-direction: column; justify-content: center; max-width: 400px; margin: 0 auto; }
         .profile-avatar { width: 100px; height: 100px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
         .profile-avatar span { font-size: 42px; color: white; font-weight: bold; }
         .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 5px; color: #1a1a2e; }
@@ -49,7 +54,7 @@
         .profile-batch-id { font-size: 13px; color: #555; margin-top: 8px; }
         .profile-batch-id i { margin-right: 6px; color: #2da44e; }
         
-        /* Quick Stats - Full Width Card (Height ছোট করা হয়েছে) */
+        /* Quick Stats */
         .stats-full-card { background: white; border-radius: 16px; padding: 20px 25px; margin-top: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .stats-full-card h3 { font-size: 16px; margin-bottom: 15px; color: #1a1a2e; border-left: 4px solid #2da44e; padding-left: 12px; }
         .stats-full-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
@@ -72,23 +77,38 @@
         canvas { max-height: 350px; width: 100% !important; }
         .chart-note { text-align: center; font-size: 12px; color: #888; margin-top: 15px; }
         
-        @media (max-width: 700px) { 
+        @media (max-width: 600px) { 
             .stat-full-item { padding: 8px 20px; min-width: 110px; } 
             .stat-full-number { font-size: 26px; }
-            .stat-full-label { font-size: 11px; }
-        }
-        @media (max-width: 900px) { 
-            .main-layout { flex-direction: column; } 
-            .sidebar { min-width: 100%; }
-            .right-panel { min-width: 100%; }
+            .profile-card { max-width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="home-container">
-        <!-- Header -->
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+        
+        <!-- Sidebar Menu -->
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-graduation-cap"></i> Menu</h3>
+                <button class="close-menu" onclick="closeSidebar()"><i class="fas fa-times"></i></button>
+            </div>
+            <ul class="menu-list">
+                <li><a href="dashboard.html"><i class="fas fa-clipboard-list"></i> Leave Management</a></li>
+                <li><a href="permission.html"><i class="fas fa-key"></i> Permission Management</a></li>
+                <li><a href="records.html"><i class="fas fa-history"></i> Records & History</a></li>
+                <li><a href="profile.html"><i class="fas fa-user-cog"></i> Profile Settings</a></li>
+            </ul>
+        </div>
+        
+        <!-- Header with Hamburger Menu -->
         <div class="header">
-            <div class="logo"><i class="fas fa-graduation-cap"></i> EduLeave System</div>
+            <div class="header-left">
+                <button class="menu-btn" id="menuBtn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <div class="logo"><i class="fas fa-graduation-cap"></i> EduLeave System</div>
+            </div>
             <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
         
@@ -100,27 +120,6 @@
         
         <!-- Main Layout -->
         <div class="main-layout">
-            <div class="sidebar">
-                <div class="menu-card">
-                    <div class="menu-item" onclick="location.href='dashboard.html'">
-                        <div class="menu-icon"><i class="fas fa-clipboard-list"></i></div>
-                        <div class="menu-text">Leave Management</div>
-                    </div>
-                    <div class="menu-item" onclick="location.href='permission.html'">
-                        <div class="menu-icon"><i class="fas fa-key"></i></div>
-                        <div class="menu-text">Permission Management</div>
-                    </div>
-                    <div class="menu-item" onclick="location.href='records.html'">
-                        <div class="menu-icon"><i class="fas fa-history"></i></div>
-                        <div class="menu-text">Records & History</div>
-                    </div>
-                    <div class="menu-item" onclick="location.href='profile.html'">
-                        <div class="menu-icon"><i class="fas fa-user-cog"></i></div>
-                        <div class="menu-text">Profile Settings</div>
-                    </div>
-                </div>
-            </div>
-            
             <div class="right-panel">
                 <div class="profile-card">
                     <div class="profile-avatar" id="profileAvatar"><span>U</span></div>
@@ -132,28 +131,28 @@
             </div>
         </div>
         
-        <!-- Quick Stats - Full Width (Height ছোট করা হয়েছে) -->
+        <!-- Quick Stats -->
         <div class="stats-full-card">
             <h3><i class="fas fa-chart-simple"></i> Quick Statistics</h3>
             <div class="stats-full-grid">
                 <div class="stat-full-item">
                     <div class="stat-full-number stat-pending" id="totalPending">0</div>
-                    <div class="stat-full-label">⏳ Pending</div>
+                    <div class="stat-full-label">Pending</div>
                 </div>
                 <div class="stat-full-item">
                     <div class="stat-full-number stat-approved" id="totalApproved">0</div>
-                    <div class="stat-full-label">✅ Approved</div>
+                    <div class="stat-full-label">Approved</div>
                 </div>
                 <div class="stat-full-item">
                     <div class="stat-full-number stat-rejected" id="totalRejected">0</div>
-                    <div class="stat-full-label">❌ Rejected</div>
+                    <div class="stat-full-label">Rejected</div>
                 </div>
             </div>
         </div>
         
         <!-- Analytics Section -->
         <div class="analytics-card">
-            <h3><i class="fas fa-chart-line"></i> Request Analytics (Line Chart)</h3>
+            <h3><i class="fas fa-chart-line"></i> Request Analytics</h3>
             <div class="period-buttons">
                 <button class="period-btn active" onclick="changePeriod('weekly', this)">Weekly</button>
                 <button class="period-btn" onclick="changePeriod('monthly', this)">Monthly</button>
@@ -162,7 +161,7 @@
             <div class="chart-container">
                 <canvas id="requestChart"></canvas>
             </div>
-            <div class="chart-note"><i class="fas fa-chart-line"></i> Showing Pending, Approved, Rejected requests over time</div>
+            <div class="chart-note">Showing Pending, Approved, Rejected requests over time</div>
         </div>
     </div>
     
@@ -183,6 +182,19 @@
         let requestChart;
         let currentPeriod = 'weekly';
         let allRequests = [];
+        
+        // Sidebar Functions
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById("sidebarMenu");
+            const overlay = document.getElementById("sidebarOverlay");
+            sidebar.classList.toggle("open");
+            overlay.style.display = sidebar.classList.contains("open") ? "block" : "none";
+        };
+        
+        window.closeSidebar = function() {
+            document.getElementById("sidebarMenu").classList.remove("open");
+            document.getElementById("sidebarOverlay").style.display = "none";
+        };
         
         window.logout = async function() {
             try { await auth.signOut(); } catch(e) {}
@@ -331,7 +343,9 @@
             const approvedData = dataPoints.map(d => d.approved);
             const rejectedData = dataPoints.map(d => d.rejected);
             
-            if (requestChart) requestChart.destroy();
+            if (requestChart) {
+                requestChart.destroy();
+            }
             
             const ctx = document.getElementById('requestChart').getContext('2d');
             requestChart = new Chart(ctx, {
@@ -426,6 +440,22 @@
             
             updateChart();
         }
+        
+        // ✅ FIX: Resize event চার্টের blur সমস্যা সমাধান
+        window.addEventListener('resize', function() {
+            if (requestChart) {
+                requestChart.resize();
+            }
+        });
+        
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById("sidebarMenu");
+            const menuBtn = document.getElementById("menuBtn");
+            if (!sidebar.contains(event.target) && !menuBtn.contains(event.target) && sidebar.classList.contains("open")) {
+                closeSidebar();
+            }
+        });
         
         auth.onAuthStateChanged((user) => {
             if (user) loadUserData();

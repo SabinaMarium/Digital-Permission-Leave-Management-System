@@ -8,68 +8,67 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; min-height: 100vh; }
-        .admin-container { max-width: 1300px; margin: 0 auto; }
+        .admin-container { max-width: 1400px; margin: 0 auto; }
         
         /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
         .logo i { color: #2da44e; margin-right: 8px; }
-        .header-right { display: flex; align-items: center; gap: 20px; }
-        
-        /* Notification */
+        .header-right { display: flex; align-items: center; gap: 20px; position: relative; }
         .notification-icon { position: relative; cursor: pointer; font-size: 22px; color: #555; }
         .notification-icon:hover { color: #2da44e; }
-        .notification-badge { position: absolute; top: -8px; right: -10px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; min-width: 18px; text-align: center; }
-        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
+        .notification-badge { position: absolute; top: -8px; right: -12px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; min-width: 18px; text-align: center; }
+        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 320px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
         .notification-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .notification-item:hover { background: #f8f9fa; }
         .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
-        
-        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
-        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
+        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
         
         /* Welcome Card */
         .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
         .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
         .welcome-card p { font-size: 13px; opacity: 0.9; }
-        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
+        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; font-size: 12px; }
         
-        /* Dashboard Layout - Sidebar + Main */
+        /* Dashboard Layout */
         .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
-        .sidebar { flex: 1; min-width: 260px; }
-        .main-content { flex: 3; min-width: 300px; }
+        .sidebar { flex: 1; min-width: 280px; }
+        .main-content { flex: 3; min-width: 350px; }
         
         /* Profile Card */
-        .profile-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .profile-card { background: white; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
         .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
         .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
         .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
-        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.2s; }
-        .btn-profile:hover { opacity: 0.9; transform: scale(0.98); }
+        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; }
         
         /* Records Card */
         .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .records-card h3 { font-size: 15px; margin-bottom: 15px; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+        .records-card h3 { font-size: 15px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
         .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .btn-history:hover { opacity: 0.9; transform: scale(0.98); }
+        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-bottom: 10px; }
+        .student-stats { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-top: 12px; }
+        .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .stat-label { font-size: 12px; color: #666; }
+        .stat-value { font-size: 16px; font-weight: 700; }
+        .stat-value.taken { color: #f59e0b; }
+        .stat-value.remaining { color: #10b981; }
+        .stat-value.pending { color: #ef4444; }
         
         /* Filter Bar */
         .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
-        .filter-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; }
         
         /* Requests Container */
-        .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .requests-container { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
-        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; transition: 0.2s; }
-        .request-card:hover { transform: translateX(3px); }
+        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; }
         .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
         .user-name { font-weight: bold; font-size: 15px; }
         .user-email { font-size: 11px; color: #666; margin-top: 2px; }
@@ -80,18 +79,24 @@
         .status-rejected { background: #f8d7da; color: #721c24; }
         .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
         .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; outline: none; }
-        .comment-input input:focus { border-color: #2da44e; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
-        .approve-btn:hover { opacity: 0.9; transform: scale(0.98); }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
-        .reject-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
         .position-relative { position: relative; }
         
-        @media (max-width: 900px) { .dashboard-layout { flex-direction: column; } }
-        @media (max-width: 600px) { .filter-bar { flex-direction: column; } .comment-input { flex-direction: column; } }
+        /* Analytics Card */
+        .analytics-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .analytics-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .chart-container { margin-top: 15px; }
+        canvas { max-height: 250px; width: 100% !important; }
+        .monthly-stats { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
+        .month-card { background: #f8f9fa; border-radius: 12px; padding: 12px; text-align: center; flex: 1; min-width: 100px; }
+        .month-name { font-size: 12px; color: #666; margin-bottom: 5px; }
+        .month-count { font-size: 20px; font-weight: 700; color: #2da44e; }
+        
+        @media (max-width: 1000px) { .dashboard-layout { flex-direction: column; } .monthly-stats { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -126,24 +131,50 @@
                 <!-- Profile Card -->
                 <div class="profile-card">
                     <div class="profile-avatar" id="profileAvatar"><span>A</span></div>
-                    <div class="profile-name" id="profileName">Admin User</div>
+                    <div class="profile-name" id="profileName">Admin</div>
                     <div class="profile-email" id="profileEmail">admin@example.com</div>
                     <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
                 </div>
                 
-                <!-- Records & History Card -->
+                <!-- Records & Student Analytics Card -->
                 <div class="records-card">
-                    <h3>Records & History</h3>
+                    <h3><i class="fas fa-chart-line"></i> Student Analytics</h3>
                     <select id="studentSelect" class="student-select">
-                        <option value="all">All Students (Department Wise)</option>
+                        <option value="all">Select a student</option>
                     </select>
-                    <button class="btn-history" onclick="viewHistory()">
-                        View History
-                    </button>
+                    <button class="btn-history" onclick="loadStudentAnalytics()">View Analytics</button>
+                    
+                    <!-- Student Stats -->
+                    <div id="studentStats" class="student-stats" style="display: none;">
+                        <div class="stat-row">
+                            <span class="stat-label">Total Leaves Taken</span>
+                            <span class="stat-value taken" id="totalTaken">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total Leaves Allowed</span>
+                            <span class="stat-value remaining" id="totalAllowed">12</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Remaining Leaves</span>
+                            <span class="stat-value remaining" id="remainingLeaves">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Pending Leaves</span>
+                            <span class="stat-value pending" id="pendingCount">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Approved Leaves</span>
+                            <span class="stat-value taken" id="approvedCount">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Rejected Leaves</span>
+                            <span class="stat-value pending" id="rejectedCount">0</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- Main Content -->
+            <!-- Right Main Content -->
             <div class="main-content">
                 <!-- Filter Bar -->
                 <div class="filter-bar">
@@ -163,10 +194,17 @@
                 
                 <!-- Requests Container -->
                 <div class="requests-container">
-                    <div class="section-title">Pending Requests</div>
-                    <div id="requestsList">
-                        <div class="empty-state">Loading requests...</div>
+                    <div class="section-title">Requests</div>
+                    <div id="requestsList"><div class="empty-state">Loading requests...</div></div>
+                </div>
+                
+                <!-- Analytics Chart -->
+                <div class="analytics-card">
+                    <h3><i class="fas fa-chart-bar"></i> Monthly Leave Analytics</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
                     </div>
+                    <div class="monthly-stats" id="monthlyStats"></div>
                 </div>
             </div>
         </div>
@@ -181,122 +219,232 @@
             messagingSenderId: "311349906309",
             appId: "1:311349906309:web:bf5391e233cd186943d2ec"
         };
-        
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         
+        let adminDepartment = null, adminName = null, adminEmail = null;
         let allLeaves = [], allPermissions = [];
-        let adminDepartment = null;
-        let adminName = null;
-        let adminEmail = null;
         let allNotifications = [];
-        let notificationsListener = null;
-        let allStudents = [];
+        let studentsList = [];
+        let monthlyChart = null;
         
-        window.logout = async function() {
-            try { await auth.signOut(); } catch(e) {}
-            sessionStorage.removeItem("currentUser");
-            window.location.href = "index.html";
-        };
+        window.logout = async () => { await auth.signOut(); sessionStorage.clear(); window.location.href = "index.html"; };
         
-        // Load students for dropdown
         async function loadStudents() {
-            const studentsSnapshot = await db.collection("users")
-                .where("role", "==", "user")
-                .where("department", "==", adminDepartment)
-                .get();
-            
-            allStudents = [];
-            studentsSnapshot.forEach(doc => {
-                const data = doc.data();
-                allStudents.push({ id: doc.id, name: data.name, email: data.email, batch: data.batch });
-            });
-            
+            const snap = await db.collection("users").where("role", "==", "user").where("department", "==", adminDepartment).get();
+            studentsList = [];
+            snap.forEach(d => studentsList.push({ id: d.id, ...d.data() }));
             const select = document.getElementById("studentSelect");
-            select.innerHTML = '<option value="all">All Students (' + adminDepartment + ' Department)</option>';
-            allStudents.forEach(student => {
-                select.innerHTML += `<option value="${student.email}">${student.name} (Batch: ${student.batch || "N/A"})</option>`;
-            });
+            select.innerHTML = '<option value="all">Select a student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name} (${s.batch || "N/A"})</option>`).join('');
         }
         
-        window.viewHistory = function() {
-            const selectedStudent = document.getElementById("studentSelect").value;
-            if (selectedStudent === "all") {
-                window.location.href = "records.html";
-            } else {
-                const student = allStudents.find(s => s.email === selectedStudent);
-                if (student) {
-                    sessionStorage.setItem("selectedStudent", JSON.stringify(student));
-                    window.location.href = "records.html?student=" + encodeURIComponent(student.email);
-                }
-            }
-        };
-        
-        // Setup notifications listener
-        function setupNotificationsListener() {
-            if (notificationsListener) notificationsListener();
-            
-            notificationsListener = db.collection("notifications")
-                .where("adminEmail", "==", adminEmail)
-                .orderBy("timestamp", "desc")
-                .onSnapshot((snapshot) => {
-                    let unreadCount = 0;
-                    let notifications = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        if (!data.isRead) unreadCount++;
-                        notifications.push({ id: doc.id, ...data });
-                    });
-                    allNotifications = notifications;
-                    
-                    const badge = document.getElementById("notifBadge");
-                    if (unreadCount > 0) {
-                        badge.innerText = unreadCount;
-                        badge.style.display = "inline-block";
-                    } else {
-                        badge.style.display = "none";
-                    }
-                });
-        }
-        
-        function toggleNotifications() {
-            const dropdown = document.getElementById("notificationDropdown");
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
+        window.loadStudentAnalytics = async function() {
+            const selectedEmail = document.getElementById("studentSelect").value;
+            if (!selectedEmail || selectedEmail === "all") {
+                document.getElementById("studentStats").style.display = "none";
                 return;
             }
             
-            if (allNotifications.length === 0) {
-                dropdown.innerHTML = "<div style='padding:15px; text-align:center; color:#888;'>No notifications</div>";
-            } else {
-                dropdown.innerHTML = allNotifications.map(n => `
-                    <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markNotificationRead('${n.id}')">
-                        <strong>${n.type === 'leave' ? 'Leave Request' : 'Permission Request'}</strong><br>
-                        👤 ${n.userName}<br>
-                        📝 ${n.details || ''}<br>
-                        📅 ${n.timestamp ? new Date(n.timestamp).toLocaleString() : 'Just now'}
-                    </div>
-                `).join('');
-            }
-            dropdown.style.display = "block";
+            const student = studentsList.find(s => s.email === selectedEmail);
+            if (!student) return;
+            
+            // Get student's leaves
+            const leavesSnap = await db.collection("leaves").where("userEmail", "==", selectedEmail).get();
+            const studentLeaves = [];
+            leavesSnap.forEach(d => studentLeaves.push(d.data()));
+            
+            const totalTaken = studentLeaves.length;
+            const totalAllowed = 12; // Default 12 leaves per year
+            const remaining = Math.max(0, totalAllowed - totalTaken);
+            const pending = studentLeaves.filter(l => l.status === "Pending").length;
+            const approved = studentLeaves.filter(l => l.status === "Approved").length;
+            const rejected = studentLeaves.filter(l => l.status === "Rejected").length;
+            
+            document.getElementById("totalTaken").innerHTML = totalTaken;
+            document.getElementById("totalAllowed").innerHTML = totalAllowed;
+            document.getElementById("remainingLeaves").innerHTML = remaining;
+            document.getElementById("pendingCount").innerHTML = pending;
+            document.getElementById("approvedCount").innerHTML = approved;
+            document.getElementById("rejectedCount").innerHTML = rejected;
+            document.getElementById("studentStats").style.display = "block";
+            
+            // Update monthly chart for this student
+            updateStudentMonthlyChart(studentLeaves, student.name);
+        };
+        
+        async function updateStudentMonthlyChart(studentLeaves, studentName) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthlyData = new Array(12).fill(0);
+            
+            studentLeaves.forEach(leave => {
+                if (leave.fromDate) {
+                    const month = new Date(leave.fromDate).getMonth();
+                    monthlyData[month]++;
+                }
+            });
+            
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            if (monthlyChart) monthlyChart.destroy();
+            
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: `${studentName}'s Leaves`,
+                        data: monthlyData,
+                        backgroundColor: '#2da44e',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+            
+            // Update monthly stats
+            const statsContainer = document.getElementById("monthlyStats");
+            statsContainer.innerHTML = months.map((month, i) => `
+                <div class="month-card">
+                    <div class="month-name">${month}</div>
+                    <div class="month-count">${monthlyData[i]}</div>
+                </div>
+            `).join('');
         }
         
-        async function markNotificationRead(id) {
-            await db.collection("notifications").doc(id).update({ isRead: true });
-            document.getElementById("notificationDropdown").style.display = "none";
+        async function loadAdminMonthlyAnalytics() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthlyData = new Array(12).fill(0);
+            
+            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).get();
+            leavesSnap.forEach(doc => {
+                const leave = doc.data();
+                if (leave.fromDate) {
+                    const month = new Date(leave.fromDate).getMonth();
+                    monthlyData[month]++;
+                }
+            });
+            
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            if (monthlyChart) monthlyChart.destroy();
+            
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: `Total Leaves (${adminDepartment} Department)`,
+                        data: monthlyData,
+                        backgroundColor: '#2da44e',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+            
+            const statsContainer = document.getElementById("monthlyStats");
+            statsContainer.innerHTML = months.map((month, i) => `
+                <div class="month-card">
+                    <div class="month-name">${month}</div>
+                    <div class="month-count">${monthlyData[i]}</div>
+                </div>
+            `).join('');
         }
         
-        async function loadData() {
-            const user = auth.currentUser;
-            if (!user) { window.location.href = "index.html"; return; }
-            
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            const userData = userDoc.data();
-            adminDepartment = userData.department;
-            adminName = userData.name;
-            adminEmail = user.email;
-            
+        async function loadRealData() {
+            if(!adminDepartment) return;
+            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).get();
+            const permsSnap = await db.collection("permissions").where("department", "==", adminDepartment).get();
+            allLeaves = []; allPermissions = [];
+            leavesSnap.forEach(d => allLeaves.push({ id: d.id, ...d.data(), type: "leave" }));
+            permsSnap.forEach(d => allPermissions.push({ id: d.id, ...d.data(), type: "permission" }));
+            allLeaves.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+            allPermissions.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+            filterRequests();
+            await loadAdminMonthlyAnalytics();
+        }
+        
+        async function updateBadgeAndDropdown() {
+            if(!adminEmail) return;
+            const snap = await db.collection("notifications").where("adminEmail", "==", adminEmail).orderBy("timestamp", "desc").get();
+            allNotifications = [];
+            let unread = 0;
+            snap.forEach(d => { 
+                let data = d.data(); 
+                if(!data.isRead) unread++; 
+                allNotifications.push({ id: d.id, ...data }); 
+            });
+            const badge = document.getElementById("notifBadge");
+            if(unread > 0) { badge.innerText = unread; badge.style.display = "inline-block"; }
+            else badge.style.display = "none";
+        }
+        
+        window.toggleNotifications = () => {
+            const dd = document.getElementById("notificationDropdown");
+            if(dd.style.display === "block") { dd.style.display = "none"; return; }
+            if(allNotifications.length === 0) dd.innerHTML = "<div style='padding:15px;text-align:center'>No notifications</div>";
+            else dd.innerHTML = allNotifications.map(n => `<div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markRead('${n.id}')">
+                <strong>${n.type === 'leave' ? 'Leave Request' : 'Permission Request'}</strong><br>
+                ${n.userName}<br>${n.details}<br><small>${new Date(n.timestamp).toLocaleString()}</small></div>`).join('');
+            dd.style.display = "block";
+        };
+        window.markRead = async (id) => { await db.collection("notifications").doc(id).update({ isRead: true }); updateBadgeAndDropdown(); document.getElementById("notificationDropdown").style.display = "none"; };
+        
+        async function updateRequestStatus(id, type, newStatus, comment) {
+            if(!comment.trim()) return alert("Please write a comment!");
+            const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
+            await ref.update({ status: newStatus, adminComment: comment, adminName: adminName, actionDate: new Date().toISOString() });
+            alert(`Request ${newStatus}`);
+            loadRealData(); updateBadgeAndDropdown();
+        }
+        
+        function filterRequests() {
+            const type = document.getElementById("typeFilter").value;
+            const status = document.getElementById("statusFilter").value;
+            let reqs = [];
+            if(type === "all" || type === "leave") reqs.push(...allLeaves.filter(l => status === "all" || l.status === status));
+            if(type === "all" || type === "permission") reqs.push(...allPermissions.filter(p => status === "all" || p.status === status));
+            renderRequests(reqs);
+        }
+        
+        function renderRequests(requests) {
+            const container = document.getElementById("requestsList");
+            if(!requests.length) { container.innerHTML = `<div class="empty-state">No requests in ${adminDepartment}</div>`; return; }
+            container.innerHTML = "";
+            requests.forEach(r => {
+                const statusCls = r.status === "Approved" ? "status-approved" : (r.status === "Rejected" ? "status-rejected" : "status-pending");
+                const details = r.type === "leave" ? `<div class="request-details"><strong>Dates:</strong> ${r.fromDate || r.from} → ${r.toDate || r.to}<br><strong>Reason:</strong> ${r.reason || "—"}</div>` :
+                    `<div class="request-details"><strong>Date:</strong> ${r.date}<br><strong>Time:</strong> ${r.startTime} → ${r.endTime}<br><strong>Duration:</strong> ${r.duration}<br><strong>Reason:</strong> ${r.reason || "—"}</div>`;
+                const adminCommentHtml = r.adminComment ? `<div class="admin-comment">${r.adminComment}</div>` : "";
+                const actionHtml = (r.status !== "Approved" && r.status !== "Rejected") ? `
+                    <div class="comment-input">
+                        <input type="text" id="comment-${r.id}" placeholder="Write comment...">
+                        <button class="approve-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Approved',document.getElementById('comment-${r.id}').value)">Approve</button>
+                        <button class="reject-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Rejected',document.getElementById('comment-${r.id}').value)">Reject</button>
+                    </div>` : "";
+                container.innerHTML += `<div class="request-card">
+                    <div class="request-header"><div><div class="user-name">${r.userName}</div><div class="user-email">${r.userEmail}</div><div class="user-dept">${r.department} | Batch:${r.batch||"N/A"} | ID:${r.studentId||"N/A"}</div></div>
+                    <span class="status-badge ${statusCls}">${r.status || "Pending"}</span></div>
+                    ${details}${adminCommentHtml}${actionHtml}</div>`;
+            });
+        }
+        
+        auth.onAuthStateChanged(async (user) => {
+            if(!user){ location.href="index.html"; return; }
+            const uDoc = await db.collection("users").doc(user.uid).get();
+            const data = uDoc.data();
+            adminDepartment = data.department; adminName = data.name; adminEmail = user.email;
             document.getElementById("adminName").innerHTML = adminName;
             document.getElementById("deptName").innerHTML = adminDepartment;
             document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> Department: ${adminDepartment}`;
@@ -304,162 +452,13 @@
             document.getElementById("profileAvatar").innerHTML = `<span>${adminName.charAt(0).toUpperCase()}</span>`;
             document.getElementById("profileName").innerHTML = adminName;
             document.getElementById("profileEmail").innerHTML = adminEmail;
-            
             await loadStudents();
-            setupNotificationsListener();
-            
-            const leavesSnapshot = await db.collection("leaves")
-                .where("department", "==", adminDepartment)
-                .get();
-            
-            const permissionsSnapshot = await db.collection("permissions")
-                .where("department", "==", adminDepartment)
-                .get();
-            
-            allLeaves = [];
-            allPermissions = [];
-            
-            leavesSnapshot.forEach(doc => {
-                allLeaves.push({ id: doc.id, ...doc.data(), type: "leave" });
-            });
-            
-            permissionsSnapshot.forEach(doc => {
-                allPermissions.push({ id: doc.id, ...doc.data(), type: "permission" });
-            });
-            
-            allLeaves.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-            allPermissions.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-            
-            filterRequests();
-        }
-        
-        async function updateRequestStatus(id, type, newStatus, comment) {
-            if (!comment.trim()) { alert("Please write a comment!"); return; }
-            
-            try {
-                const collectionRef = type === "leave" ? db.collection("leaves") : db.collection("permissions");
-                await collectionRef.doc(id).update({ 
-                    status: newStatus, 
-                    adminComment: comment, 
-                    adminName: adminName, 
-                    actionDate: new Date().toISOString() 
-                });
-                
-                // Mark related notification as read
-                const notifQuery = await db.collection("notifications")
-                    .where("requestId", "==", id)
-                    .get();
-                notifQuery.forEach(async (doc) => {
-                    await db.collection("notifications").doc(doc.id).update({ isRead: true });
-                });
-                
-                alert(`Request ${newStatus} with comment: "${comment}"`);
-            } catch(e) { 
-                console.error("Error:", e);
-                alert("Failed to update!"); 
-            }
-        }
-        
-        function filterRequests() {
-            const typeFilter = document.getElementById("typeFilter").value;
-            const statusFilter = document.getElementById("statusFilter").value;
-            
-            let requests = [];
-            if (typeFilter === "all" || typeFilter === "leave") {
-                let filtered = [...allLeaves];
-                if (statusFilter !== "all") {
-                    filtered = filtered.filter(r => r.status === statusFilter);
-                }
-                requests.push(...filtered);
-            }
-            if (typeFilter === "all" || typeFilter === "permission") {
-                let filtered = [...allPermissions];
-                if (statusFilter !== "all") {
-                    filtered = filtered.filter(r => r.status === statusFilter);
-                }
-                requests.push(...filtered);
-            }
-            
-            renderRequests(requests);
-        }
-        
-        function renderRequests(requests) {
-            const container = document.getElementById("requestsList");
-            if (requests.length === 0) {
-                container.innerHTML = `<div class="empty-state">No requests found in ${adminDepartment} department.</div>`;
-                return;
-            }
-            
-            container.innerHTML = "";
-            requests.forEach(req => {
-                const statusClass = req.status === "Approved" ? "status-approved" : (req.status === "Rejected" ? "status-rejected" : "status-pending");
-                const statusText = req.status || "Pending";
-                
-                let details = "";
-                if (req.type === "leave") {
-                    details = `<div class="request-details">
-                        <strong>Dates:</strong> ${req.fromDate || req.from} → ${req.toDate || req.to}<br>
-                        <strong>Reason:</strong> ${req.reason || "No reason provided"}
-                    </div>`;
-                } else {
-                    details = `<div class="request-details">
-                        <strong>Date:</strong> ${req.date}<br>
-                        <strong>Time:</strong> ${req.startTime} → ${req.endTime}<br>
-                        <strong>Duration:</strong> ${req.duration}<br>
-                        <strong>Reason:</strong> ${req.reason || "No reason provided"}
-                    </div>`;
-                }
-                
-                const adminCommentHtml = req.adminComment ? `<div class="admin-comment">${req.adminComment}</div>` : "";
-                const actionHtml = (req.status !== "Approved" && req.status !== "Rejected") ? 
-                    `<div class="comment-input">
-                        <input type="text" id="comment-${req.id}" placeholder="Write your comment here...">
-                        <button class="approve-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Approved', document.getElementById('comment-${req.id}').value)">Approve</button>
-                        <button class="reject-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Rejected', document.getElementById('comment-${req.id}').value)">Reject</button>
-                    </div>` : "";
-                
-                container.innerHTML += `
-                    <div class="request-card">
-                        <div class="request-header">
-                            <div>
-                                <div class="user-name">${req.userName}</div>
-                                <div class="user-email">${req.userEmail}</div>
-                                <div class="user-dept">${req.department} | Batch: ${req.batch || "N/A"} | ID: ${req.studentId || "N/A"}</div>
-                            </div>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </div>
-                        ${details}
-                        ${adminCommentHtml}
-                        ${actionHtml}
-                    </div>
-                `;
-            });
-        }
-        
-        // Real-time listeners
-        let leavesUnsubscribe = null;
-        let permissionsUnsubscribe = null;
-        
-        function setupRealtimeListeners() {
-            if (leavesUnsubscribe) leavesUnsubscribe();
-            if (permissionsUnsubscribe) permissionsUnsubscribe();
-            
-            leavesUnsubscribe = db.collection("leaves")
-                .where("department", "==", adminDepartment)
-                .onSnapshot(() => loadData());
-            
-            permissionsUnsubscribe = db.collection("permissions")
-                .where("department", "==", adminDepartment)
-                .onSnapshot(() => loadData());
-        }
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                await loadData();
-                setupRealtimeListeners();
-            } else {
-                window.location.href = "index.html";
-            }
+            await loadRealData();
+            await updateBadgeAndDropdown();
+            setInterval(updateBadgeAndDropdown, 5000);
+            db.collection("leaves").where("department","==",adminDepartment).onSnapshot(()=>loadRealData());
+            db.collection("permissions").where("department","==",adminDepartment).onSnapshot(()=>loadRealData());
+            db.collection("notifications").where("adminEmail","==",adminEmail).onSnapshot(()=>updateBadgeAndDropdown());
         });
     </script>
 </body>
