@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | EduLeave</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .avatar { width: 80px; height: 80px; background: #2da44e; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+        .avatar span { font-size: 32px; color: white; font-weight: bold; }
+        .text-center { text-align: center; }
+        .name { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+        .email { color: #666; margin-bottom: 20px; }
+        .info-row { margin-bottom: 16px; }
+        .info-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+        .info-value { font-size: 16px; padding: 8px 12px; background: #f5f5f5; border-radius: 8px; }
+        input, select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; }
+        .btn-edit { background: #2da44e; color: white; }
+        .btn-save { background: #2da44e; color: white; }
+        .btn-cancel { background: #6c757d; color: white; }
+        .btn-password { background: #4f46e5; color: white; }
+        .btn-logout { background: #dc3545; color: white; }
+        .mt-2 { margin-top: 16px; }
+        .hidden { display: none; }
+        .error-msg { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 8px; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="flex-between" style="margin-bottom: 20px;">
+            <h2><i class="fas fa-user-circle"></i> My Profile</h2>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+        
+        <button onclick="goBack()" style="background: #4f46e5; color: white; margin-bottom: 20px; padding: 8px 16px; border-radius: 8px;"><i class="fas fa-arrow-left"></i> Back</button>
+        
+        <div class="card">
+            <div class="text-center">
+                <div class="avatar" id="profileAvatar"><span id="avatarText"></span></div>
+                <div class="name" id="displayName"></div>
+                <div class="email" id="displayEmail"></div>
+            </div>
+            
+            <div id="viewMode">
+                <div class="info-row"><div class="info-label">Full Name</div><div class="info-value" id="viewName"></div></div>
+                <div class="info-row"><div class="info-label">Department</div><div class="info-value" id="viewDept"></div></div>
+                <div class="info-row" id="viewBatchRow"><div class="info-label">Batch</div><div class="info-value" id="viewBatch"></div></div>
+                <div class="info-row" id="viewIdRow"><div class="info-label">Student/Employee ID</div><div class="info-value" id="viewId"></div></div>
+                <div class="info-row"><div class="info-label">Role</div><div class="info-value" id="viewRole"></div></div>
+                <div class="flex-between mt-2">
+                    <button class="btn-edit" onclick="enableEdit()"><i class="fas fa-edit"></i> Edit Profile</button>
+                    <button class="btn-password" onclick="showPasswordModal()"><i class="fas fa-key"></i> Change Password</button>
+                </div>
+            </div>
+            
+            <div id="editMode" class="hidden">
+                <div class="info-row"><div class="info-label">Full Name</div><input type="text" id="editName"></div>
+                <div class="info-row"><div class="info-label">Department</div><select id="editDept"><option value="CSE">CSE</option><option value="EEE">EEE</option><option value="BBA">BBA</option><option value="LLB">LLB</option><option value="CEN">CEN</option><option value="TEX">TEX</option></select></div>
+                <div class="info-row" id="editBatchRow"><div class="info-label">Batch</div><input type="text" id="editBatch" placeholder="e.g., 2024"></div>
+                <div class="info-row" id="editIdRow"><div class="info-label">Student/Employee ID</div><input type="text" id="editId" placeholder="e.g., CSE 031 08187"></div>
+                <div class="flex-between mt-2">
+                    <button class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> Save</button>
+                    <button class="btn-cancel" onclick="disableEdit()"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+        <div style="background:white; border-radius:16px; padding:24px; max-width:400px; width:90%;">
+            <h3>Change Password</h3>
+            <div id="pwdError" class="error-msg" style="display:none;"></div>
+            <input type="password" id="currentPwd" placeholder="Current Password" style="width:100%; margin-bottom:12px; padding:10px;">
+            <input type="password" id="newPwd" placeholder="New Password" style="width:100%; margin-bottom:12px; padding:10px;">
+            <input type="password" id="confirmPwd" placeholder="Confirm Password" style="width:100%; margin-bottom:20px; padding:10px;">
+            <div class="flex-between">
+                <button onclick="hidePasswordModal()" style="background:#6c757d; color:white; padding:8px 16px; border-radius:8px;">Cancel</button>
+                <button onclick="changePassword()" style="background:#2da44e; color:white; padding:8px 16px; border-radius:8px;">Update</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg",
+            authDomain: "eduleave-system.firebaseapp.com",
+            projectId: "eduleave-system",
+            storageBucket: "eduleave-system.firebasestorage.app",
+            messagingSenderId: "311349906309",
+            appId: "1:311349906309:web:bf5391e233cd186943d2ec"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        let currentUserData = null;
+        
+        // Logout function
+        window.logout = async function() {
+            try { await auth.signOut(); } catch(e) { console.error(e); }
+            sessionStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        };
+        
+        function goBack() {
+            let user = JSON.parse(sessionStorage.getItem("currentUser"));
+            if (user && user.role === "admin") location.href = "admin.html";
+            else location.href = "home.html";
+        }
+        
+        async function loadData() {
+            const user = auth.currentUser;
+            if (!user) { location.href = "index.html"; return; }
+            
+            const doc = await db.collection("users").doc(user.uid).get();
+            currentUserData = doc.data();
+            if (!currentUserData) { location.href = "index.html"; return; }
+            
+            // Store in session
+            sessionStorage.setItem("currentUser", JSON.stringify({
+                id: user.uid,
+                name: currentUserData.name,
+                email: user.email,
+                role: currentUserData.role
+            }));
+            
+            // Avatar
+            document.getElementById("avatarText").innerHTML = currentUserData.name.charAt(0).toUpperCase();
+            document.getElementById("displayName").innerHTML = currentUserData.name;
+            document.getElementById("displayEmail").innerHTML = user.email;
+            
+            // View Mode
+            document.getElementById("viewName").innerHTML = currentUserData.name;
+            document.getElementById("viewDept").innerHTML = currentUserData.department;
+            document.getElementById("viewRole").innerHTML = currentUserData.role === "admin" ? "Administrator" : "User";
+            
+            // Edit Mode
+            document.getElementById("editName").value = currentUserData.name;
+            document.getElementById("editDept").value = currentUserData.department;
+            document.getElementById("editBatch").value = currentUserData.batch || "";
+            document.getElementById("editId").value = currentUserData.studentId || "";
+            
+            // Show/Hide Batch & ID based on role
+            if (currentUserData.role === "user") {
+                document.getElementById("viewBatchRow").style.display = "block";
+                document.getElementById("viewIdRow").style.display = "block";
+                document.getElementById("editBatchRow").style.display = "block";
+                document.getElementById("editIdRow").style.display = "block";
+                document.getElementById("viewBatch").innerHTML = currentUserData.batch || "N/A";
+                document.getElementById("viewId").innerHTML = currentUserData.studentId || "N/A";
+            } else {
+                document.getElementById("viewBatchRow").style.display = "none";
+                document.getElementById("viewIdRow").style.display = "none";
+                document.getElementById("editBatchRow").style.display = "none";
+                document.getElementById("editIdRow").style.display = "none";
+            }
+        }
+        
+        function enableEdit() {
+            document.getElementById("viewMode").style.display = "none";
+            document.getElementById("editMode").style.display = "block";
+        }
+        
+        function disableEdit() {
+            document.getElementById("viewMode").style.display = "block";
+            document.getElementById("editMode").style.display = "none";
+        }
+        
+        async function saveProfile() {
+            const user = auth.currentUser;
+            if (!user) { alert("Please login again"); return; }
+            
+            const name = document.getElementById("editName").value.trim();
+            const dept = document.getElementById("editDept").value;
+            
+            if (!name || !dept) { alert("Please fill all fields!"); return; }
+            
+            const updateData = { name: name, department: dept };
+            
+            if (currentUserData.role === "user") {
+                const batch = document.getElementById("editBatch").value.trim();
+                const studentId = document.getElementById("editId").value.trim();
+                if (!batch) { alert("Please enter Batch!"); return; }
+                if (!studentId) { alert("Please enter Student/Employee ID!"); return; }
+                updateData.batch = batch;
+                updateData.studentId = studentId;
+            }
+            
+            try {
+                await db.collection("users").doc(user.uid).update(updateData);
+                
+                // Update session
+                let sessionUser = JSON.parse(sessionStorage.getItem("currentUser"));
+                if (sessionUser) sessionUser.name = name;
+                sessionStorage.setItem("currentUser", JSON.stringify(sessionUser));
+                
+                alert("✅ Profile updated successfully!");
+                await loadData();
+                disableEdit();
+            } catch(e) {
+                alert("Error: " + e.message);
+            }
+        }
+        
+        function showPasswordModal() {
+            document.getElementById("passwordModal").style.display = "flex";
+            document.getElementById("currentPwd").value = "";
+            document.getElementById("newPwd").value = "";
+            document.getElementById("confirmPwd").value = "";
+            document.getElementById("pwdError").style.display = "none";
+        }
+        
+        function hidePasswordModal() {
+            document.getElementById("passwordModal").style.display = "none";
+        }
+        
+        async function changePassword() {
+            const current = document.getElementById("currentPwd").value;
+            const newPwd = document.getElementById("newPwd").value;
+            const confirm = document.getElementById("confirmPwd").value;
+            const errorDiv = document.getElementById("pwdError");
+            
+            if (!current || !newPwd || !confirm) {
+                errorDiv.style.display = "block";
+                errorDiv.innerHTML = "Please fill all fields!";
+                return;
+            }
+            
+            if (newPwd !== confirm) {
+                errorDiv.style.display = "block";
+                errorDiv.innerHTML = "New passwords do not match!";
+                return;
+            }
+            
+            const hasUpper = /[A-Z]/.test(newPwd);
+            const hasLower = /[a-z]/.test(newPwd);
+            const hasDigit = /[0-9]/.test(newPwd);
+            const hasSpecial = /[@$!%*?&#]/.test(newPwd);
+            const isLong = newPwd.length >= 8;
+            
+            if (!hasUpper || !hasLower || !hasDigit || !hasSpecial || !isLong) {
+                errorDiv.style.display = "block";
+                errorDiv.innerHTML = "Password must have Uppercase, Lowercase, Digit, Special character & min 8 characters!";
+                return;
+            }
+            
+            const user = auth.currentUser;
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, current);
+            
+            try {
+                await user.reauthenticateWithCredential(credential);
+                await user.updatePassword(newPwd);
+                alert("✅ Password changed successfully!");
+                hidePasswordModal();
+            } catch(e) {
+                errorDiv.style.display = "block";
+                errorDiv.innerHTML = e.code === 'auth/wrong-password' ? "Current password is incorrect!" : e.message;
+            }
+        }
+        
+        // Initialize on page load
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadData();
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>
