@@ -44,15 +44,19 @@
         .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
         .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
         .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
+        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; }
         .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; }
         
-        /* Records Card */
+        /* Records & History Card */
         .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .records-card h3 { font-size: 15px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
         .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-bottom: 10px; }
-        .student-stats { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-top: 12px; }
+        .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-clear { background: #6c757d; color: white; border: none; padding: 8px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; }
+        .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        
+        /* Student Stats */
+        .student-stats { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-top: 12px; display: none; }
         .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
         .stat-label { font-size: 12px; color: #666; }
         .stat-value { font-size: 16px; font-weight: 700; }
@@ -67,7 +71,8 @@
         
         /* Requests Container */
         .requests-container { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+        .hide-requests-btn { background: #6c757d; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; }
         .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
         .user-name { font-weight: bold; font-size: 15px; }
@@ -84,19 +89,17 @@
         .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
+        .hidden { display: none; }
         .position-relative { position: relative; }
         
         /* Analytics Card */
-        .analytics-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .analytics-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 20px; }
         .analytics-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
-        .chart-container { margin-top: 15px; }
-        canvas { max-height: 250px; width: 100% !important; }
-        .monthly-stats { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
-        .month-card { background: #f8f9fa; border-radius: 12px; padding: 12px; text-align: center; flex: 1; min-width: 100px; }
-        .month-name { font-size: 12px; color: #666; margin-bottom: 5px; }
-        .month-count { font-size: 20px; font-weight: 700; color: #2da44e; }
+        .chart-container { margin-top: 15px; min-height: 320px; }
+        canvas { max-height: 300px; width: 100% !important; }
+        .chart-note { text-align: center; font-size: 11px; color: #888; margin-top: 10px; }
         
-        @media (max-width: 1000px) { .dashboard-layout { flex-direction: column; } .monthly-stats { flex-direction: column; } }
+        @media (max-width: 1000px) { .dashboard-layout { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -136,16 +139,18 @@
                     <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
                 </div>
                 
-                <!-- Records & Student Analytics Card -->
+                <!-- Records & History Card -->
                 <div class="records-card">
-                    <h3><i class="fas fa-chart-line"></i> Student Analytics</h3>
+                    <h3><i class="fas fa-chart-line"></i> Student Analytics & History</h3>
                     <select id="studentSelect" class="student-select">
                         <option value="all">Select a student</option>
                     </select>
-                    <button class="btn-history" onclick="loadStudentAnalytics()">View Analytics</button>
+                    <button class="btn-analytics" onclick="loadStudentAnalytics()"><i class="fas fa-chart-line"></i> View Analytics</button>
+                    <button class="btn-history" onclick="viewStudentHistory()"><i class="fas fa-history"></i> View Full History</button>
+                    <button class="btn-clear" onclick="clearAnalyticsView()"><i class="fas fa-arrow-left"></i> Back to Requests</button>
                     
                     <!-- Student Stats -->
-                    <div id="studentStats" class="student-stats" style="display: none;">
+                    <div id="studentStats" class="student-stats">
                         <div class="stat-row">
                             <span class="stat-label">Total Leaves Taken</span>
                             <span class="stat-value taken" id="totalTaken">0</span>
@@ -177,7 +182,7 @@
             <!-- Right Main Content -->
             <div class="main-content">
                 <!-- Filter Bar -->
-                <div class="filter-bar">
+                <div id="filterBar" class="filter-bar">
                     <select id="typeFilter">
                         <option value="all">All Types</option>
                         <option value="leave">Leave Requests</option>
@@ -193,18 +198,21 @@
                 </div>
                 
                 <!-- Requests Container -->
-                <div class="requests-container">
-                    <div class="section-title">Requests</div>
+                <div id="requestsContainer" class="requests-container">
+                    <div class="section-title">
+                        <span>Requests</span>
+                        <button class="hide-requests-btn" onclick="hideRequests()">Hide</button>
+                    </div>
                     <div id="requestsList"><div class="empty-state">Loading requests...</div></div>
                 </div>
                 
-                <!-- Analytics Chart -->
-                <div class="analytics-card">
-                    <h3><i class="fas fa-chart-bar"></i> Monthly Leave Analytics</h3>
+                <!-- Analytics Line Chart -->
+                <div id="analyticsCard" class="analytics-card hidden">
+                    <h3><i class="fas fa-chart-line"></i> Monthly Leave Analytics (Line Chart)</h3>
                     <div class="chart-container">
                         <canvas id="monthlyChart"></canvas>
                     </div>
-                    <div class="monthly-stats" id="monthlyStats"></div>
+                    <div class="chart-note">Showing monthly leave requests over time</div>
                 </div>
             </div>
         </div>
@@ -228,8 +236,38 @@
         let allNotifications = [];
         let studentsList = [];
         let monthlyChart = null;
+        let currentSelectedStudent = null;
+        let isAnalyticsView = false;
         
         window.logout = async () => { await auth.signOut(); sessionStorage.clear(); window.location.href = "index.html"; };
+        
+        function showRequestsOnly() {
+            document.getElementById("filterBar").classList.remove("hidden");
+            document.getElementById("requestsContainer").classList.remove("hidden");
+            document.getElementById("analyticsCard").classList.add("hidden");
+            
+            // Re-render requests
+            filterRequests();
+            isAnalyticsView = false;
+        }
+        
+        function hideRequests() {
+            if (!isAnalyticsView) {
+                document.getElementById("filterBar").classList.add("hidden");
+                document.getElementById("requestsContainer").classList.add("hidden");
+            }
+        }
+        
+        window.clearAnalyticsView = function() {
+            showRequestsOnly();
+            document.getElementById("studentStats").style.display = "none";
+            document.getElementById("studentSelect").value = "all";
+            currentSelectedStudent = null;
+            if (monthlyChart) {
+                monthlyChart.destroy();
+                monthlyChart = null;
+            }
+        };
         
         async function loadStudents() {
             const snap = await db.collection("users").where("role", "==", "user").where("department", "==", adminDepartment).get();
@@ -242,20 +280,24 @@
         window.loadStudentAnalytics = async function() {
             const selectedEmail = document.getElementById("studentSelect").value;
             if (!selectedEmail || selectedEmail === "all") {
-                document.getElementById("studentStats").style.display = "none";
+                alert("Please select a student first!");
                 return;
             }
+            currentSelectedStudent = studentsList.find(s => s.email === selectedEmail);
+            if (!currentSelectedStudent) return;
             
-            const student = studentsList.find(s => s.email === selectedEmail);
-            if (!student) return;
+            // Hide requests and filter bar, show analytics
+            document.getElementById("filterBar").classList.add("hidden");
+            document.getElementById("requestsContainer").classList.add("hidden");
+            document.getElementById("analyticsCard").classList.remove("hidden");
+            isAnalyticsView = true;
             
-            // Get student's leaves
             const leavesSnap = await db.collection("leaves").where("userEmail", "==", selectedEmail).get();
             const studentLeaves = [];
             leavesSnap.forEach(d => studentLeaves.push(d.data()));
             
             const totalTaken = studentLeaves.length;
-            const totalAllowed = 12; // Default 12 leaves per year
+            const totalAllowed = 12;
             const remaining = Math.max(0, totalAllowed - totalTaken);
             const pending = studentLeaves.filter(l => l.status === "Pending").length;
             const approved = studentLeaves.filter(l => l.status === "Approved").length;
@@ -269,18 +311,42 @@
             document.getElementById("rejectedCount").innerHTML = rejected;
             document.getElementById("studentStats").style.display = "block";
             
-            // Update monthly chart for this student
-            updateStudentMonthlyChart(studentLeaves, student.name);
+            updateStudentMonthlyChart(studentLeaves, currentSelectedStudent.name);
+        };
+        
+        // ✅ FIX: View Full History - শুধু সিলেক্টেড স্টুডেন্টের ইতিহাস দেখাবে
+        window.viewStudentHistory = function() {
+            const selectedEmail = document.getElementById("studentSelect").value;
+            if (!selectedEmail || selectedEmail === "all") {
+                alert("Please select a student first!");
+                return;
+            }
+            const selectedStudent = studentsList.find(s => s.email === selectedEmail);
+            if (selectedStudent) {
+                // Store selected student info in localStorage temporarily
+                localStorage.setItem("selectedStudentForHistory", JSON.stringify({
+                    name: selectedStudent.name,
+                    email: selectedStudent.email,
+                    batch: selectedStudent.batch,
+                    studentId: selectedStudent.studentId
+                }));
+                // Redirect to records page with query parameter
+                window.location.href = `records.html?student=${encodeURIComponent(selectedEmail)}`;
+            }
         };
         
         async function updateStudentMonthlyChart(studentLeaves, studentName) {
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const monthlyData = new Array(12).fill(0);
+            const approvedData = new Array(12).fill(0);
+            const rejectedData = new Array(12).fill(0);
             
             studentLeaves.forEach(leave => {
                 if (leave.fromDate) {
                     const month = new Date(leave.fromDate).getMonth();
                     monthlyData[month]++;
+                    if (leave.status === 'Approved') approvedData[month]++;
+                    if (leave.status === 'Rejected') rejectedData[month]++;
                 }
             });
             
@@ -288,78 +354,57 @@
             if (monthlyChart) monthlyChart.destroy();
             
             monthlyChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
                     labels: months,
-                    datasets: [{
-                        label: `${studentName}'s Leaves`,
-                        data: monthlyData,
-                        backgroundColor: '#2da44e',
-                        borderRadius: 8
-                    }]
+                    datasets: [
+                        {
+                            label: `${studentName}'s Total Leaves`,
+                            data: monthlyData,
+                            borderColor: '#2da44e',
+                            backgroundColor: 'rgba(45, 164, 78, 0.1)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#2da44e'
+                        },
+                        {
+                            label: 'Approved',
+                            data: approvedData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'Rejected',
+                            data: rejectedData,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#ef4444'
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
                     plugins: {
-                        legend: { position: 'top' }
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Number of Leaves' } }
                     }
                 }
             });
-            
-            // Update monthly stats
-            const statsContainer = document.getElementById("monthlyStats");
-            statsContainer.innerHTML = months.map((month, i) => `
-                <div class="month-card">
-                    <div class="month-name">${month}</div>
-                    <div class="month-count">${monthlyData[i]}</div>
-                </div>
-            `).join('');
-        }
-        
-        async function loadAdminMonthlyAnalytics() {
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const monthlyData = new Array(12).fill(0);
-            
-            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).get();
-            leavesSnap.forEach(doc => {
-                const leave = doc.data();
-                if (leave.fromDate) {
-                    const month = new Date(leave.fromDate).getMonth();
-                    monthlyData[month]++;
-                }
-            });
-            
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
-            if (monthlyChart) monthlyChart.destroy();
-            
-            monthlyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: `Total Leaves (${adminDepartment} Department)`,
-                        data: monthlyData,
-                        backgroundColor: '#2da44e',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { position: 'top' }
-                    }
-                }
-            });
-            
-            const statsContainer = document.getElementById("monthlyStats");
-            statsContainer.innerHTML = months.map((month, i) => `
-                <div class="month-card">
-                    <div class="month-name">${month}</div>
-                    <div class="month-count">${monthlyData[i]}</div>
-                </div>
-            `).join('');
         }
         
         async function loadRealData() {
@@ -371,8 +416,10 @@
             permsSnap.forEach(d => allPermissions.push({ id: d.id, ...d.data(), type: "permission" }));
             allLeaves.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
             allPermissions.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
-            filterRequests();
-            await loadAdminMonthlyAnalytics();
+            
+            if (!isAnalyticsView) {
+                filterRequests();
+            }
         }
         
         async function updateBadgeAndDropdown() {
@@ -440,6 +487,9 @@
             });
         }
         
+        // ✅ FIX: Update records.html to show only selected student (add this to records.html as well)
+        // Update records page to filter by student email if present in URL
+        
         auth.onAuthStateChanged(async (user) => {
             if(!user){ location.href="index.html"; return; }
             const uDoc = await db.collection("users").doc(user.uid).get();
@@ -456,6 +506,11 @@
             await loadRealData();
             await updateBadgeAndDropdown();
             setInterval(updateBadgeAndDropdown, 5000);
+            
+            window.addEventListener('resize', function() {
+                if (monthlyChart) monthlyChart.resize();
+            });
+            
             db.collection("leaves").where("department","==",adminDepartment).onSnapshot(()=>loadRealData());
             db.collection("permissions").where("department","==",adminDepartment).onSnapshot(()=>loadRealData());
             db.collection("notifications").where("adminEmail","==",adminEmail).onSnapshot(()=>updateBadgeAndDropdown());
