@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Records & History | EduLeave</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; }
+        .container { max-width: 1300px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .btn { padding: 8px 16px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
+        .btn-logout { background: #dc3545; color: white; }
+        .btn-back { background: #4f46e5; color: white; margin-bottom: 20px; }
+        .btn-download { background: #2da44e; color: white; }
+        .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .filter-bar input, .filter-bar select { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .records-table { background: white; border-radius: 12px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; }
+        .status-pending { color: #f59e0b; font-weight: 600; }
+        .status-approved { color: #10b981; font-weight: 600; }
+        .status-rejected { color: #ef4444; font-weight: 600; }
+        .empty-state { text-align: center; padding: 50px; color: #888; }
+        .dept-info { background: #e8f5e9; padding: 8px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; color: #2e7d32; }
+        @media (max-width: 768px) { .filter-bar { flex-direction: column; } th, td { padding: 8px 10px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"><i class="fas fa-history"></i> Records & History</div>
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">U</div>
+                <button class="btn btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+        
+        <button class="btn btn-back" onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+        
+        <div id="deptInfo" class="dept-info" style="display:none;">Loading...</div>
+        
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search by name or email..." onkeyup="filterRecords()">
+            <select id="typeFilter" onchange="filterRecords()">
+                <option value="all">📋 All Types</option>
+                <option value="leave">📋 Leave Requests</option>
+                <option value="permission">🔐 Permission Requests</option>
+            </select>
+            <select id="statusFilter" onchange="filterRecords()">
+                <option value="all">📊 All Status</option>
+                <option value="Pending">⏳ Pending</option>
+                <option value="Approved">✅ Approved</option>
+                <option value="Rejected">❌ Rejected</option>
+            </select>
+            <button class="btn btn-download" onclick="downloadReport()"><i class="fas fa-download"></i> Download Report</button>
+        </div>
+        
+        <div class="records-table">
+            <div id="recordsList" class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading records...</div>
+        </div>
+    </div>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg",
+            authDomain: "eduleave-system.firebaseapp.com",
+            projectId: "eduleave-system",
+            storageBucket: "eduleave-system.firebasestorage.app",
+            messagingSenderId: "311349906309",
+            appId: "1:311349906309:web:bf5391e233cd186943d2ec"
+        };
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        let allRecords = [];
+        let currentUserRole = null;
+        let currentUserEmail = null;
+        let currentUserName = null;
+        let adminDepartment = null;
+        
+        window.logout = async function() {
+            try { await auth.signOut(); } catch(e) {}
+            sessionStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        };
+        
+        function goBack() {
+            let user = JSON.parse(sessionStorage.getItem("currentUser"));
+            if (user && user.role === "admin") {
+                window.location.href = "admin.html";
+            } else {
+                window.location.href = "home.html";
+            }
+        }
+        
+        async function loadRecords() {
+            const user = auth.currentUser;
+            if (!user) { window.location.href = "index.html"; return; }
+            
+            try {
+                const userDoc = await db.collection("users").doc(user.uid).get();
+                const userData = userDoc.data();
+                currentUserRole = userData?.role;
+                currentUserEmail = user.email;
+                currentUserName = userData?.name;
+                adminDepartment = userData?.department;
+                
+                document.getElementById("userAvatar").innerHTML = currentUserName?.charAt(0).toUpperCase() || "U";
+                
+                let leaves = [];
+                let permissions = [];
+                
+                if (currentUserRole === "admin") {
+                    document.getElementById("deptInfo").style.display = "block";
+                    document.getElementById("deptInfo").innerHTML = `<i class="fas fa-building"></i> Your Department: <strong>${adminDepartment}</strong> | Showing records from <strong>${adminDepartment}</strong> department only`;
+                    
+                    // ✅ No orderBy here - we'll sort manually
+                    const leavesSnapshot = await db.collection("leaves")
+                        .where("department", "==", adminDepartment)
+                        .get();
+                    leavesSnapshot.forEach(doc => {
+                        leaves.push({ id: doc.id, ...doc.data(), recordType: "leave", typeLabel: "📋 Leave" });
+                    });
+                    
+                    const permissionsSnapshot = await db.collection("permissions")
+                        .where("department", "==", adminDepartment)
+                        .get();
+                    permissionsSnapshot.forEach(doc => {
+                        permissions.push({ id: doc.id, ...doc.data(), recordType: "permission", typeLabel: "🔐 Permission" });
+                    });
+                } else {
+                    document.getElementById("deptInfo").style.display = "none";
+                    
+                    // ✅ No orderBy here - we'll sort manually
+                    const leavesSnapshot = await db.collection("leaves")
+                        .where("userEmail", "==", user.email)
+                        .get();
+                    leavesSnapshot.forEach(doc => {
+                        leaves.push({ id: doc.id, ...doc.data(), recordType: "leave", typeLabel: "📋 Leave" });
+                    });
+                    
+                    const permissionsSnapshot = await db.collection("permissions")
+                        .where("userEmail", "==", user.email)
+                        .get();
+                    permissionsSnapshot.forEach(doc => {
+                        permissions.push({ id: doc.id, ...doc.data(), recordType: "permission", typeLabel: "🔐 Permission" });
+                    });
+                }
+                
+                allRecords = [...leaves, ...permissions];
+                // ✅ Manual sorting - no index needed
+                allRecords.sort((a, b) => {
+                    const dateA = a.timestamp ? (a.timestamp.toDate ? a.timestamp.toDate() : new Date(a.timestamp)) : new Date(0);
+                    const dateB = b.timestamp ? (b.timestamp.toDate ? b.timestamp.toDate() : new Date(b.timestamp)) : new Date(0);
+                    return dateB - dateA;
+                });
+                
+                console.log("Total records loaded:", allRecords.length);
+                
+                if (allRecords.length === 0) {
+                    document.getElementById("recordsList").innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i> No records found.</div>';
+                } else {
+                    renderRecords(allRecords);
+                }
+            } catch (error) {
+                console.error("Error loading records:", error);
+                document.getElementById("recordsList").innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</div>`;
+            }
+        }
+        
+        function filterRecords() {
+            let searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
+            let typeFilter = document.getElementById("typeFilter")?.value || "all";
+            let statusFilter = document.getElementById("statusFilter")?.value || "all";
+            
+            let filtered = allRecords.filter(record => {
+                let matchSearch = (record.userName || "").toLowerCase().includes(searchTerm) || 
+                               (record.userEmail || "").toLowerCase().includes(searchTerm);
+                let matchType = typeFilter === "all" || record.recordType === typeFilter;
+                let matchStatus = statusFilter === "all" || record.status === statusFilter;
+                return matchSearch && matchType && matchStatus;
+            });
+            
+            renderRecords(filtered);
+        }
+        
+        function renderRecords(records) {
+            const container = document.getElementById("recordsList");
+            if (!records.length) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i> No matching records found.</div>`;
+                return;
+            }
+            
+            let html = `<table><thead><tr>
+                <th>Type</th><th>User</th><th>Email</th><th>Dept/Batch/ID</th><th>Details</th><th>Status</th><th>Admin Comment</th><th>Date</th>
+            </tr></thead><tbody>`;
+            
+            records.forEach(record => {
+                let statusClass = record.status === "Approved" ? "status-approved" : (record.status === "Rejected" ? "status-rejected" : "status-pending");
+                let deptInfo = `${record.department || "N/A"} | Batch: ${record.batch || "N/A"} | ID: ${record.studentId || "N/A"}`;
+                
+                let details = "";
+                if (record.recordType === "leave") {
+                    details = `<strong>${record.type || "Leave"}</strong><br>
+                              <small>📅 ${record.fromDate || record.from} → ${record.toDate || record.to}</small><br>
+                              <small>📝 ${record.reason || "No reason"}</small>`;
+                } else {
+                    details = `<strong>${record.purpose || "Permission"}</strong><br>
+                              <small>📅 ${record.date || "N/A"}</small><br>
+                              <small>⏰ ${record.startTime || "N/A"} → ${record.endTime || "N/A"}</small><br>
+                              <small>⏱️ Duration: ${record.duration || "N/A"}</small><br>
+                              <small>📝 ${record.reason || "No reason"}</small>`;
+                }
+                
+                let displayDate = "N/A";
+                if (record.timestamp) {
+                    try {
+                        if (record.timestamp.toDate) {
+                            displayDate = record.timestamp.toDate().toLocaleString();
+                        } else {
+                            displayDate = new Date(record.timestamp).toLocaleString();
+                        }
+                    } catch(e) {}
+                }
+                
+                html += `<tr>
+                    <td>${record.typeLabel}</td>
+                    <td>${record.userName || "N/A"}</td>
+                    <td>${record.userEmail || "N/A"}</td>
+                    <td><small>${deptInfo}</small></td>
+                    <td>${details}</td>
+                    <td class="${statusClass}"><strong>${record.status || "Pending"}</strong></td>
+                    <td><small>${record.adminComment || "—"}</small></td>
+                    <td><small>${displayDate}</small></td>
+                </tr>`;
+            });
+            
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+        
+        function downloadReport() {
+            if (allRecords.length === 0) {
+                alert("No records to download!");
+                return;
+            }
+            
+            let content = "========================================\n";
+            content += "        EDULEAVE - RECORDS REPORT\n";
+            content += "========================================\n";
+            content += `Generated: ${new Date().toLocaleString()}\n`;
+            content += `User: ${currentUserEmail}\n`;
+            content += `Role: ${currentUserRole === "admin" ? "Administrator" : "User"}\n`;
+            if (currentUserRole === "admin") {
+                content += `Department: ${adminDepartment}\n`;
+            }
+            content += "========================================\n\n";
+            
+            allRecords.forEach((record, index) => {
+                content += `${index + 1}. [${record.recordType.toUpperCase()}] - ${record.status || "Pending"}\n`;
+                content += `   User: ${record.userName} (${record.userEmail})\n`;
+                content += `   Department: ${record.department || "N/A"}\n`;
+                content += `   Batch: ${record.batch || "N/A"}\n`;
+                content += `   ID: ${record.studentId || "N/A"}\n`;
+                
+                if (record.recordType === "leave") {
+                    content += `   Type: ${record.type}\n`;
+                    content += `   Date: ${record.fromDate || record.from} → ${record.toDate || record.to}\n`;
+                    content += `   Reason: ${record.reason || "—"}\n`;
+                } else {
+                    content += `   Purpose: ${record.purpose}\n`;
+                    content += `   Date: ${record.date}\n`;
+                    content += `   Time: ${record.startTime} → ${record.endTime}\n`;
+                    content += `   Duration: ${record.duration}\n`;
+                    content += `   Reason: ${record.reason || "—"}\n`;
+                }
+                
+                if (record.adminComment) {
+                    content += `   Admin Comment: ${record.adminComment}\n`;
+                }
+                content += "----------------------------------------\n";
+            });
+            
+            content += "\n========================================\n";
+            content += `Total Records: ${allRecords.length}\n`;
+            content += "========================================\n";
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eduleave_report_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert("✅ Report downloaded successfully!");
+        }
+        
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadRecords();
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>

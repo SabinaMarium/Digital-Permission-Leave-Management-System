@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Home | EduLeave</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='50'%3E🏠%3C/text%3E%3C/svg%3E">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; min-height: 100vh; }
+        .home-container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .logo { font-size: 22px; font-weight: bold; color: #1a1a2e; }
+        .logo i { color: #2da44e; margin-right: 10px; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 14px; transition: 0.2s; }
+        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
+        
+        /* Welcome Card */
+        .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 25px 30px; border-radius: 16px; margin-bottom: 25px; }
+        .welcome-card h2 { font-size: 24px; margin-bottom: 8px; }
+        .welcome-card p { font-size: 14px; opacity: 0.9; }
+        
+        /* Main Layout - Sidebar + Right Panel */
+        .main-layout { display: flex; gap: 25px; flex-wrap: wrap; margin-bottom: 30px; align-items: stretch; }
+        .sidebar { flex: 1; min-width: 300px; display: flex; }
+        .right-panel { flex: 2; min-width: 350px; display: flex; }
+        
+        /* Menu Card */
+        .menu-card { background: white; border-radius: 16px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); width: 100%; display: flex; flex-direction: column; }
+        .menu-item { display: flex; align-items: center; gap: 18px; padding: 18px 22px; border-radius: 14px; cursor: pointer; transition: 0.2s; margin: 8px 0; }
+        .menu-item:hover { background: #e8f5e9; transform: translateX(8px); }
+        .menu-icon { font-size: 24px; color: #2da44e; width: 35px; text-align: center; }
+        .menu-text { font-size: 17px; font-weight: 600; color: #333; }
+        
+        /* Profile Card */
+        .profile-card { background: white; border-radius: 16px; padding: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); width: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .profile-avatar { width: 100px; height: 100px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
+        .profile-avatar span { font-size: 42px; color: white; font-weight: bold; }
+        .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 5px; color: #1a1a2e; }
+        .profile-email { font-size: 13px; color: #666; margin-bottom: 10px; }
+        .profile-dept { font-size: 13px; color: #2da44e; background: #e8f5e9; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 10px; }
+        .profile-batch-id { font-size: 13px; color: #555; margin-top: 8px; }
+        .profile-batch-id i { margin-right: 6px; color: #2da44e; }
+        
+        /* Quick Stats - Full Width Card (Height ছোট করা হয়েছে) */
+        .stats-full-card { background: white; border-radius: 16px; padding: 20px 25px; margin-top: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .stats-full-card h3 { font-size: 16px; margin-bottom: 15px; color: #1a1a2e; border-left: 4px solid #2da44e; padding-left: 12px; }
+        .stats-full-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
+        .stat-full-item { text-align: center; padding: 12px 28px; background: #f8f9fa; border-radius: 16px; min-width: 140px; transition: 0.2s; }
+        .stat-full-item:hover { transform: translateY(-3px); background: #e8f5e9; }
+        .stat-full-number { font-size: 32px; font-weight: 800; }
+        .stat-full-label { font-size: 13px; font-weight: 600; margin-top: 6px; }
+        .stat-pending { color: #f59e0b; }
+        .stat-approved { color: #10b981; }
+        .stat-rejected { color: #ef4444; }
+        
+        /* Analytics Section */
+        .analytics-card { background: white; border-radius: 16px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .analytics-card h3 { font-size: 18px; margin-bottom: 15px; color: #1a1a2e; border-left: 4px solid #2da44e; padding-left: 15px; }
+        .period-buttons { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
+        .period-btn { background: #f0f2f5; border: none; padding: 10px 28px; border-radius: 30px; cursor: pointer; font-weight: 500; font-size: 14px; transition: 0.2s; }
+        .period-btn.active { background: #2da44e; color: white; }
+        .period-btn:hover { background: #2da44e; color: white; }
+        .chart-container { margin-top: 20px; }
+        canvas { max-height: 350px; width: 100% !important; }
+        .chart-note { text-align: center; font-size: 12px; color: #888; margin-top: 15px; }
+        
+        @media (max-width: 700px) { 
+            .stat-full-item { padding: 8px 20px; min-width: 110px; } 
+            .stat-full-number { font-size: 26px; }
+            .stat-full-label { font-size: 11px; }
+        }
+        @media (max-width: 900px) { 
+            .main-layout { flex-direction: column; } 
+            .sidebar { min-width: 100%; }
+            .right-panel { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo"><i class="fas fa-graduation-cap"></i> EduLeave System</div>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+        
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h2>Welcome, <span id="welcomeName">User</span>!</h2>
+            <p>Manage your leaves and permissions from one place</p>
+        </div>
+        
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <div class="sidebar">
+                <div class="menu-card">
+                    <div class="menu-item" onclick="location.href='dashboard.html'">
+                        <div class="menu-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <div class="menu-text">Leave Management</div>
+                    </div>
+                    <div class="menu-item" onclick="location.href='permission.html'">
+                        <div class="menu-icon"><i class="fas fa-key"></i></div>
+                        <div class="menu-text">Permission Management</div>
+                    </div>
+                    <div class="menu-item" onclick="location.href='records.html'">
+                        <div class="menu-icon"><i class="fas fa-history"></i></div>
+                        <div class="menu-text">Records & History</div>
+                    </div>
+                    <div class="menu-item" onclick="location.href='profile.html'">
+                        <div class="menu-icon"><i class="fas fa-user-cog"></i></div>
+                        <div class="menu-text">Profile Settings</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="profile-card">
+                    <div class="profile-avatar" id="profileAvatar"><span>U</span></div>
+                    <div class="profile-name" id="profileName">User Name</div>
+                    <div class="profile-email" id="profileEmail">user@example.com</div>
+                    <div class="profile-dept" id="profileDept">Department</div>
+                    <div class="profile-batch-id" id="profileBatchId"><i class="fas fa-calendar"></i> Batch: - | <i class="fas fa-id-card"></i> ID: -</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats - Full Width (Height ছোট করা হয়েছে) -->
+        <div class="stats-full-card">
+            <h3><i class="fas fa-chart-simple"></i> Quick Statistics</h3>
+            <div class="stats-full-grid">
+                <div class="stat-full-item">
+                    <div class="stat-full-number stat-pending" id="totalPending">0</div>
+                    <div class="stat-full-label">⏳ Pending</div>
+                </div>
+                <div class="stat-full-item">
+                    <div class="stat-full-number stat-approved" id="totalApproved">0</div>
+                    <div class="stat-full-label">✅ Approved</div>
+                </div>
+                <div class="stat-full-item">
+                    <div class="stat-full-number stat-rejected" id="totalRejected">0</div>
+                    <div class="stat-full-label">❌ Rejected</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analytics Section -->
+        <div class="analytics-card">
+            <h3><i class="fas fa-chart-line"></i> Request Analytics (Line Chart)</h3>
+            <div class="period-buttons">
+                <button class="period-btn active" onclick="changePeriod('weekly', this)">Weekly</button>
+                <button class="period-btn" onclick="changePeriod('monthly', this)">Monthly</button>
+                <button class="period-btn" onclick="changePeriod('yearly', this)">Yearly</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="requestChart"></canvas>
+            </div>
+            <div class="chart-note"><i class="fas fa-chart-line"></i> Showing Pending, Approved, Rejected requests over time</div>
+        </div>
+    </div>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg",
+            authDomain: "eduleave-system.firebaseapp.com",
+            projectId: "eduleave-system",
+            storageBucket: "eduleave-system.firebasestorage.app",
+            messagingSenderId: "311349906309",
+            appId: "1:311349906309:web:bf5391e233cd186943d2ec"
+        };
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        let requestChart;
+        let currentPeriod = 'weekly';
+        let allRequests = [];
+        
+        window.logout = async function() {
+            try { await auth.signOut(); } catch(e) {}
+            sessionStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        };
+        
+        window.changePeriod = function(period, btn) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateChart();
+        };
+        
+        function getDateRange() {
+            const now = new Date();
+            let startDate;
+            if (currentPeriod === 'weekly') {
+                startDate = new Date(now);
+                startDate.setDate(now.getDate() - 7);
+            } else if (currentPeriod === 'monthly') {
+                startDate = new Date(now);
+                startDate.setMonth(now.getMonth() - 1);
+            } else {
+                startDate = new Date(now);
+                startDate.setFullYear(now.getFullYear() - 1);
+            }
+            return startDate;
+        }
+        
+        function getDateLabels() {
+            const startDate = getDateRange();
+            const endDate = new Date();
+            const labels = [];
+            const current = new Date(startDate);
+            
+            if (currentPeriod === 'weekly') {
+                while (current <= endDate) {
+                    labels.push(current.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                    current.setDate(current.getDate() + 1);
+                }
+            } else if (currentPeriod === 'monthly') {
+                while (current <= endDate) {
+                    labels.push(current.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+                    current.setMonth(current.getMonth() + 1);
+                }
+            } else {
+                while (current <= endDate) {
+                    labels.push(current.getFullYear().toString());
+                    current.setFullYear(current.getFullYear() + 1);
+                }
+            }
+            return labels;
+        }
+        
+        function filterRequestsByDate(requests) {
+            const startDate = getDateRange();
+            return requests.filter(req => {
+                if (!req.timestamp) return false;
+                let reqDate;
+                if (req.timestamp.toDate) {
+                    reqDate = req.timestamp.toDate();
+                } else {
+                    reqDate = new Date(req.timestamp);
+                }
+                return reqDate >= startDate;
+            });
+        }
+        
+        function getDataByDateRange(requests) {
+            const startDate = getDateRange();
+            const endDate = new Date();
+            const dataPoints = [];
+            const current = new Date(startDate);
+            
+            if (currentPeriod === 'weekly') {
+                while (current <= endDate) {
+                    const dayStart = new Date(current);
+                    const dayEnd = new Date(current);
+                    dayEnd.setHours(23, 59, 59, 999);
+                    
+                    const dayRequests = requests.filter(req => {
+                        let reqDate;
+                        if (req.timestamp.toDate) reqDate = req.timestamp.toDate();
+                        else reqDate = new Date(req.timestamp);
+                        return reqDate >= dayStart && reqDate <= dayEnd;
+                    });
+                    
+                    dataPoints.push({
+                        pending: dayRequests.filter(r => r.status === 'Pending').length,
+                        approved: dayRequests.filter(r => r.status === 'Approved').length,
+                        rejected: dayRequests.filter(r => r.status === 'Rejected').length
+                    });
+                    current.setDate(current.getDate() + 1);
+                }
+            } else if (currentPeriod === 'monthly') {
+                while (current <= endDate) {
+                    const monthStart = new Date(current.getFullYear(), current.getMonth(), 1);
+                    const monthEnd = new Date(current.getFullYear(), current.getMonth() + 1, 0);
+                    monthEnd.setHours(23, 59, 59, 999);
+                    
+                    const monthRequests = requests.filter(req => {
+                        let reqDate;
+                        if (req.timestamp.toDate) reqDate = req.timestamp.toDate();
+                        else reqDate = new Date(req.timestamp);
+                        return reqDate >= monthStart && reqDate <= monthEnd;
+                    });
+                    
+                    dataPoints.push({
+                        pending: monthRequests.filter(r => r.status === 'Pending').length,
+                        approved: monthRequests.filter(r => r.status === 'Approved').length,
+                        rejected: monthRequests.filter(r => r.status === 'Rejected').length
+                    });
+                    current.setMonth(current.getMonth() + 1);
+                }
+            } else {
+                while (current <= endDate) {
+                    const yearStart = new Date(current.getFullYear(), 0, 1);
+                    const yearEnd = new Date(current.getFullYear(), 11, 31);
+                    yearEnd.setHours(23, 59, 59, 999);
+                    
+                    const yearRequests = requests.filter(req => {
+                        let reqDate;
+                        if (req.timestamp.toDate) reqDate = req.timestamp.toDate();
+                        else reqDate = new Date(req.timestamp);
+                        return reqDate >= yearStart && reqDate <= yearEnd;
+                    });
+                    
+                    dataPoints.push({
+                        pending: yearRequests.filter(r => r.status === 'Pending').length,
+                        approved: yearRequests.filter(r => r.status === 'Approved').length,
+                        rejected: yearRequests.filter(r => r.status === 'Rejected').length
+                    });
+                    current.setFullYear(current.getFullYear() + 1);
+                }
+            }
+            return dataPoints;
+        }
+        
+        function updateChart() {
+            const filteredRequests = filterRequestsByDate(allRequests);
+            const dataPoints = getDataByDateRange(filteredRequests);
+            const labels = getDateLabels();
+            
+            const pendingData = dataPoints.map(d => d.pending);
+            const approvedData = dataPoints.map(d => d.approved);
+            const rejectedData = dataPoints.map(d => d.rejected);
+            
+            if (requestChart) requestChart.destroy();
+            
+            const ctx = document.getElementById('requestChart').getContext('2d');
+            requestChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Pending Requests',
+                            data: pendingData,
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#f59e0b'
+                        },
+                        {
+                            label: 'Approved Requests',
+                            data: approvedData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'Rejected Requests',
+                            data: rejectedData,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#ef4444'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Number of Requests' } },
+                        x: { title: { display: true, text: currentPeriod === 'weekly' ? 'Date' : (currentPeriod === 'monthly' ? 'Month' : 'Year') } }
+                    }
+                }
+            });
+        }
+        
+        async function loadUserData() {
+            const user = auth.currentUser;
+            if (!user) { window.location.href = "index.html"; return; }
+            
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            const userData = userDoc.data();
+            if (!userData) { window.location.href = "index.html"; return; }
+            
+            if (userData.role === "admin") {
+                window.location.href = "admin.html";
+                return;
+            }
+            
+            document.getElementById("welcomeName").innerHTML = userData.name;
+            document.getElementById("profileAvatar").innerHTML = `<span>${userData.name.charAt(0).toUpperCase()}</span>`;
+            document.getElementById("profileName").innerHTML = userData.name;
+            document.getElementById("profileEmail").innerHTML = user.email;
+            document.getElementById("profileDept").innerHTML = userData.department || "Not Assigned";
+            document.getElementById("profileBatchId").innerHTML = `<i class="fas fa-calendar"></i> Batch: ${userData.batch || "N/A"} &nbsp;|&nbsp; <i class="fas fa-id-card"></i> ID: ${userData.studentId || "N/A"}`;
+            
+            const leavesSnap = await db.collection("leaves").where("userEmail", "==", user.email).get();
+            const permsSnap = await db.collection("permissions").where("userEmail", "==", user.email).get();
+            
+            allRequests = [];
+            leavesSnap.forEach(doc => allRequests.push(doc.data()));
+            permsSnap.forEach(doc => allRequests.push(doc.data()));
+            
+            const totalPending = allRequests.filter(r => r.status === 'Pending').length;
+            const totalApproved = allRequests.filter(r => r.status === 'Approved').length;
+            const totalRejected = allRequests.filter(r => r.status === 'Rejected').length;
+            
+            document.getElementById("totalPending").innerHTML = totalPending;
+            document.getElementById("totalApproved").innerHTML = totalApproved;
+            document.getElementById("totalRejected").innerHTML = totalRejected;
+            
+            updateChart();
+        }
+        
+        auth.onAuthStateChanged((user) => {
+            if (user) loadUserData();
+            else window.location.href = "index.html";
+        });
+    </script>
+</body>
+</html>
