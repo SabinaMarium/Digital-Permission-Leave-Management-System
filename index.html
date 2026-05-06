@@ -307,7 +307,7 @@
                 if (userData.role === "admin") {
                     window.location.href = "admin.html";
                 } else {
-                    window.location.href = home.html";
+                    window.location.href = "home.html";
                 }
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
@@ -331,6 +331,7 @@
             document.getElementById("resetError").innerText = "";
             document.getElementById("resetSuccess").innerHTML = "";
             document.getElementById("resetError").classList.remove("show");
+            document.getElementById("resetSuccess").classList.remove("show");
         };
         
         window.closeForgotPasswordModal = function() {
@@ -345,6 +346,7 @@
             errorDiv.innerText = "";
             successDiv.innerHTML = "";
             errorDiv.classList.remove("show");
+            successDiv.classList.remove("show");
             
             if (!email) {
                 errorDiv.innerText = "Please enter your email address!";
