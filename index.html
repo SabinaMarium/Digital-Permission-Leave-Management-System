@@ -28,9 +28,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             transition: transform 0.3s ease;
         }
-        .box:hover {
-            transform: translateY(-3px);
-        }
+        .box:hover { transform: translateY(-3px); }
         .icon-circle {
             width: 70px; height: 70px;
             background: #2da44e;
@@ -40,7 +38,6 @@
             justify-content: center;
             font-size: 2rem;
             margin-bottom: 1rem;
-            box-shadow: 0 8px 20px rgba(45, 164, 78, 0.25);
         }
         h2 {
             font-size: 1.8rem;
@@ -68,10 +65,7 @@
             outline: none;
             transition: all 0.2s ease;
         }
-        input::placeholder {
-            color: #6b7280;
-            font-weight: 400;
-        }
+        input::placeholder { color: #6b7280; font-weight: 400; }
         input:focus {
             border-color: #2da44e;
             background: #333333;
@@ -94,10 +88,7 @@
             justify-content: center;
             gap: 8px;
         }
-        button:hover {
-            background: #2c974b;
-            transform: scale(0.98);
-        }
+        button:hover { background: #2c974b; transform: scale(0.98); }
         .forgot-link {
             text-align: right;
             margin-top: 5px;
@@ -109,9 +100,7 @@
             font-size: 0.8rem;
             transition: color 0.2s;
         }
-        .forgot-link a:hover {
-            color: #2da44e;
-        }
+        .forgot-link a:hover { color: #2da44e; }
         .footer-text {
             text-align: center;
             margin-top: 1.5rem;
@@ -123,21 +112,33 @@
             text-decoration: none;
             font-weight: 500;
         }
-        .footer-text a:hover {
-            text-decoration: underline;
-        }
+        .footer-text a:hover { text-decoration: underline; }
+        
         .error-msg {
             color: #f87171;
             font-size: 0.8rem;
             text-align: center;
             margin-top: 12px;
-            padding: 8px;
+            padding: 10px;
             background: rgba(248, 113, 113, 0.1);
             border-radius: 12px;
+            display: none;
         }
+        .error-msg.show { display: block; }
+        .success-msg {
+            color: #4ade80;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 12px;
+            display: none;
+        }
+        .success-msg.show { display: block; }
+        
         .text-center { text-align: center; }
         
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -161,14 +162,8 @@
             animation: fadeInUp 0.3s ease;
         }
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .modal-content h3 {
             color: white;
@@ -182,34 +177,15 @@
             text-align: center;
             margin-bottom: 1.5rem;
         }
-        .modal-content input {
-            margin-bottom: 1rem;
-        }
+        .modal-content input { margin-bottom: 1rem; }
         .modal-buttons {
             display: flex;
             gap: 1rem;
             margin-top: 1rem;
         }
-        .modal-buttons button {
-            flex: 1;
-            margin-top: 0;
-        }
-        .btn-cancel {
-            background: #3a3a3a;
-        }
-        .btn-cancel:hover {
-            background: #4a4a4a;
-            transform: scale(0.98);
-        }
-        .success-msg {
-            color: #4ade80;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 10px;
-            padding: 8px;
-            background: rgba(74, 222, 128, 0.1);
-            border-radius: 12px;
-        }
+        .modal-buttons button { flex: 1; margin-top: 0; }
+        .btn-cancel { background: #3a3a3a; }
+        .btn-cancel:hover { background: #4a4a4a; transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -231,6 +207,7 @@
             </div>
             
             <div id="loginError" class="error-msg"></div>
+            <div id="loginSuccess" class="success-msg"></div>
             <button onclick="login()">
                 <span>Login</span>
                 <i class="fas fa-arrow-right" style="font-size: 0.85rem;"></i>
@@ -271,41 +248,72 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         
+        // Resend verification email function
+        async function sendVerificationEmail() {
+            const user = auth.currentUser;
+            if (user && !user.emailVerified) {
+                await user.sendEmailVerification();
+                const successDiv = document.getElementById("loginSuccess");
+                successDiv.innerHTML = "✅ New verification email sent! Please check your inbox.";
+                successDiv.classList.add("show");
+                setTimeout(() => {
+                    successDiv.classList.remove("show");
+                }, 5000);
+            }
+        }
+        
         window.login = async function() {
             let email = document.getElementById("loginEmail").value.trim();
             let password = document.getElementById("loginPassword").value;
             let errorDiv = document.getElementById("loginError");
+            let successDiv = document.getElementById("loginSuccess");
+            
+            errorDiv.classList.remove("show");
+            successDiv.classList.remove("show");
+            errorDiv.innerText = "";
+            successDiv.innerHTML = "";
             
             if (!email || !password) {
                 errorDiv.innerText = "Please fill all fields!";
+                errorDiv.classList.add("show");
                 return;
             }
-            errorDiv.innerText = "";
             
             try {
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const userDoc = await db.collection("users").doc(userCredential.user.uid).get();
+                const user = userCredential.user;
+                
+                // Check if email is verified
+                if (!user.emailVerified) {
+                    errorDiv.innerHTML = "❌ Email not verified! Please check your inbox and verify your email address.<br><br><a href='#' onclick='sendVerificationEmail(); return false;' style='color:#2da44e;'>Click here to resend verification email</a>";
+                    errorDiv.classList.add("show");
+                    await auth.signOut();
+                    return;
+                }
+                
+                // Get user data from Firestore
+                const userDoc = await db.collection("users").doc(user.uid).get();
                 const userData = userDoc.data();
                 
                 if (!userData) throw new Error("User data not found!");
                 
                 sessionStorage.setItem("currentUser", JSON.stringify({
-                    id: userCredential.user.uid,
+                    id: user.uid,
                     name: userData.name,
-                    email: userCredential.user.email,
+                    email: user.email,
                     role: userData.role
                 }));
                 
                 if (userData.role === "admin") {
                     window.location.href = "admin.html";
                 } else {
-                    window.location.href = "home.html";
+                    window.location.href = home.html";
                 }
             } catch (error) {
                 if (error.code === 'auth/user-not-found') {
                     errorDiv.innerText = "No user found with this email!";
                 } else if (error.code === 'auth/wrong-password') {
-                    errorDiv.innerText = "Wrong password!";
+                    errorDiv.innerText = "Wrong password! Please try again.";
                 } else if (error.code === 'auth/invalid-email') {
                     errorDiv.innerText = "Invalid email format!";
                 } else if (error.code === 'auth/too-many-requests') {
@@ -313,6 +321,7 @@
                 } else {
                     errorDiv.innerText = error.message;
                 }
+                errorDiv.classList.add("show");
             }
         };
         
@@ -321,6 +330,7 @@
             document.getElementById("resetEmail").value = "";
             document.getElementById("resetError").innerText = "";
             document.getElementById("resetSuccess").innerHTML = "";
+            document.getElementById("resetError").classList.remove("show");
         };
         
         window.closeForgotPasswordModal = function() {
@@ -334,21 +344,25 @@
             
             errorDiv.innerText = "";
             successDiv.innerHTML = "";
+            errorDiv.classList.remove("show");
             
             if (!email) {
                 errorDiv.innerText = "Please enter your email address!";
+                errorDiv.classList.add("show");
                 return;
             }
             
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 errorDiv.innerText = "Please enter a valid email address!";
+                errorDiv.classList.add("show");
                 return;
             }
             
             try {
                 await auth.sendPasswordResetEmail(email);
                 successDiv.innerHTML = "✅ Password reset link sent! Check your email.";
+                successDiv.classList.add("show");
                 setTimeout(() => {
                     closeForgotPasswordModal();
                 }, 3000);
@@ -360,6 +374,7 @@
                 } else {
                     errorDiv.innerText = error.message;
                 }
+                errorDiv.classList.add("show");
             }
         };
         
@@ -369,6 +384,16 @@
         
         document.getElementById("resetEmail")?.addEventListener("keypress", function(e) {
             if (e.key === "Enter") sendPasswordReset();
+        });
+        
+        document.getElementById("loginEmail")?.addEventListener("input", function() {
+            document.getElementById("loginError").classList.remove("show");
+            document.getElementById("loginSuccess").classList.remove("show");
+        });
+        
+        document.getElementById("loginPassword")?.addEventListener("input", function() {
+            document.getElementById("loginError").classList.remove("show");
+            document.getElementById("loginSuccess").classList.remove("show");
         });
     </script>
 </body>

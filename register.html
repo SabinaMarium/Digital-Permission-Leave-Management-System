@@ -58,7 +58,7 @@
             width: 100%;
             padding: 12px;
             margin-top: 18px;
-            background: #029f2e;
+            background: #2da44e;
             border: none;
             border-radius: 40px;
             font-weight: 600;
@@ -66,9 +66,9 @@
             color: white;
             cursor: pointer;
         }
-        button:hover { background: #049d2f; transform: scale(0.98); }
+        button:hover { background: #2c974b; transform: scale(0.98); }
         .footer-text { text-align: center; margin-top: 1.5rem; color: #ffffff; font-size: 0.85rem; }
-        .footer-text a { color: #4ade80; text-decoration: none; font-weight: 600; }
+        .footer-text a { color: #2da44e; text-decoration: none; font-weight: 600; }
         .suggestions-box {
             background: #2a2a2a;
             border-radius: 1rem;
@@ -93,6 +93,20 @@
         .mb-2 { margin-bottom: 1rem; }
         .mt-2 { margin-top: 1rem; }
         .hidden { display: none; }
+        .info-note {
+            background: rgba(45, 164, 78, 0.15);
+            border: 1px solid rgba(45, 164, 78, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            text-align: center;
+        }
+        .info-note i {
+            color: #2da44e;
+            margin-right: 6px;
+        }
         @media (max-width: 550px) {
             .box { padding: 1.5rem; }
             .form-row { flex-direction: column; }
@@ -168,11 +182,28 @@
             
             <button onclick="register()" class="mt-2">Create Account</button>
             
+            <div class="info-note">
+                <i class="fas fa-envelope"></i> After registration, please check your email to verify your account.
+            </div>
+            
             <p class="footer-text">Already have account? <a href="index.html">Sign in</a></p>
         </div>
     </div>
-    <script src="script.js"></script>
+    
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg",
+            authDomain: "eduleave-system.firebaseapp.com",
+            projectId: "eduleave-system",
+            storageBucket: "eduleave-system.firebasestorage.app",
+            messagingSenderId: "311349906309",
+            appId: "1:311349906309:web:bf5391e233cd186943d2ec"
+        };
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
         function togglePassword(fieldId, btn) {
             const field = document.getElementById(fieldId);
             if (field.type === 'password') {
@@ -286,6 +317,97 @@
             validateConfirmPassword();
         });
         confirmInput?.addEventListener("input", validateConfirmPassword);
+        
+        // Register function with email verification
+        window.register = async function() {
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let role = document.getElementById("role").value;
+            let pass = document.getElementById("password").value;
+            let confirmPwd = document.getElementById("confirmPassword").value;
+            let errorDiv = document.getElementById("registerError");
+            let successDiv = document.getElementById("registerSuccess");
+            
+            errorDiv.innerHTML = "";
+            successDiv.innerHTML = "";
+            
+            if (!name || !email || !role || !pass || !confirmPwd) {
+                errorDiv.innerHTML = "Please fill all required fields!";
+                return;
+            }
+            
+            let department = "", batch = "", studentId = "";
+            if (role === "user") {
+                department = document.getElementById("userDepartment").value;
+                batch = document.getElementById("batch").value;
+                studentId = document.getElementById("studentId").value.trim();
+                if (!department || !batch || !studentId) {
+                    errorDiv.innerHTML = "Please fill Department, Batch and ID!";
+                    return;
+                }
+            } else if (role === "admin") {
+                department = document.getElementById("adminDepartment").value;
+                if (!department) {
+                    errorDiv.innerHTML = "Please select Department!";
+                    return;
+                }
+            }
+            
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                errorDiv.innerHTML = "Enter a valid email address!";
+                return;
+            }
+            
+            if (pass !== confirmPwd) {
+                errorDiv.innerHTML = "Passwords do not match!";
+                return;
+            }
+            
+            const hasUpper = /[A-Z]/.test(pass);
+            const hasLower = /[a-z]/.test(pass);
+            const hasDigit = /[0-9]/.test(pass);
+            const hasSpecial = /[@$!%*?&#]/.test(pass);
+            const isLong = pass.length >= 8;
+            
+            if (!hasUpper || !hasLower || !hasDigit || !hasSpecial || !isLong) {
+                errorDiv.innerHTML = "Password must contain: Uppercase, Lowercase, Digit, Special character and min 8 characters!";
+                return;
+            }
+            
+            try {
+                // Create user with Firebase Authentication
+                const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+                const user = userCredential.user;
+                
+                // Send email verification
+                await user.sendEmailVerification();
+                
+                // Save user data to Firestore
+                const userData = { name, email, department, role, createdAt: new Date().toISOString() };
+                if (role === "user") { userData.batch = batch; userData.studentId = studentId; }
+                await db.collection("users").doc(user.uid).set(userData);
+                
+                // Sign out immediately after registration (so user must verify email before login)
+                await auth.signOut();
+                
+                successDiv.innerHTML = "✅ Registration successful! A verification email has been sent to your inbox. Please verify your email before logging in.";
+                
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 4000);
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    errorDiv.innerHTML = "Email already exists! Try login.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorDiv.innerHTML = "Invalid email format!";
+                } else if (error.code === 'auth/weak-password') {
+                    errorDiv.innerHTML = "Password is too weak!";
+                } else {
+                    errorDiv.innerHTML = error.message;
+                }
+            }
+        };
     </script>
 </body>
 </html>
