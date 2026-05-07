@@ -93,20 +93,6 @@
         .mb-2 { margin-bottom: 1rem; }
         .mt-2 { margin-top: 1rem; }
         .hidden { display: none; }
-        .info-note {
-            background: rgba(45, 164, 78, 0.15);
-            border: 1px solid rgba(45, 164, 78, 0.3);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            font-size: 0.8rem;
-            color: #9ca3af;
-            text-align: center;
-        }
-        .info-note i {
-            color: #2da44e;
-            margin-right: 6px;
-        }
         @media (max-width: 550px) {
             .box { padding: 1.5rem; }
             .form-row { flex-direction: column; }
@@ -181,10 +167,6 @@
             <div id="registerSuccess" class="success-msg"></div>
             
             <button onclick="register()" class="mt-2">Create Account</button>
-            
-            <div class="info-note">
-                <i class="fas fa-envelope"></i> After registration, please check your email to verify your account.
-            </div>
             
             <p class="footer-text">Already have account? <a href="index.html">Sign in</a></p>
         </div>
@@ -318,7 +300,7 @@
         });
         confirmInput?.addEventListener("input", validateConfirmPassword);
         
-        // Register function with email verification
+        // Register function - WITHOUT email verification (direct login after registration)
         window.register = async function() {
             let name = document.getElementById("name").value.trim();
             let email = document.getElementById("email").value.trim();
@@ -376,26 +358,21 @@
             }
             
             try {
-                // Create user with Firebase Authentication
                 const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
                 const user = userCredential.user;
                 
-                // Send email verification
-                await user.sendEmailVerification();
+                // NO EMAIL VERIFICATION - directly work
+                // await user.sendEmailVerification(); // commented out
                 
-                // Save user data to Firestore
                 const userData = { name, email, department, role, createdAt: new Date().toISOString() };
                 if (role === "user") { userData.batch = batch; userData.studentId = studentId; }
                 await db.collection("users").doc(user.uid).set(userData);
                 
-                // Sign out immediately after registration (so user must verify email before login)
-                await auth.signOut();
-                
-                successDiv.innerHTML = "✅ Registration successful! A verification email has been sent to your inbox. Please verify your email before logging in.";
+                successDiv.innerHTML = "✅ Registration successful! Redirecting to login...";
                 
                 setTimeout(() => {
                     window.location.href = "index.html";
-                }, 4000);
+                }, 2000);
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
                     errorDiv.innerHTML = "Email already exists! Try login.";

@@ -125,17 +125,6 @@
             display: none;
         }
         .error-msg.show { display: block; }
-        .success-msg {
-            color: #4ade80;
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 12px;
-            padding: 10px;
-            background: rgba(74, 222, 128, 0.1);
-            border-radius: 12px;
-            display: none;
-        }
-        .success-msg.show { display: block; }
         
         .text-center { text-align: center; }
         
@@ -207,7 +196,6 @@
             </div>
             
             <div id="loginError" class="error-msg"></div>
-            <div id="loginSuccess" class="success-msg"></div>
             <button onclick="login()">
                 <span>Login</span>
                 <i class="fas fa-arrow-right" style="font-size: 0.85rem;"></i>
@@ -248,30 +236,13 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         
-        // Resend verification email function
-        async function sendVerificationEmail() {
-            const user = auth.currentUser;
-            if (user && !user.emailVerified) {
-                await user.sendEmailVerification();
-                const successDiv = document.getElementById("loginSuccess");
-                successDiv.innerHTML = "✅ New verification email sent! Please check your inbox.";
-                successDiv.classList.add("show");
-                setTimeout(() => {
-                    successDiv.classList.remove("show");
-                }, 5000);
-            }
-        }
-        
         window.login = async function() {
             let email = document.getElementById("loginEmail").value.trim();
             let password = document.getElementById("loginPassword").value;
             let errorDiv = document.getElementById("loginError");
-            let successDiv = document.getElementById("loginSuccess");
             
             errorDiv.classList.remove("show");
-            successDiv.classList.remove("show");
             errorDiv.innerText = "";
-            successDiv.innerHTML = "";
             
             if (!email || !password) {
                 errorDiv.innerText = "Please fill all fields!";
@@ -283,15 +254,14 @@
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
                 
-                // Check if email is verified
-                if (!user.emailVerified) {
-                    errorDiv.innerHTML = "❌ Email not verified! Please check your inbox and verify your email address.<br><br><a href='#' onclick='sendVerificationEmail(); return false;' style='color:#2da44e;'>Click here to resend verification email</a>";
-                    errorDiv.classList.add("show");
-                    await auth.signOut();
-                    return;
-                }
+                // NO EMAIL VERIFICATION CHECK - directly allow login
+                // if (!user.emailVerified) {
+                //     errorDiv.innerHTML = "❌ Email not verified! Please check your inbox.";
+                //     errorDiv.classList.add("show");
+                //     await auth.signOut();
+                //     return;
+                // }
                 
-                // Get user data from Firestore
                 const userDoc = await db.collection("users").doc(user.uid).get();
                 const userData = userDoc.data();
                 
@@ -390,12 +360,10 @@
         
         document.getElementById("loginEmail")?.addEventListener("input", function() {
             document.getElementById("loginError").classList.remove("show");
-            document.getElementById("loginSuccess").classList.remove("show");
         });
         
         document.getElementById("loginPassword")?.addEventListener("input", function() {
             document.getElementById("loginError").classList.remove("show");
-            document.getElementById("loginSuccess").classList.remove("show");
         });
     </script>
 </body>
