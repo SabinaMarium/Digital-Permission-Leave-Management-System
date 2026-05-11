@@ -8,100 +8,76 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // ========== EmailJS Configuration ==========
-        const EMAILJS_PUBLIC_KEY = "AL3i8ym-GFA_MMX8A";
-        const EMAILJS_SERVICE_ID = "service_hv5ishb";
-        // ===========================================
-        
-        emailjs.init(EMAILJS_PUBLIC_KEY);
-        console.log("✅ EmailJS initialized");
-    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; min-height: 100vh; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; }
         .admin-container { max-width: 1400px; margin: 0 auto; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; }
         .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
         .logo i { color: #2da44e; margin-right: 8px; }
         .header-right { display: flex; align-items: center; gap: 20px; position: relative; }
         
-        .notification-icon { position: relative; cursor: pointer; font-size: 24px; color: #555; padding: 8px; border-radius: 50%; transition: 0.2s; }
+        .notification-icon { position: relative; cursor: pointer; font-size: 24px; color: #555; padding: 8px; border-radius: 50%; }
         .notification-icon:hover { background: #e8f5e9; color: #2da44e; }
-        .notification-badge { position: absolute; top: -5px; right: -8px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; min-width: 20px; text-align: center; box-shadow: 0 0 0 2px white; }
+        .notification-badge { position: absolute; top: -5px; right: -8px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; min-width: 20px; text-align: center; }
         .notification-dropdown { position: absolute; right: 0; top: 45px; width: 380px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 1000; max-height: 450px; overflow-y: auto; border: 1px solid #e0e0e0; }
-        .notification-item { padding: 14px 16px; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.2s; }
+        .notification-item { padding: 14px 16px; border-bottom: 1px solid #eee; cursor: pointer; }
         .notification-item:hover { background: #f8f9fa; }
         .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
-        .notification-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         .notification-title { font-weight: 600; font-size: 13px; }
-        .notification-user { font-size: 12px; color: #2da44e; margin-bottom: 5px; }
-        .notification-details { font-size: 11px; color: #666; margin-bottom: 5px; }
+        .notification-user { font-size: 12px; color: #2da44e; margin: 5px 0; }
+        .notification-details { font-size: 11px; color: #666; }
         .notification-time { font-size: 10px; color: #999; margin-top: 5px; }
-        .mark-read-btn { background: none; border: none; color: #2da44e; font-size: 11px; cursor: pointer; padding: 2px 8px; border-radius: 10px; }
-        .mark-read-btn:hover { background: #d4edda; }
+        .mark-read-btn { background: none; border: none; color: #2da44e; font-size: 11px; cursor: pointer; }
         
-        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
-        .btn-logout:hover { opacity: 0.9; }
+        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
         
         .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
-        .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
-        .welcome-card p { font-size: 13px; opacity: 0.9; }
-        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
+        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; font-size: 12px; }
         
         .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
         .sidebar { flex: 1; min-width: 280px; }
         .main-content { flex: 3; min-width: 350px; }
         
-        .profile-card { background: white; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .profile-card { background: white; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; }
         .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
         .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
-        .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+        .profile-name { font-size: 16px; font-weight: 700; }
         .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; }
         .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; width: 100%; }
         
-        .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; }
         .records-card h3 { font-size: 15px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
-        .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-        .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; }
+        .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; }
         
-        .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; }
+        .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; }
+        .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; }
         
-        .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .requests-container { background: white; border-radius: 16px; padding: 20px; }
         .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
-        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; transition: 0.2s; }
-        .request-card:hover { transform: translateX(3px); }
+        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; }
         .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
-        .user-name { font-weight: bold; font-size: 15px; }
-        .user-email { font-size: 11px; color: #666; margin-top: 2px; }
-        .user-dept { font-size: 11px; color: #2da44e; margin-top: 2px; }
-        .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; display: inline-block; }
+        .user-name { font-weight: bold; }
+        .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; display: inline-block; }
         .status-pending { background: #fff3cd; color: #856404; }
         .status-approved { background: #d4edda; color: #155724; }
         .status-rejected { background: #f8d7da; color: #721c24; }
-        .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
+        .request-details { font-size: 12px; color: #555; margin: 10px 0; }
         .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; }
         .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
         
-        .analytics-card { background: white; border-radius: 16px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .analytics-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
-        .chart-container { margin-top: 15px; }
-        canvas { max-height: 300px; width: 100% !important; }
-        
         .hidden { display: none; }
         .position-relative { position: relative; }
-        
         @media (max-width: 1000px) { .dashboard-layout { flex-direction: column; } }
         @media (max-width: 600px) { .filter-bar { flex-direction: column; } .comment-input { flex-direction: column; } }
     </style>
@@ -125,8 +101,8 @@
         
         <div class="welcome-card">
             <h2>Welcome, <span id="adminName">Admin</span>!</h2>
-            <p>You are managing <strong id="deptName">your department</strong> department</p>
-            <div class="dept-badge" id="deptBadge"><i class="fas fa-building"></i> Loading...</div>
+            <p>Managing <strong id="deptName">department</strong></p>
+            <div class="dept-badge" id="deptBadge">Loading...</div>
         </div>
         
         <div class="dashboard-layout">
@@ -139,10 +115,8 @@
                 </div>
                 
                 <div class="records-card">
-                    <h3><i class="fas fa-chart-line"></i> Student Analytics</h3>
-                    <select id="studentSelect" class="student-select">
-                        <option value="all">Select a student</option>
-                    </select>
+                    <h3>Student Analytics</h3>
+                    <select id="studentSelect" class="student-select"><option value="all">Select a student</option></select>
                     <button class="btn-analytics" onclick="loadStudentAnalytics()">View Analytics</button>
                     <button class="btn-history" onclick="viewStudentHistory()">View Full History</button>
                 </div>
@@ -150,28 +124,14 @@
             
             <div class="main-content">
                 <div class="filter-bar">
-                    <select id="typeFilter">
-                        <option value="all">All Types</option>
-                        <option value="leave">Leave Requests</option>
-                        <option value="permission">Permission Requests</option>
-                    </select>
-                    <select id="statusFilter">
-                        <option value="all">All Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Approved">Approved</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
+                    <select id="typeFilter"><option value="all">All Types</option><option value="leave">Leave</option><option value="permission">Permission</option></select>
+                    <select id="statusFilter"><option value="all">All Status</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
                     <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
                 </div>
                 
                 <div class="requests-container">
                     <div class="section-title">All Requests</div>
-                    <div id="requestsList"><div class="empty-state">Loading requests...</div></div>
-                </div>
-                
-                <div id="analyticsCard" class="analytics-card hidden">
-                    <h3>Monthly Leave Analytics</h3>
-                    <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
+                    <div id="requestsList"><div class="empty-state">Loading...</div></div>
                 </div>
             </div>
         </div>
@@ -191,291 +151,129 @@
         const auth = firebase.auth();
         
         let adminDepartment = null, adminName = null, adminEmail = null;
-        let allLeaves = [], allPermissions = [];
-        let studentsList = [];
-        let monthlyChart = null;
-        
-        // ============ SEND EMAIL FUNCTION ============
-        async function sendEmail(to, subject, message, fromName, fromEmail) {
-            try {
-                const templateParams = {
-                    from_name: fromName || "EduLeave System",
-                    from_email: fromEmail || "noreply@eduleave.com",
-                    to_email: to,
-                    subject: subject,
-                    message: message
-                };
-                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
-                console.log("✅ Email sent to:", to);
-                return true;
-            } catch(e) {
-                console.error("❌ Email error:", e);
-                return false;
-            }
-        }
+        let allLeaves = [], allPermissions = [], studentsList = [];
+        let allNotifications = [];
         
         // ============ NOTIFICATION SYSTEM ============
-        
-        function setupNotificationsListener() {
-            if (!adminEmail) return;
-            
-            db.collection("notifications")
-                .where("adminEmail", "==", adminEmail)
-                .orderBy("timestamp", "desc")
-                .onSnapshot((snapshot) => {
-                    let unreadCount = 0;
-                    let notifications = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        if (!data.isRead) unreadCount++;
-                        notifications.push({ id: doc.id, ...data });
-                    });
-                    
-                    const badge = document.getElementById("notifBadge");
-                    if (unreadCount > 0) {
-                        badge.innerText = unreadCount;
-                        badge.style.display = "inline-block";
-                    } else {
-                        badge.style.display = "none";
-                    }
-                    
-                    if (document.getElementById("notificationDropdown").style.display === "block") {
-                        renderDropdown(notifications);
-                    }
+        function setupNotifications() {
+            db.collection("notifications").where("adminEmail", "==", adminEmail).orderBy("timestamp", "desc").onSnapshot(snapshot => {
+                let unread = 0;
+                allNotifications = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (!data.isRead) unread++;
+                    allNotifications.push({ id: doc.id, ...data });
                 });
+                const badge = document.getElementById("notifBadge");
+                if (unread > 0) {
+                    badge.innerText = unread;
+                    badge.style.display = "inline-block";
+                } else {
+                    badge.style.display = "none";
+                }
+            });
         }
         
-        function renderDropdown(notifications) {
+        function renderNotifications() {
             const dropdown = document.getElementById("notificationDropdown");
-            if (notifications.length === 0) {
-                dropdown.innerHTML = `<div style="padding:40px;text-align:center;color:#888;"><i class="fas fa-bell-slash"></i><br>No notifications</div>`;
+            if (allNotifications.length === 0) {
+                dropdown.innerHTML = '<div style="padding:40px;text-align:center">No notifications</div>';
                 return;
             }
-            
             let html = '';
-            notifications.forEach(n => {
-                const date = n.timestamp?.toDate ? n.timestamp.toDate() : new Date(n.timestamp);
-                const timeAgo = getTimeAgo(date);
-                const icon = n.type === 'leave' ? '📋' : '🔐';
-                const typeText = n.type === 'leave' ? 'Leave Request' : 'Permission Request';
-                
-                html += `
-                    <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markAsRead('${n.id}')">
-                        <div class="notification-header">
-                            <span class="notification-title">${icon} ${typeText}</span>
-                            <button class="mark-read-btn" onclick="event.stopPropagation(); markAsRead('${n.id}')">✓ Mark read</button>
-                        </div>
-                        <div class="notification-user">👤 ${n.userName}</div>
-                        <div class="notification-details">📝 ${n.details}</div>
-                        <div class="notification-time">🕐 ${timeAgo}</div>
-                    </div>
-                `;
+            allNotifications.forEach(n => {
+                html += `<div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markRead('${n.id}')">
+                    <div class="notification-title">${n.type === 'leave' ? '📋 Leave' : '🔐 Permission'}</div>
+                    <div class="notification-user">👤 ${n.userName}</div>
+                    <div class="notification-details">${n.details}</div>
+                    <div class="notification-time">${new Date(n.timestamp).toLocaleString()}</div>
+                </div>`;
             });
             dropdown.innerHTML = html;
         }
         
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-            if (seconds < 60) return "Just now";
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes} min ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            const days = Math.floor(hours / 24);
-            return `${days} day${days > 1 ? 's' : ''} ago`;
-        }
-        
-        window.toggleNotifications = function() {
-            const dropdown = document.getElementById("notificationDropdown");
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
-                return;
-            }
-            db.collection("notifications").where("adminEmail", "==", adminEmail).get().then(snap => {
-                const notifications = [];
-                snap.forEach(doc => notifications.push({ id: doc.id, ...doc.data() }));
-                renderDropdown(notifications);
-                dropdown.style.display = "block";
-            });
+        window.toggleNotifications = () => {
+            const dd = document.getElementById("notificationDropdown");
+            if (dd.style.display === "block") { dd.style.display = "none"; return; }
+            renderNotifications();
+            dd.style.display = "block";
         };
         
-        window.markAsRead = async function(notifId) {
-            await db.collection("notifications").doc(notifId).update({ isRead: true });
+        window.markRead = async (id) => {
+            await db.collection("notifications").doc(id).update({ isRead: true });
         };
         
-        function createNotification(request) {
-            const details = request.type === "leave" 
-                ? `${request.type} | ${request.fromDate} → ${request.toDate}`
-                : `${request.purpose} | ${request.date} | ${request.startTime} → ${request.endTime}`;
-            
-            db.collection("notifications").add({
-                type: request.type === "leave" ? "leave" : "permission",
-                userName: request.userName,
-                userEmail: request.userEmail,
-                adminEmail: adminEmail,
-                requestId: request.id,
-                details: details,
-                isRead: false,
-                timestamp: new Date().toISOString()
+        async function addNotification(req) {
+            const details = req.type === "leave" ? `${req.type} | ${req.fromDate}→${req.toDate}` : `${req.purpose} | ${req.date} | ${req.startTime}→${req.endTime}`;
+            await db.collection("notifications").add({
+                type: req.type, userName: req.userName, userEmail: req.userEmail,
+                adminEmail: adminEmail, requestId: req.id, details: details,
+                isRead: false, timestamp: new Date().toISOString()
             });
         }
         
-        // ============ WATCH FOR NEW REQUESTS & SEND EMAIL ============
-        
-        function watchNewRequests() {
-            if (!adminDepartment || !adminEmail) return;
-            
-            // Watch Leaves
-            db.collection("leaves").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
+        // ============ WATCH NEW REQUESTS ============
+        function watchRequests() {
+            db.collection("leaves").where("department", "==", adminDepartment).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(async change => {
                     if (change.type === "added") {
                         const data = change.doc.data();
                         if (data.status === "Pending") {
-                            createNotification({ id: change.doc.id, ...data, type: "leave" });
-                            
-                            // Send email to Admin
-                            await sendEmail(
-                                adminEmail,
-                                `📋 New Leave Request from ${data.userName}`,
-                                `Student: ${data.userName}\nEmail: ${data.userEmail}\nType: ${data.type}\nDates: ${data.fromDate} → ${data.toDate}\nReason: ${data.reason}\n\nPlease login to admin panel to approve/reject.`,
-                                data.userName,
-                                data.userEmail
-                            );
+                            await addNotification({ id: change.doc.id, ...data, type: "leave" });
                         }
                     }
                 });
-                loadRequests();
+                loadData();
             });
-            
-            // Watch Permissions
-            db.collection("permissions").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
+            db.collection("permissions").where("department", "==", adminDepartment).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(async change => {
                     if (change.type === "added") {
                         const data = change.doc.data();
                         if (data.status === "Pending") {
-                            createNotification({ id: change.doc.id, ...data, type: "permission" });
-                            
-                            // Send email to Admin
-                            await sendEmail(
-                                adminEmail,
-                                `🔐 New Permission Request from ${data.userName}`,
-                                `Student: ${data.userName}\nEmail: ${data.userEmail}\nPurpose: ${data.purpose}\nDate: ${data.date}\nTime: ${data.startTime} → ${data.endTime}\nDuration: ${data.duration}\nReason: ${data.reason}\n\nPlease login to admin panel to approve/reject.`,
-                                data.userName,
-                                data.userEmail
-                            );
+                            await addNotification({ id: change.doc.id, ...data, type: "permission" });
                         }
                     }
                 });
-                loadRequests();
+                loadData();
             });
         }
         
-        // ============ LOAD DATA ============
-        
-        async function loadStudents() {
-            const snap = await db.collection("users").where("role", "==", "user").where("department", "==", adminDepartment).get();
-            studentsList = [];
-            snap.forEach(d => studentsList.push({ id: d.id, ...d.data() }));
-            const select = document.getElementById("studentSelect");
-            select.innerHTML = '<option value="all">Select a student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name}</option>`).join('');
+        async function updateStatus(id, type, status, comment) {
+            if (!comment.trim()) return alert("Write comment!");
+            const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
+            await ref.update({ status, adminComment: comment, adminName, actionDate: new Date().toISOString() });
+            alert(`✅ ${status}!`);
+            loadData();
         }
         
-        window.viewStudentHistory = function() {
-            const selectedEmail = document.getElementById("studentSelect").value;
-            if (!selectedEmail || selectedEmail === "all") {
-                alert("Please select a student first!");
-                return;
-            }
-            window.location.href = `records.html?student=${encodeURIComponent(selectedEmail)}`;
-        };
-        
-        window.loadStudentAnalytics = async function() {
-            const selectedEmail = document.getElementById("studentSelect").value;
-            if (!selectedEmail || selectedEmail === "all") {
-                alert("Please select a student first!");
-                return;
-            }
-            const currentStudent = studentsList.find(s => s.email === selectedEmail);
-            if (!currentStudent) return;
-            
-            const leavesSnap = await db.collection("leaves").where("userEmail", "==", selectedEmail).get();
-            const studentLeaves = [];
-            leavesSnap.forEach(d => studentLeaves.push(d.data()));
-            
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const monthlyData = new Array(12).fill(0);
-            
-            studentLeaves.forEach(leave => {
-                if (leave.fromDate) {
-                    const month = new Date(leave.fromDate).getMonth();
-                    monthlyData[month]++;
-                }
-            });
-            
-            const ctx = document.getElementById('monthlyChart').getContext('2d');
-            if (monthlyChart) monthlyChart.destroy();
-            
-            monthlyChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: `${currentStudent.name}'s Leaves`,
-                        data: monthlyData,
-                        borderColor: '#2da44e',
-                        backgroundColor: 'rgba(45, 164, 78, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: true }
-            });
-            
-            document.getElementById("analyticsCard").classList.remove("hidden");
-        };
-        
-        async function loadRequests() {
+        async function loadData() {
             if (!adminDepartment) return;
             const leaves = await db.collection("leaves").where("department", "==", adminDepartment).get();
             const perms = await db.collection("permissions").where("department", "==", adminDepartment).get();
             allLeaves = []; allPermissions = [];
             leaves.forEach(d => allLeaves.push({ id: d.id, ...d.data(), type: "leave" }));
             perms.forEach(d => allPermissions.push({ id: d.id, ...d.data(), type: "permission" }));
-            allLeaves.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            allPermissions.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
             filterRequests();
         }
         
-        async function updateRequestStatus(id, type, newStatus, comment) {
-            if (!comment.trim()) return alert("Please write a comment!");
-            const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
-            
-            // Get request data before update
-            const docSnap = await ref.get();
-            const requestData = docSnap.data();
-            
-            await ref.update({ status: newStatus, adminComment: comment, adminName: adminName, actionDate: new Date().toISOString() });
-            
-            // Send email to Student
-            let details = "";
-            if (type === "leave") {
-                details = `Leave from ${requestData.fromDate} → ${requestData.toDate}`;
-            } else {
-                details = `Permission on ${requestData.date} | ${requestData.startTime} → ${requestData.endTime}`;
-            }
-            
-            await sendEmail(
-                requestData.userEmail,
-                `✅ Your ${type === "leave" ? "Leave" : "Permission"} Request has been ${newStatus}`,
-                `Dear ${requestData.userName},\n\nYour ${type === "leave" ? "leave" : "permission"} request has been ${newStatus}.\n\nDetails: ${details}\nAdmin Comment: ${comment}\n\nThank you,\nEduLeave System`,
-                "EduLeave Admin",
-                adminEmail
-            );
-            
-            alert(`✅ Request ${newStatus}! Email sent to student.`);
-            loadRequests();
+        async function loadStudents() {
+            const snap = await db.collection("users").where("role", "==", "user").where("department", "==", adminDepartment).get();
+            studentsList = [];
+            snap.forEach(d => studentsList.push({ id: d.id, ...d.data() }));
+            document.getElementById("studentSelect").innerHTML = '<option value="all">Select student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name}</option>`).join('');
         }
+        
+        window.viewStudentHistory = () => {
+            const email = document.getElementById("studentSelect").value;
+            if (!email || email === "all") return alert("Select a student!");
+            window.location.href = `records.html?student=${encodeURIComponent(email)}`;
+        };
+        
+        window.loadStudentAnalytics = async () => {
+            const email = document.getElementById("studentSelect").value;
+            if (!email || email === "all") return alert("Select a student!");
+            alert("View student records for analytics");
+        };
         
         function filterRequests() {
             const type = document.getElementById("typeFilter").value;
@@ -486,69 +284,37 @@
             renderRequests(reqs);
         }
         
-        function renderRequests(requests) {
+        function renderRequests(reqs) {
             const container = document.getElementById("requestsList");
-            if (!requests.length) {
-                container.innerHTML = `<div class="empty-state">No requests found</div>`;
-                return;
-            }
+            if (!reqs.length) { container.innerHTML = '<div class="empty-state">No requests</div>'; return; }
             container.innerHTML = "";
-            requests.forEach(r => {
+            reqs.forEach(r => {
                 const statusCls = r.status === "Approved" ? "status-approved" : (r.status === "Rejected" ? "status-rejected" : "status-pending");
-                const details = r.type === "leave" ? 
-                    `<div class="request-details"><strong>Dates:</strong> ${r.fromDate} → ${r.toDate}<br><strong>Reason:</strong> ${r.reason || "—"}</div>` :
-                    `<div class="request-details"><strong>Date:</strong> ${r.date}<br><strong>Time:</strong> ${r.startTime} → ${r.endTime}<br><strong>Duration:</strong> ${r.duration}<br><strong>Reason:</strong> ${r.reason || "—"}</div>`;
-                const adminCommentHtml = r.adminComment ? `<div class="admin-comment">${r.adminComment}</div>` : "";
-                const actionHtml = (r.status !== "Approved" && r.status !== "Rejected") ? `
-                    <div class="comment-input">
-                        <input type="text" id="comment-${r.id}" placeholder="Write comment...">
-                        <button class="approve-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Approved',document.getElementById('comment-${r.id}').value)">Approve</button>
-                        <button class="reject-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Rejected',document.getElementById('comment-${r.id}').value)">Reject</button>
-                    </div>` : "";
-                container.innerHTML += `<div class="request-card">
-                    <div class="request-header">
-                        <div>
-                            <div class="user-name">${r.userName}</div>
-                            <div class="user-email">${r.userEmail}</div>
-                            <div class="user-dept">${r.department} | Batch: ${r.batch || "N/A"} | ID: ${r.studentId || "N/A"}</div>
-                        </div>
-                        <span class="status-badge ${statusCls}">${r.status || "Pending"}</span>
-                    </div>
-                    ${details}
-                    ${adminCommentHtml}
-                    ${actionHtml}
-                </div>`;
+                const details = r.type === "leave" ? `<div class="request-details"><strong>Dates:</strong> ${r.fromDate} → ${r.toDate}<br><strong>Reason:</strong> ${r.reason || "—"}</div>` : `<div class="request-details"><strong>Date:</strong> ${r.date}<br><strong>Time:</strong> ${r.startTime} → ${r.endTime}<br><strong>Duration:</strong> ${r.duration}<br><strong>Reason:</strong> ${r.reason || "—"}</div>`;
+                const action = (r.status !== "Approved" && r.status !== "Rejected") ? `<div class="comment-input"><input type="text" id="cmt-${r.id}"><button class="approve-btn" onclick="updateStatus('${r.id}','${r.type}','Approved',document.getElementById('cmt-${r.id}').value)">Approve</button><button class="reject-btn" onclick="updateStatus('${r.id}','${r.type}','Rejected',document.getElementById('cmt-${r.id}').value)">Reject</button></div>` : "";
+                container.innerHTML += `<div class="request-card"><div class="request-header"><div><div class="user-name">${r.userName}</div><div class="user-email">${r.userEmail}</div></div><span class="status-badge ${statusCls}">${r.status}</span></div>${details}${action}</div>`;
             });
         }
         
-        window.logout = async () => {
-            await auth.signOut();
-            sessionStorage.clear();
-            window.location.href = "index.html";
-        };
+        window.logout = async () => { await auth.signOut(); window.location.href = "index.html"; };
         
-        auth.onAuthStateChanged(async (user) => {
+        auth.onAuthStateChanged(async user => {
             if (!user) { window.location.href = "index.html"; return; }
             const doc = await db.collection("users").doc(user.uid).get();
             const data = doc.data();
             if (!data || data.role !== "admin") { window.location.href = "home.html"; return; }
-            
-            adminDepartment = data.department;
-            adminName = data.name;
-            adminEmail = user.email;
-            
+            adminDepartment = data.department; adminName = data.name; adminEmail = user.email;
             document.getElementById("adminName").innerHTML = adminName;
             document.getElementById("deptName").innerHTML = adminDepartment;
-            document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> Department: ${adminDepartment}`;
+            document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> ${adminDepartment}`;
             document.getElementById("adminAvatar").innerHTML = adminName.charAt(0).toUpperCase();
             document.getElementById("profileAvatar").innerHTML = `<span>${adminName.charAt(0).toUpperCase()}</span>`;
             document.getElementById("profileName").innerHTML = adminName;
             document.getElementById("profileEmail").innerHTML = adminEmail;
-            
             await loadStudents();
-            await loadRequests();
-            setupNotificationsListener();
-            watchNewRequests();
+            await loadData();
+            setupNotifications();
+            watchRequests();
         });
     </script>
 </body>
