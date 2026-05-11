@@ -8,53 +8,94 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #f0f2f5; font-family: Arial, sans-serif; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; }
-        .logo { font-size: 20px; font-weight: bold; color: #2da44e; }
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .notification-icon { position: relative; cursor: pointer; font-size: 24px; padding: 5px; }
-        .notification-icon:hover { opacity: 0.8; }
-        .notification-badge { position: absolute; top: -5px; right: -8px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; min-width: 18px; text-align: center; }
-        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 320px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); display: none; max-height: 400px; overflow-y: auto; z-index: 100; }
-        .notification-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .notification-item:hover { background: #f5f5f5; }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; min-height: 100vh; }
+        .admin-container { max-width: 1400px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
+        .logo i { color: #2da44e; margin-right: 8px; }
+        .header-right { display: flex; align-items: center; gap: 20px; position: relative; }
+        
+        .notification-icon { position: relative; cursor: pointer; font-size: 22px; color: #555; }
+        .notification-icon:hover { color: #2da44e; }
+        .notification-badge { position: absolute; top: -8px; right: -10px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; min-width: 18px; text-align: center; }
+        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
+        .notification-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .notification-item:hover { background: #f8f9fa; }
         .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
-        .notification-title { font-weight: bold; font-size: 13px; }
-        .notification-user { font-size: 12px; color: #2da44e; margin: 3px 0; }
-        .notification-details { font-size: 11px; color: #666; }
-        .notification-time { font-size: 10px; color: #999; margin-top: 5px; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 6px 15px; border-radius: 5px; cursor: pointer; }
-        .admin-avatar { width: 35px; height: 35px; background: #2da44e; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
-        .welcome-card { background: #2da44e; color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .filter-bar select, .filter-btn { padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
-        .filter-btn { background: #4f46e5; color: white; border: none; cursor: pointer; }
-        .requests-container { background: white; border-radius: 10px; padding: 20px; }
-        .request-card { background: #f8f9fa; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #2da44e; }
-        .status-pending { color: #f59e0b; font-weight: bold; }
-        .status-approved { color: #10b981; font-weight: bold; }
-        .status-rejected { color: #ef4444; font-weight: bold; }
+        .notification-time { font-size: 10px; color: #888; margin-top: 5px; }
+        
+        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
+        
+        .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
+        .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
+        .welcome-card p { font-size: 13px; opacity: 0.9; }
+        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
+        
+        .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
+        .sidebar { flex: 1; min-width: 260px; }
+        .main-content { flex: 3; min-width: 300px; }
+        
+        .profile-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+        .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
+        .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
+        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.2s; }
+        .btn-profile:hover { opacity: 0.9; transform: scale(0.98); }
+        
+        .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .records-card h3 { font-size: 15px; margin-bottom: 15px; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+        .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
+        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-history:hover { opacity: 0.9; transform: scale(0.98); }
+        
+        .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
+        .filter-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        
+        .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; transition: 0.2s; }
+        .request-card:hover { transform: translateX(3px); }
+        .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+        .user-name { font-weight: bold; font-size: 15px; }
+        .user-email { font-size: 11px; color: #666; margin-top: 2px; }
+        .user-dept { font-size: 11px; color: #2da44e; margin-top: 2px; }
+        .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; display: inline-block; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
         .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px; border-radius: 5px; border: 1px solid #ddd; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
-        .admin-comment { background: #fff3cd; padding: 8px; margin-top: 8px; border-radius: 5px; font-size: 12px; }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; outline: none; }
+        .comment-input input:focus { border-color: #2da44e; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
+        .approve-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
+        .reject-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
         .position-relative { position: relative; }
-        .hidden { display: none; }
+        
+        @media (max-width: 900px) { .dashboard-layout { flex-direction: column; } }
         @media (max-width: 600px) { .filter-bar { flex-direction: column; } .comment-input { flex-direction: column; } }
     </style>
 </head>
 <body>
     <div class="admin-container">
         <div class="header">
-            <div class="logo">📋 EduLeave Admin</div>
+            <div class="logo"><i class="fas fa-crown"></i> Admin Dashboard</div>
             <div class="header-right">
                 <div class="position-relative">
                     <div class="notification-icon" onclick="toggleNotifications()">
-                        🔔
+                        <i class="fas fa-bell"></i>
                         <span id="notifBadge" class="notification-badge" style="display:none;">0</span>
                     </div>
                     <div id="notificationDropdown" class="notification-dropdown"></div>
@@ -66,20 +107,56 @@
         
         <div class="welcome-card">
             <h2>Welcome, <span id="adminName">Admin</span>!</h2>
-            <p>Department: <strong id="deptName">Loading...</strong></p>
+            <p>You are managing <strong id="deptName">your department</strong> department</p>
+            <div class="dept-badge" id="deptBadge"><i class="fas fa-building"></i> Loading...</div>
         </div>
         
-        <div class="filter-bar">
-            <select id="typeFilter"><option value="all">All Types</option><option value="leave">Leave</option><option value="permission">Permission</option></select>
-            <select id="statusFilter"><option value="all">All Status</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select>
-            <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
-        </div>
-        
-        <div class="requests-container">
-            <div id="requestsList"><div class="empty-state">Loading...</div></div>
+        <div class="dashboard-layout">
+            <div class="sidebar">
+                <div class="profile-card">
+                    <div class="profile-avatar" id="profileAvatar"><span>A</span></div>
+                    <div class="profile-name" id="profileName">Admin User</div>
+                    <div class="profile-email" id="profileEmail">admin@example.com</div>
+                    <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
+                </div>
+                
+                <div class="records-card">
+                    <h3>Records & History</h3>
+                    <select id="studentSelect" class="student-select">
+                        <option value="all">All Students (Department Wise)</option>
+                    </select>
+                    <button class="btn-history" onclick="viewHistory()">
+                        View History
+                    </button>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="filter-bar">
+                    <select id="typeFilter">
+                        <option value="all">All Types</option>
+                        <option value="leave">Leave Requests</option>
+                        <option value="permission">Permission Requests</option>
+                    </select>
+                    <select id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
+                </div>
+                
+                <div class="requests-container">
+                    <div class="section-title">All Requests</div>
+                    <div id="requestsList">
+                        <div class="empty-state">Loading requests...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+    
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBtQx8RJ3QbAAxZOwthz4YqWeq-DOC5rGg",
@@ -89,19 +166,63 @@
             messagingSenderId: "311349906309",
             appId: "1:311349906309:web:bf5391e233cd186943d2ec"
         };
+        
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         
-        let adminDepartment = null, adminName = null, adminEmail = null;
-        let allRequests = [];
+        let allLeaves = [], allPermissions = [];
+        let adminDepartment = null;
+        let adminName = null;
+        let adminEmail = null;
+        let allNotifications = [];
+        let notificationsListener = null;
+        let allStudents = [];
         
-        // ============ NOTIFICATION SYSTEM (Firestore - সব ডিভাইসে কাজ করবে) ============
+        window.logout = async function() {
+            try { await auth.signOut(); } catch(e) {}
+            sessionStorage.removeItem("currentUser");
+            window.location.href = "index.html";
+        };
         
-        function setupNotifications() {
-            if (!adminEmail) return;
+        async function loadStudents() {
+            const studentsSnapshot = await db.collection("users")
+                .where("role", "==", "user")
+                .where("department", "==", adminDepartment)
+                .get();
             
-            db.collection("notifications")
+            allStudents = [];
+            studentsSnapshot.forEach(doc => {
+                const data = doc.data();
+                allStudents.push({ id: doc.id, name: data.name, email: data.email, batch: data.batch });
+            });
+            
+            const select = document.getElementById("studentSelect");
+            select.innerHTML = '<option value="all">All Students (' + adminDepartment + ' Department)</option>';
+            allStudents.forEach(student => {
+                select.innerHTML += `<option value="${student.email}">${student.name} (Batch: ${student.batch || "N/A"})</option>`;
+            });
+        }
+        
+        window.viewHistory = function() {
+            const selectedStudent = document.getElementById("studentSelect").value;
+            if (selectedStudent === "all") {
+                window.location.href = "records.html";
+            } else {
+                const student = allStudents.find(s => s.email === selectedStudent);
+                if (student) {
+                    sessionStorage.setItem("selectedStudent", JSON.stringify(student));
+                    window.location.href = "records.html?student=" + encodeURIComponent(student.email);
+                }
+            }
+        };
+        
+        // ============ NOTIFICATION SYSTEM ============
+        
+        function setupNotificationsListener() {
+            if (notificationsListener) notificationsListener();
+            
+            notificationsListener = db.collection("notifications")
                 .where("adminEmail", "==", adminEmail)
                 .orderBy("timestamp", "desc")
                 .onSnapshot((snapshot) => {
@@ -112,6 +233,7 @@
                         if (!data.isRead) unreadCount++;
                         notifications.push({ id: doc.id, ...data });
                     });
+                    allNotifications = notifications;
                     
                     const badge = document.getElementById("notifBadge");
                     if (unreadCount > 0) {
@@ -121,44 +243,36 @@
                         badge.style.display = "none";
                     }
                     
-                    // Update dropdown if open
                     const dropdown = document.getElementById("notificationDropdown");
                     if (dropdown.style.display === "block") {
-                        renderNotifications(notifications);
+                        renderNotificationsDropdown();
                     }
                 });
         }
         
-        function renderNotifications(notifications) {
+        function renderNotificationsDropdown() {
             const dropdown = document.getElementById("notificationDropdown");
-            if (notifications.length === 0) {
-                dropdown.innerHTML = '<div style="padding:20px;text-align:center">No notifications</div>';
-                return;
+            if (allNotifications.length === 0) {
+                dropdown.innerHTML = "<div style='padding:15px; text-align:center; color:#888;'>No notifications</div>";
+            } else {
+                dropdown.innerHTML = allNotifications.map(n => {
+                    const date = n.timestamp ? (n.timestamp.toDate ? n.timestamp.toDate() : new Date(n.timestamp)) : new Date();
+                    const timeAgo = getTimeAgo(date);
+                    return `
+                        <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markNotificationRead('${n.id}')">
+                            <strong>${n.type === 'leave' ? '📋 Leave Request' : '🔐 Permission Request'}</strong><br>
+                            👤 ${n.userName}<br>
+                            📝 ${n.details || ''}<br>
+                            <div class="notification-time">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
             }
-            
-            let html = '';
-            for (const n of notifications) {
-                const timeAgo = getTimeAgo(n.timestamp);
-                const icon = n.type === 'leave' ? '📋' : '🔐';
-                html += `
-                    <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markNotificationRead('${n.id}', '${n.requestId || ''}')">
-                        <div class="notification-title">${icon} ${n.type === 'leave' ? 'Leave Request' : 'Permission Request'}</div>
-                        <div class="notification-user">👤 ${n.userName}</div>
-                        <div class="notification-details">${n.details || ''}</div>
-                        <div class="notification-time">🕐 ${timeAgo}</div>
-                    </div>
-                `;
-            }
-            dropdown.innerHTML = html;
         }
         
-        function getTimeAgo(timestamp) {
-            if (!timestamp) return "Just now";
-            let date;
-            if (timestamp.toDate) date = timestamp.toDate();
-            else date = new Date(timestamp);
+        function getTimeAgo(date) {
             const seconds = Math.floor((new Date() - date) / 1000);
-            if (seconds < 60) return "Just now";
+            if (seconds < 60) return 'Just now';
             const minutes = Math.floor(seconds / 60);
             if (minutes < 60) return `${minutes} min ago`;
             const hours = Math.floor(minutes / 60);
@@ -167,187 +281,226 @@
             return `${days} day${days > 1 ? 's' : ''} ago`;
         }
         
-        window.toggleNotifications = async function() {
+        window.toggleNotifications = function() {
             const dropdown = document.getElementById("notificationDropdown");
             if (dropdown.style.display === "block") {
                 dropdown.style.display = "none";
                 return;
             }
-            const snapshot = await db.collection("notifications")
-                .where("adminEmail", "==", adminEmail)
-                .orderBy("timestamp", "desc")
-                .get();
-            const notifications = [];
-            snapshot.forEach(doc => notifications.push({ id: doc.id, ...doc.data() }));
-            renderNotifications(notifications);
+            renderNotificationsDropdown();
             dropdown.style.display = "block";
         };
         
-        window.markNotificationRead = async function(notifId, requestId) {
-            await db.collection("notifications").doc(notifId).update({ isRead: true });
-            if (requestId) {
-                const element = document.getElementById(`request-${requestId}`);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                    element.style.backgroundColor = '#e8f5e9';
-                    setTimeout(() => element.style.backgroundColor = '', 2000);
-                }
-            }
-            const dropdown = document.getElementById("notificationDropdown");
-            if (dropdown.style.display === "block") {
-                const snapshot = await db.collection("notifications").where("adminEmail", "==", adminEmail).orderBy("timestamp", "desc").get();
-                const notifications = [];
-                snapshot.forEach(doc => notifications.push({ id: doc.id, ...doc.data() }));
-                renderNotifications(notifications);
-            }
+        window.markNotificationRead = async function(id) {
+            await db.collection("notifications").doc(id).update({ isRead: true });
+            document.getElementById("notificationDropdown").style.display = "none";
         };
         
-        // Create notification for new request
-        async function createNotification(request) {
-            const details = request.type === "leave" 
-                ? `${request.type} | ${request.fromDate} → ${request.toDate}`
-                : `${request.purpose} | ${request.date} | ${request.startTime} → ${request.endTime}`;
+        async function createNotificationForPendingRequests() {
+            const pendingLeaves = allLeaves.filter(l => l.status === "Pending");
+            const pendingPermissions = allPermissions.filter(p => p.status === "Pending");
+            const allPending = [...pendingLeaves, ...pendingPermissions];
             
-            await db.collection("notifications").add({
-                type: request.type,
-                userName: request.userName,
-                userEmail: request.userEmail,
-                adminEmail: adminEmail,
-                requestId: request.id,
-                details: details,
-                isRead: false,
-                timestamp: new Date().toISOString()
-            });
-        }
-        
-        // Create notifications for existing pending requests
-        async function loadExistingPendingRequests() {
-            const pending = allRequests.filter(r => r.status === "Pending");
-            for (const req of pending) {
+            for (const req of allPending) {
                 const existing = await db.collection("notifications")
                     .where("requestId", "==", req.id)
                     .where("adminEmail", "==", adminEmail)
                     .get();
+                
                 if (existing.empty) {
-                    await createNotification(req);
+                    const details = req.type === "leave" 
+                        ? `${req.type} | ${req.fromDate} → ${req.toDate}`
+                        : `${req.purpose} | ${req.date} | ${req.startTime} → ${req.endTime}`;
+                    
+                    await db.collection("notifications").add({
+                        type: req.type === "leave" ? "leave" : "permission",
+                        userName: req.userName,
+                        userEmail: req.userEmail,
+                        department: req.department,
+                        adminEmail: adminEmail,
+                        requestId: req.id,
+                        details: details,
+                        reason: req.reason || "No reason",
+                        isRead: false,
+                        timestamp: req.timestamp || new Date().toISOString()
+                    });
                 }
             }
         }
         
-        // ============ MAIN FUNCTIONS ============
-        
         async function loadData() {
-            if (!adminDepartment) return;
-            
-            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).get();
-            const permsSnap = await db.collection("permissions").where("department", "==", adminDepartment).get();
-            
-            allRequests = [];
-            leavesSnap.forEach(doc => allRequests.push({ id: doc.id, ...doc.data(), type: "leave" }));
-            permsSnap.forEach(doc => allRequests.push({ id: doc.id, ...doc.data(), type: "permission" }));
-            allRequests.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            await loadExistingPendingRequests();
-            filterRequests();
-        }
-        
-        async function updateStatus(id, type, status, comment) {
-            if (!comment.trim()) return alert("Write a comment!");
-            const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
-            await ref.update({ status, adminComment: comment, adminName, actionDate: new Date().toISOString() });
-            alert(`✅ Request ${status}!`);
-            loadData();
-        }
-        
-        function filterRequests() {
-            const type = document.getElementById("typeFilter").value;
-            const status = document.getElementById("statusFilter").value;
-            let filtered = allRequests.filter(r => {
-                if (type !== "all" && r.type !== type) return false;
-                if (status !== "all" && r.status !== status) return false;
-                return true;
-            });
-            renderRequests(filtered);
-        }
-        
-        function renderRequests(requests) {
-            const container = document.getElementById("requestsList");
-            if (!requests.length) {
-                container.innerHTML = '<div class="empty-state">No requests found</div>';
-                return;
-            }
-            container.innerHTML = "";
-            for (const r of requests) {
-                const statusClass = r.status === "Approved" ? "status-approved" : (r.status === "Rejected" ? "status-rejected" : "status-pending");
-                const details = r.type === "leave" ? 
-                    `<div><strong>Dates:</strong> ${r.fromDate} → ${r.toDate}</div><div><strong>Reason:</strong> ${r.reason || "—"}</div>` :
-                    `<div><strong>Date:</strong> ${r.date}</div><div><strong>Time:</strong> ${r.startTime} → ${r.endTime}</div><div><strong>Duration:</strong> ${r.duration}</div><div><strong>Reason:</strong> ${r.reason || "—"}</div>`;
-                const action = (r.status !== "Approved" && r.status !== "Rejected") ? `
-                    <div class="comment-input">
-                        <input type="text" id="cmt-${r.id}" placeholder="Write comment...">
-                        <button class="approve-btn" onclick="updateStatus('${r.id}','${r.type}','Approved',document.getElementById('cmt-${r.id}').value)">Approve</button>
-                        <button class="reject-btn" onclick="updateStatus('${r.id}','${r.type}','Rejected',document.getElementById('cmt-${r.id}').value)">Reject</button>
-                    </div>` : "";
-                container.innerHTML += `<div class="request-card" id="request-${r.id}">
-                    <div style="display:flex;justify-content:space-between;flex-wrap:wrap">
-                        <div><strong>${r.userName}</strong><br><small>${r.userEmail}</small><br><small>${r.department} | Batch: ${r.batch || "N/A"}</small></div>
-                        <span class="${statusClass}">${r.status}</span>
-                    </div>
-                    ${details}
-                    ${r.adminComment ? `<div class="admin-comment"><strong>Admin:</strong> ${r.adminComment}</div>` : ""}
-                    ${action}
-                </div>`;
-            }
-        }
-        
-        // Watch for new requests and create notifications
-        function watchNewRequests() {
-            if (!adminDepartment) return;
-            
-            db.collection("leaves").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(change => {
-                    if (change.type === "added") {
-                        const data = change.doc.data();
-                        if (data.status === "Pending") {
-                            createNotification({ id: change.doc.id, ...data, type: "leave" });
-                        }
-                    }
-                });
-                loadData();
-            });
-            
-            db.collection("permissions").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(change => {
-                    if (change.type === "added") {
-                        const data = change.doc.data();
-                        if (data.status === "Pending") {
-                            createNotification({ id: change.doc.id, ...data, type: "permission" });
-                        }
-                    }
-                });
-                loadData();
-            });
-        }
-        
-        window.logout = async () => { await auth.signOut(); window.location.href = "index.html"; };
-        
-        auth.onAuthStateChanged(async (user) => {
+            const user = auth.currentUser;
             if (!user) { window.location.href = "index.html"; return; }
-            const doc = await db.collection("users").doc(user.uid).get();
-            const data = doc.data();
-            if (!data || data.role !== "admin") { window.location.href = "home.html"; return; }
             
-            adminDepartment = data.department;
-            adminName = data.name;
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            const userData = userDoc.data();
+            adminDepartment = userData.department;
+            adminName = userData.name;
             adminEmail = user.email;
             
             document.getElementById("adminName").innerHTML = adminName;
             document.getElementById("deptName").innerHTML = adminDepartment;
+            document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> Department: ${adminDepartment}`;
             document.getElementById("adminAvatar").innerHTML = adminName.charAt(0).toUpperCase();
+            document.getElementById("profileAvatar").innerHTML = `<span>${adminName.charAt(0).toUpperCase()}</span>`;
+            document.getElementById("profileName").innerHTML = adminName;
+            document.getElementById("profileEmail").innerHTML = adminEmail;
             
-            await loadData();
-            setupNotifications();
-            watchNewRequests();
+            await loadStudents();
+            setupNotificationsListener();
+            
+            const leavesSnapshot = await db.collection("leaves")
+                .where("department", "==", adminDepartment)
+                .get();
+            
+            const permissionsSnapshot = await db.collection("permissions")
+                .where("department", "==", adminDepartment)
+                .get();
+            
+            allLeaves = [];
+            allPermissions = [];
+            
+            leavesSnapshot.forEach(doc => {
+                allLeaves.push({ id: doc.id, ...doc.data(), type: "leave" });
+            });
+            
+            permissionsSnapshot.forEach(doc => {
+                allPermissions.push({ id: doc.id, ...doc.data(), type: "permission" });
+            });
+            
+            allLeaves.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+            allPermissions.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+            
+            await createNotificationForPendingRequests();
+            filterRequests();
+        }
+        
+        async function updateRequestStatus(id, type, newStatus, comment) {
+            if (!comment.trim()) { alert("Please write a comment!"); return; }
+            
+            try {
+                const collectionRef = type === "leave" ? db.collection("leaves") : db.collection("permissions");
+                await collectionRef.doc(id).update({ 
+                    status: newStatus, 
+                    adminComment: comment, 
+                    adminName: adminName, 
+                    actionDate: new Date().toISOString() 
+                });
+                
+                const notifQuery = await db.collection("notifications")
+                    .where("requestId", "==", id)
+                    .get();
+                notifQuery.forEach(async (doc) => {
+                    await db.collection("notifications").doc(doc.id).update({ isRead: true });
+                });
+                
+                alert(`Request ${newStatus} with comment: "${comment}"`);
+                loadData();
+            } catch(e) { 
+                console.error("Error:", e);
+                alert("Failed to update!"); 
+            }
+        }
+        
+        function filterRequests() {
+            const typeFilter = document.getElementById("typeFilter").value;
+            const statusFilter = document.getElementById("statusFilter").value;
+            
+            let requests = [];
+            if (typeFilter === "all" || typeFilter === "leave") {
+                let filtered = [...allLeaves];
+                if (statusFilter !== "all") {
+                    filtered = filtered.filter(r => r.status === statusFilter);
+                }
+                requests.push(...filtered);
+            }
+            if (typeFilter === "all" || typeFilter === "permission") {
+                let filtered = [...allPermissions];
+                if (statusFilter !== "all") {
+                    filtered = filtered.filter(r => r.status === statusFilter);
+                }
+                requests.push(...filtered);
+            }
+            
+            renderRequests(requests);
+        }
+        
+        function renderRequests(requests) {
+            const container = document.getElementById("requestsList");
+            if (requests.length === 0) {
+                container.innerHTML = `<div class="empty-state">No requests found in ${adminDepartment} department.</div>`;
+                return;
+            }
+            
+            container.innerHTML = "";
+            requests.forEach(req => {
+                const statusClass = req.status === "Approved" ? "status-approved" : (req.status === "Rejected" ? "status-rejected" : "status-pending");
+                const statusText = req.status || "Pending";
+                
+                let details = "";
+                if (req.type === "leave") {
+                    details = `<div class="request-details">
+                        <strong>Dates:</strong> ${req.fromDate || req.from} → ${req.toDate || req.to}<br>
+                        <strong>Reason:</strong> ${req.reason || "No reason provided"}
+                    </div>`;
+                } else {
+                    details = `<div class="request-details">
+                        <strong>Date:</strong> ${req.date}<br>
+                        <strong>Time:</strong> ${req.startTime} → ${req.endTime}<br>
+                        <strong>Duration:</strong> ${req.duration}<br>
+                        <strong>Reason:</strong> ${req.reason || "No reason provided"}
+                    </div>`;
+                }
+                
+                const adminCommentHtml = req.adminComment ? `<div class="admin-comment">${req.adminComment}</div>` : "";
+                const actionHtml = (req.status !== "Approved" && req.status !== "Rejected") ? 
+                    `<div class="comment-input">
+                        <input type="text" id="comment-${req.id}" placeholder="Write your comment here...">
+                        <button class="approve-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Approved', document.getElementById('comment-${req.id}').value)">Approve</button>
+                        <button class="reject-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Rejected', document.getElementById('comment-${req.id}').value)">Reject</button>
+                    </div>` : "";
+                
+                container.innerHTML += `
+                    <div class="request-card" id="request-${req.id}">
+                        <div class="request-header">
+                            <div>
+                                <div class="user-name">${req.userName}</div>
+                                <div class="user-email">${req.userEmail}</div>
+                                <div class="user-dept">${req.department} | Batch: ${req.batch || "N/A"} | ID: ${req.studentId || "N/A"}</div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        ${details}
+                        ${adminCommentHtml}
+                        ${actionHtml}
+                    </div>
+                `;
+            });
+        }
+        
+        let leavesUnsubscribe = null;
+        let permissionsUnsubscribe = null;
+        
+        function setupRealtimeListeners() {
+            if (leavesUnsubscribe) leavesUnsubscribe();
+            if (permissionsUnsubscribe) permissionsUnsubscribe();
+            
+            leavesUnsubscribe = db.collection("leaves")
+                .where("department", "==", adminDepartment)
+                .onSnapshot(() => loadData());
+            
+            permissionsUnsubscribe = db.collection("permissions")
+                .where("department", "==", adminDepartment)
+                .onSnapshot(() => loadData());
+        }
+        
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                await loadData();
+                setupRealtimeListeners();
+            } else {
+                window.location.href = "index.html";
+            }
         });
     </script>
 </body>
