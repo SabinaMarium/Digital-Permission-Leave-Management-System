@@ -10,11 +10,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // ========== EmailJS Configuration ==========
         const EMAILJS_PUBLIC_KEY = "AL3i8ym-GFA_MMX8A";
-        const EMAILJS_SERVICE_ID = "service_wvak23r";
-        // ===========================================
-        
+        const EMAILJS_SERVICE_ID = "service_hv5ishb";
         emailjs.init(EMAILJS_PUBLIC_KEY);
     </script>
     <style>
@@ -37,7 +34,6 @@
         .date-field label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
         .btn-submit { background: linear-gradient(135deg, #2da44e, #216e39); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; margin-top: 10px; }
         .btn-submit:hover { transform: scale(0.98); }
-        .email-badge { background: #e8f5e9; padding: 4px 10px; border-radius: 20px; font-size: 11px; color: #2da44e; margin-left: 10px; display: inline-block; }
         @media (max-width: 550px) { .date-group { flex-direction: column; gap: 0; } body { padding: 10px; } }
     </style>
 </head>
@@ -56,10 +52,7 @@
         <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
         
         <div class="form-card">
-            <div class="form-title">
-                <i class="fas fa-pen-alt"></i> Apply for Leave
-                <span class="email-badge"><i class="fas fa-envelope"></i> Email notification will be sent to Admin</span>
-            </div>
+            <div class="form-title"><i class="fas fa-pen-alt"></i> Apply for Leave</div>
             
             <select id="department" class="input-field">
                 <option value="">Select Department</option>
@@ -120,24 +113,6 @@
             });
         };
         
-        // Send email to Admin when student applies
-        async function sendEmailToAdmin(adminEmail, studentName, studentEmail, type, details, reason) {
-            if (!adminEmail) return;
-            try {
-                const templateParams = {
-                    from_name: `EduLeave - ${studentName}`,
-                    from_email: studentEmail,
-                    to_email: adminEmail,
-                    subject: `📋 New ${type} Request from ${studentName}`,
-                    message: `Student: ${studentName}\nEmail: ${studentEmail}\nType: ${type}\nDetails: ${details}\nReason: ${reason}\n\nPlease login to admin panel to approve/reject.`
-                };
-                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
-                console.log("📧 Email sent to admin:", adminEmail);
-            } catch(e) {
-                console.error("Email error:", e);
-            }
-        }
-        
         window.submitLeave = async function() {
             const user = auth.currentUser;
             if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
@@ -181,10 +156,6 @@
             
             try {
                 await db.collection("leaves").add(requestData);
-                
-                // Send email to Admin
-                await sendEmailToAdmin(adminEmail, name, user.email, `Leave - ${type}`, `${from} → ${to}`, reason);
-                
                 alert("✅ Leave request submitted! Admin will be notified by email.");
                 
                 document.getElementById("fromDate").value = "";

@@ -11,10 +11,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // ========== EmailJS Configuration (আপনার তথ্য বসানো আছে) ==========
+        // ========== EmailJS Configuration ==========
         const EMAILJS_PUBLIC_KEY = "AL3i8ym-GFA_MMX8A";
-        const EMAILJS_SERVICE_ID = "service_wvak23r";
-        // ===================================================================
+        const EMAILJS_SERVICE_ID = "service_hv5ishb";
+        // ===========================================
         
         emailjs.init(EMAILJS_PUBLIC_KEY);
         console.log("✅ EmailJS initialized");
@@ -29,7 +29,6 @@
         .logo i { color: #2da44e; margin-right: 8px; }
         .header-right { display: flex; align-items: center; gap: 20px; position: relative; }
         
-        /* Notification Styles */
         .notification-icon { position: relative; cursor: pointer; font-size: 24px; color: #555; padding: 8px; border-radius: 50%; transition: 0.2s; }
         .notification-icon:hover { background: #e8f5e9; color: #2da44e; }
         .notification-badge { position: absolute; top: -5px; right: -8px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; min-width: 20px; text-align: center; box-shadow: 0 0 0 2px white; }
@@ -45,15 +44,14 @@
         .mark-read-btn { background: none; border: none; color: #2da44e; font-size: 11px; cursor: pointer; padding: 2px 8px; border-radius: 10px; }
         .mark-read-btn:hover { background: #d4edda; }
         
-        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
-        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
+        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+        .btn-logout:hover { opacity: 0.9; }
         
         .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
         .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
         .welcome-card p { font-size: 13px; opacity: 0.9; }
         .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
-        .email-status { background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 20px; font-size: 11px; margin-left: 10px; display: inline-block; }
         
         .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
         .sidebar { flex: 1; min-width: 280px; }
@@ -63,20 +61,18 @@
         .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
         .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
         .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
-        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.2s; }
-        .btn-profile:hover { opacity: 0.9; transform: scale(0.98); }
+        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; }
+        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; width: 100%; }
         
         .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .records-card h3 { font-size: 15px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
         .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-        .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         
         .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
-        .filter-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; }
         
         .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
@@ -92,12 +88,9 @@
         .status-rejected { background: #f8d7da; color: #721c24; }
         .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
         .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; outline: none; }
-        .comment-input input:focus { border-color: #2da44e; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .approve-btn:hover { opacity: 0.9; }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .reject-btn:hover { opacity: 0.9; }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
         
@@ -126,7 +119,7 @@
                     <div id="notificationDropdown" class="notification-dropdown"></div>
                 </div>
                 <div class="admin-avatar" id="adminAvatar">A</div>
-                <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </div>
         
@@ -134,7 +127,6 @@
             <h2>Welcome, <span id="adminName">Admin</span>!</h2>
             <p>You are managing <strong id="deptName">your department</strong> department</p>
             <div class="dept-badge" id="deptBadge"><i class="fas fa-building"></i> Loading...</div>
-            <span class="email-status" id="emailStatus"><i class="fas fa-envelope"></i> Email: ✅ Ready</span>
         </div>
         
         <div class="dashboard-layout">
@@ -143,7 +135,7 @@
                     <div class="profile-avatar" id="profileAvatar"><span>A</span></div>
                     <div class="profile-name" id="profileName">Admin</div>
                     <div class="profile-email" id="profileEmail">admin@example.com</div>
-                    <button class="btn-profile" onclick="location.href='profile.html'"><i class="fas fa-user-edit"></i> Edit Profile</button>
+                    <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
                 </div>
                 
                 <div class="records-card">
@@ -151,8 +143,8 @@
                     <select id="studentSelect" class="student-select">
                         <option value="all">Select a student</option>
                     </select>
-                    <button class="btn-analytics" onclick="loadStudentAnalytics()"><i class="fas fa-chart-line"></i> View Analytics</button>
-                    <button class="btn-history" onclick="viewStudentHistory()"><i class="fas fa-history"></i> View Full History</button>
+                    <button class="btn-analytics" onclick="loadStudentAnalytics()">View Analytics</button>
+                    <button class="btn-history" onclick="viewStudentHistory()">View Full History</button>
                 </div>
             </div>
             
@@ -169,18 +161,17 @@
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                     </select>
-                    <button class="filter-btn" onclick="filterRequests()"><i class="fas fa-filter"></i> Apply Filter</button>
+                    <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
                 </div>
                 
                 <div class="requests-container">
-                    <div class="section-title"><i class="fas fa-list"></i> All Requests</div>
-                    <div id="requestsList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div></div>
+                    <div class="section-title">All Requests</div>
+                    <div id="requestsList"><div class="empty-state">Loading requests...</div></div>
                 </div>
                 
                 <div id="analyticsCard" class="analytics-card hidden">
-                    <h3><i class="fas fa-chart-line"></i> Monthly Leave Analytics</h3>
+                    <h3>Monthly Leave Analytics</h3>
                     <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
-                    <div class="chart-note" style="font-size: 11px; color: #888; margin-top: 10px; text-align: center;">Showing monthly leave requests</div>
                 </div>
             </div>
         </div>
@@ -204,57 +195,83 @@
         let studentsList = [];
         let monthlyChart = null;
         
-        // ============ LOCAL NOTIFICATION SYSTEM (Bell Icon) ============
-        
-        function getNotifications() {
-            const stored = localStorage.getItem("adminNotifications");
-            return stored ? JSON.parse(stored) : [];
-        }
-        
-        function saveNotifications(notifications) {
-            localStorage.setItem("adminNotifications", JSON.stringify(notifications));
-        }
-        
-        function addNotification(request) {
-            let notifications = getNotifications();
-            if (notifications.some(n => n.requestId === request.id)) return;
-            
-            const details = request.type === "leave" 
-                ? `${request.type || request.leaveType} | ${request.fromDate} → ${request.toDate}`
-                : `${request.purpose} | ${request.date} | ${request.startTime} → ${request.endTime}`;
-            
-            notifications.unshift({
-                id: Date.now(),
-                type: request.type === "leave" ? "leave" : "permission",
-                userName: request.userName,
-                userEmail: request.userEmail,
-                details: details,
-                reason: request.reason || "No reason",
-                requestId: request.id,
-                timestamp: new Date().toISOString(),
-                isRead: false
-            });
-            
-            saveNotifications(notifications);
-            updateBadge();
-        }
-        
-        function loadPendingRequestsAsNotifications() {
-            const pendingLeaves = allLeaves.filter(l => l.status === "Pending");
-            const pendingPermissions = allPermissions.filter(p => p.status === "Pending");
-            [...pendingLeaves, ...pendingPermissions].forEach(req => addNotification(req));
-        }
-        
-        function updateBadge() {
-            const notifications = getNotifications();
-            const unreadCount = notifications.filter(n => !n.isRead).length;
-            const badge = document.getElementById("notifBadge");
-            if (unreadCount > 0) {
-                badge.innerText = unreadCount;
-                badge.style.display = "inline-block";
-            } else {
-                badge.style.display = "none";
+        // ============ SEND EMAIL FUNCTION ============
+        async function sendEmail(to, subject, message, fromName, fromEmail) {
+            try {
+                const templateParams = {
+                    from_name: fromName || "EduLeave System",
+                    from_email: fromEmail || "noreply@eduleave.com",
+                    to_email: to,
+                    subject: subject,
+                    message: message
+                };
+                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
+                console.log("✅ Email sent to:", to);
+                return true;
+            } catch(e) {
+                console.error("❌ Email error:", e);
+                return false;
             }
+        }
+        
+        // ============ NOTIFICATION SYSTEM ============
+        
+        function setupNotificationsListener() {
+            if (!adminEmail) return;
+            
+            db.collection("notifications")
+                .where("adminEmail", "==", adminEmail)
+                .orderBy("timestamp", "desc")
+                .onSnapshot((snapshot) => {
+                    let unreadCount = 0;
+                    let notifications = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (!data.isRead) unreadCount++;
+                        notifications.push({ id: doc.id, ...data });
+                    });
+                    
+                    const badge = document.getElementById("notifBadge");
+                    if (unreadCount > 0) {
+                        badge.innerText = unreadCount;
+                        badge.style.display = "inline-block";
+                    } else {
+                        badge.style.display = "none";
+                    }
+                    
+                    if (document.getElementById("notificationDropdown").style.display === "block") {
+                        renderDropdown(notifications);
+                    }
+                });
+        }
+        
+        function renderDropdown(notifications) {
+            const dropdown = document.getElementById("notificationDropdown");
+            if (notifications.length === 0) {
+                dropdown.innerHTML = `<div style="padding:40px;text-align:center;color:#888;"><i class="fas fa-bell-slash"></i><br>No notifications</div>`;
+                return;
+            }
+            
+            let html = '';
+            notifications.forEach(n => {
+                const date = n.timestamp?.toDate ? n.timestamp.toDate() : new Date(n.timestamp);
+                const timeAgo = getTimeAgo(date);
+                const icon = n.type === 'leave' ? '📋' : '🔐';
+                const typeText = n.type === 'leave' ? 'Leave Request' : 'Permission Request';
+                
+                html += `
+                    <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markAsRead('${n.id}')">
+                        <div class="notification-header">
+                            <span class="notification-title">${icon} ${typeText}</span>
+                            <button class="mark-read-btn" onclick="event.stopPropagation(); markAsRead('${n.id}')">✓ Mark read</button>
+                        </div>
+                        <div class="notification-user">👤 ${n.userName}</div>
+                        <div class="notification-details">📝 ${n.details}</div>
+                        <div class="notification-time">🕐 ${timeAgo}</div>
+                    </div>
+                `;
+            });
+            dropdown.innerHTML = html;
         }
         
         function getTimeAgo(date) {
@@ -268,114 +285,84 @@
             return `${days} day${days > 1 ? 's' : ''} ago`;
         }
         
-        function renderDropdown() {
-            const dropdown = document.getElementById("notificationDropdown");
-            const notifications = getNotifications();
-            
-            if (notifications.length === 0) {
-                dropdown.innerHTML = `<div style="padding:40px;text-align:center;color:#888;"><i class="fas fa-bell-slash"></i><br>No notifications</div>`;
-                return;
-            }
-            
-            let html = '';
-            notifications.forEach(n => {
-                const date = new Date(n.timestamp);
-                const timeAgo = getTimeAgo(date);
-                const icon = n.type === 'leave' ? '📋' : '🔐';
-                const typeText = n.type === 'leave' ? 'Leave Request' : 'Permission Request';
-                
-                html += `
-                    <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markAsRead('${n.id}', '${n.requestId}')">
-                        <div class="notification-header">
-                            <span class="notification-title">${icon} ${typeText}</span>
-                            <button class="mark-read-btn" onclick="event.stopPropagation(); markAsRead('${n.id}', '${n.requestId}')">✓ Mark read</button>
-                        </div>
-                        <div class="notification-user">👤 ${n.userName}</div>
-                        <div class="notification-details">📝 ${n.details}</div>
-                        <div class="notification-time">🕐 ${timeAgo}</div>
-                    </div>
-                `;
-            });
-            dropdown.innerHTML = html;
-        }
-        
         window.toggleNotifications = function() {
             const dropdown = document.getElementById("notificationDropdown");
             if (dropdown.style.display === "block") {
                 dropdown.style.display = "none";
                 return;
             }
-            renderDropdown();
-            dropdown.style.display = "block";
+            db.collection("notifications").where("adminEmail", "==", adminEmail).get().then(snap => {
+                const notifications = [];
+                snap.forEach(doc => notifications.push({ id: doc.id, ...doc.data() }));
+                renderDropdown(notifications);
+                dropdown.style.display = "block";
+            });
         };
         
-        window.markAsRead = function(id, requestId) {
-            let notifications = getNotifications();
-            notifications = notifications.map(n => n.id == id ? { ...n, isRead: true } : n);
-            saveNotifications(notifications);
-            updateBadge();
+        window.markAsRead = async function(notifId) {
+            await db.collection("notifications").doc(notifId).update({ isRead: true });
+        };
+        
+        function createNotification(request) {
+            const details = request.type === "leave" 
+                ? `${request.type} | ${request.fromDate} → ${request.toDate}`
+                : `${request.purpose} | ${request.date} | ${request.startTime} → ${request.endTime}`;
             
-            if (requestId) {
-                const el = document.getElementById(`request-${requestId}`);
-                if (el) {
-                    el.scrollIntoView({ behavior: 'smooth' });
-                    el.style.backgroundColor = '#e8f5e9';
-                    setTimeout(() => el.style.backgroundColor = '', 2000);
-                }
-            }
-            const dropdown = document.getElementById("notificationDropdown");
-            if (dropdown.style.display === "block") renderDropdown();
-        };
-        
-        // ============ EMAIL NOTIFICATION ============
-        
-        // Email to Student when Admin approves/rejects
-        async function sendEmailToStudent(studentEmail, studentName, requestType, status, details, adminComment) {
-            if (!studentEmail) return false;
-            try {
-                const templateParams = {
-                    from_name: `EduLeave System`,
-                    from_email: adminEmail,
-                    to_email: studentEmail,
-                    subject: `📋 Your ${requestType} has been ${status}`,
-                    message: `Dear ${studentName},\n\nYour ${requestType} has been ${status}.\n\nDetails: ${details}\n\nAdmin Comment: ${adminComment}\n\nThank you,\nEduLeave System`
-                };
-                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
-                console.log("📧 Email sent to student:", studentEmail);
-                return true;
-            } catch(e) {
-                console.error("Email error to student:", e);
-                return false;
-            }
+            db.collection("notifications").add({
+                type: request.type === "leave" ? "leave" : "permission",
+                userName: request.userName,
+                userEmail: request.userEmail,
+                adminEmail: adminEmail,
+                requestId: request.id,
+                details: details,
+                isRead: false,
+                timestamp: new Date().toISOString()
+            });
         }
         
-        // ============ WATCH FOR NEW REQUESTS ============
+        // ============ WATCH FOR NEW REQUESTS & SEND EMAIL ============
         
         function watchNewRequests() {
             if (!adminDepartment || !adminEmail) return;
             
+            // Watch Leaves
             db.collection("leaves").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(change => {
+                snapshot.docChanges().forEach(async change => {
                     if (change.type === "added") {
                         const data = change.doc.data();
                         if (data.status === "Pending") {
-                            const details = `${data.type} | ${data.fromDate} → ${data.toDate}`;
-                            addNotification({ id: change.doc.id, ...data, type: "leave" });
-                            updateBadge();
+                            createNotification({ id: change.doc.id, ...data, type: "leave" });
+                            
+                            // Send email to Admin
+                            await sendEmail(
+                                adminEmail,
+                                `📋 New Leave Request from ${data.userName}`,
+                                `Student: ${data.userName}\nEmail: ${data.userEmail}\nType: ${data.type}\nDates: ${data.fromDate} → ${data.toDate}\nReason: ${data.reason}\n\nPlease login to admin panel to approve/reject.`,
+                                data.userName,
+                                data.userEmail
+                            );
                         }
                     }
                 });
                 loadRequests();
             });
             
+            // Watch Permissions
             db.collection("permissions").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(change => {
+                snapshot.docChanges().forEach(async change => {
                     if (change.type === "added") {
                         const data = change.doc.data();
                         if (data.status === "Pending") {
-                            const details = `${data.purpose} | ${data.date} | ${data.startTime} → ${data.endTime}`;
-                            addNotification({ id: change.doc.id, ...data, type: "permission" });
-                            updateBadge();
+                            createNotification({ id: change.doc.id, ...data, type: "permission" });
+                            
+                            // Send email to Admin
+                            await sendEmail(
+                                adminEmail,
+                                `🔐 New Permission Request from ${data.userName}`,
+                                `Student: ${data.userName}\nEmail: ${data.userEmail}\nPurpose: ${data.purpose}\nDate: ${data.date}\nTime: ${data.startTime} → ${data.endTime}\nDuration: ${data.duration}\nReason: ${data.reason}\n\nPlease login to admin panel to approve/reject.`,
+                                data.userName,
+                                data.userEmail
+                            );
                         }
                     }
                 });
@@ -390,7 +377,7 @@
             studentsList = [];
             snap.forEach(d => studentsList.push({ id: d.id, ...d.data() }));
             const select = document.getElementById("studentSelect");
-            select.innerHTML = '<option value="all">Select a student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name} (${s.batch || "N/A"})</option>`).join('');
+            select.innerHTML = '<option value="all">Select a student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name}</option>`).join('');
         }
         
         window.viewStudentHistory = function() {
@@ -399,16 +386,7 @@
                 alert("Please select a student first!");
                 return;
             }
-            const selectedStudent = studentsList.find(s => s.email === selectedEmail);
-            if (selectedStudent) {
-                localStorage.setItem("selectedStudentForHistory", JSON.stringify({
-                    name: selectedStudent.name,
-                    email: selectedStudent.email,
-                    batch: selectedStudent.batch,
-                    studentId: selectedStudent.studentId
-                }));
-                window.location.href = `records.html?student=${encodeURIComponent(selectedEmail)}`;
-            }
+            window.location.href = `records.html?student=${encodeURIComponent(selectedEmail)}`;
         };
         
         window.loadStudentAnalytics = async function() {
@@ -448,17 +426,10 @@
                         backgroundColor: 'rgba(45, 164, 78, 0.1)',
                         borderWidth: 2,
                         fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#2da44e'
+                        tension: 0.3
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Leaves' } } }
-                }
+                options: { responsive: true, maintainAspectRatio: true }
             });
             
             document.getElementById("analyticsCard").classList.remove("hidden");
@@ -473,27 +444,20 @@
             perms.forEach(d => allPermissions.push({ id: d.id, ...d.data(), type: "permission" }));
             allLeaves.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
             allPermissions.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            if (getNotifications().length === 0) {
-                loadPendingRequestsAsNotifications();
-            }
-            updateBadge();
             filterRequests();
         }
         
-        // ============ UPDATE REQUEST STATUS WITH EMAIL TO STUDENT ============
         async function updateRequestStatus(id, type, newStatus, comment) {
             if (!comment.trim()) return alert("Please write a comment!");
             const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
             
-            // Get request data before updating
+            // Get request data before update
             const docSnap = await ref.get();
             const requestData = docSnap.data();
             
-            // Update status
             await ref.update({ status: newStatus, adminComment: comment, adminName: adminName, actionDate: new Date().toISOString() });
             
-            // Send email to student
+            // Send email to Student
             let details = "";
             if (type === "leave") {
                 details = `Leave from ${requestData.fromDate} → ${requestData.toDate}`;
@@ -501,20 +465,13 @@
                 details = `Permission on ${requestData.date} | ${requestData.startTime} → ${requestData.endTime}`;
             }
             
-            await sendEmailToStudent(
+            await sendEmail(
                 requestData.userEmail,
-                requestData.userName,
-                type === "leave" ? "Leave Request" : "Permission Request",
-                newStatus,
-                details,
-                comment
+                `✅ Your ${type === "leave" ? "Leave" : "Permission"} Request has been ${newStatus}`,
+                `Dear ${requestData.userName},\n\nYour ${type === "leave" ? "leave" : "permission"} request has been ${newStatus}.\n\nDetails: ${details}\nAdmin Comment: ${comment}\n\nThank you,\nEduLeave System`,
+                "EduLeave Admin",
+                adminEmail
             );
-            
-            // Remove notification
-            let notifications = getNotifications();
-            notifications = notifications.filter(n => n.requestId !== id);
-            saveNotifications(notifications);
-            updateBadge();
             
             alert(`✅ Request ${newStatus}! Email sent to student.`);
             loadRequests();
@@ -548,7 +505,7 @@
                         <button class="approve-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Approved',document.getElementById('comment-${r.id}').value)">Approve</button>
                         <button class="reject-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Rejected',document.getElementById('comment-${r.id}').value)">Reject</button>
                     </div>` : "";
-                container.innerHTML += `<div class="request-card" id="request-${r.id}">
+                container.innerHTML += `<div class="request-card">
                     <div class="request-header">
                         <div>
                             <div class="user-name">${r.userName}</div>
@@ -590,12 +547,8 @@
             
             await loadStudents();
             await loadRequests();
+            setupNotificationsListener();
             watchNewRequests();
-            updateBadge();
-            
-            if (Notification.permission === "default") {
-                Notification.requestPermission();
-            }
         });
     </script>
 </body>
