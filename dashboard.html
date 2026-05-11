@@ -8,6 +8,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // ========== EmailJS Configuration ==========
+        const EMAILJS_PUBLIC_KEY = "AL3i8ym-GFA_MMX8A";
+        const EMAILJS_SERVICE_ID = "service_wvak23r";
+        // ===========================================
+        
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); font-family: 'Inter', sans-serif; padding: 20px; }
@@ -28,8 +37,7 @@
         .date-field label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
         .btn-submit { background: linear-gradient(135deg, #2da44e, #216e39); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; margin-top: 10px; }
         .btn-submit:hover { transform: scale(0.98); }
-        .fraud-warning { background: #fff3cd; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 12px; display: none; }
-        .warning-text { color: #856404; }
+        .email-badge { background: #e8f5e9; padding: 4px 10px; border-radius: 20px; font-size: 11px; color: #2da44e; margin-left: 10px; display: inline-block; }
         @media (max-width: 550px) { .date-group { flex-direction: column; gap: 0; } body { padding: 10px; } }
     </style>
 </head>
@@ -48,7 +56,10 @@
         <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
         
         <div class="form-card">
-            <div class="form-title"><i class="fas fa-pen-alt"></i> Apply for Leave</div>
+            <div class="form-title">
+                <i class="fas fa-pen-alt"></i> Apply for Leave
+                <span class="email-badge"><i class="fas fa-envelope"></i> Email notification will be sent to Admin</span>
+            </div>
             
             <select id="department" class="input-field">
                 <option value="">Select Department</option>
@@ -74,9 +85,7 @@
             
             <textarea id="leaveReason" placeholder="Reason for leave..." class="input-field" style="min-height:80px;"></textarea>
             
-            <div id="fraudWarning" class="fraud-warning"></div>
-            
-            <button class="btn-submit" onclick="submitLeaveWithML()"><i class="fas fa-paper-plane"></i> Submit Leave Request</button>
+            <button class="btn-submit" onclick="submitLeave()"><i class="fas fa-paper-plane"></i> Submit Leave Request</button>
         </div>
     </div>
     
@@ -111,113 +120,25 @@
             });
         };
         
-        // ============ FRAUD DETECTION API CALL FUNCTIONS ============
-        
-        // Get reason code based on leave type
-        function getReasonCode(type) {
-            const map = {
-                'Sick Leave': 13,
-                'Casual Leave': 23,
-                'Emergency Leave': 26,
-                'Annual Leave': 14
-            };
-            return map[type] || 0;
-        }
-        
-        // Get season based on date
-        function getSeason(date) {
-            const month = new Date(date).getMonth() + 1;
-            if (month >= 3 && month <= 5) return 1;  // Spring
-            if (month >= 6 && month <= 8) return 2;  // Summer
-            if (month >= 9 && month <= 11) return 3; // Fall
-            return 4; // Winter
-        }
-        
-        // Call ML API for fraud detection
-        async function checkFraudWithML(leaveData) {
+        // Send email to Admin when student applies
+        async function sendEmailToAdmin(adminEmail, studentName, studentEmail, type, details, reason) {
+            if (!adminEmail) return;
             try {
-                const response = await fetch('http://127.0.0.1:5000/predict', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        reason: getReasonCode(leaveData.type),
-                        month: new Date(leaveData.fromDate).getMonth() + 1,
-                        day: new Date(leaveData.fromDate).getDay(),
-                        seasons: getSeason(leaveData.fromDate),
-                        distance: 20,
-                        service_time: 5,
-                        age: 25,
-                        work_load: 100,
-                        hit_target: 0
-                    })
-                });
-                
-                const result = await response.json();
-                console.log("ML API Response:", result);
-                return result;
-            } catch (error) {
-                console.error("ML API Error:", error);
-                // Return null if API is not available
-                return null;
+                const templateParams = {
+                    from_name: `EduLeave - ${studentName}`,
+                    from_email: studentEmail,
+                    to_email: adminEmail,
+                    subject: `📋 New ${type} Request from ${studentName}`,
+                    message: `Student: ${studentName}\nEmail: ${studentEmail}\nType: ${type}\nDetails: ${details}\nReason: ${reason}\n\nPlease login to admin panel to approve/reject.`
+                };
+                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
+                console.log("📧 Email sent to admin:", adminEmail);
+            } catch(e) {
+                console.error("Email error:", e);
             }
         }
         
-        // Rule-based fraud detection (already in script.js)
-        async function getUserLeaveHistory(userEmail) {
-            const leavesSnapshot = await db.collection("leaves")
-                .where("userEmail", "==", userEmail)
-                .get();
-            const leaves = [];
-            leavesSnapshot.forEach(doc => leaves.push(doc.data()));
-            return leaves;
-        }
-        
-        function analyzeLeaveRequest(leaveData, userHistory) {
-            let suspiciousScore = 0;
-            let detectionReasons = [];
-            
-            const fromDate = new Date(leaveData.fromDate);
-            const toDate = new Date(leaveData.toDate);
-            const dayOfWeek = fromDate.getDay();
-            const durationDays = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
-            
-            const leavesInLast30Days = userHistory.filter(l => {
-                const leaveDate = new Date(l.fromDate);
-                const daysDiff = (new Date() - leaveDate) / (1000 * 60 * 60 * 24);
-                return daysDiff <= 30;
-            }).length;
-            
-            if (leavesInLast30Days >= 3) {
-                suspiciousScore += 30;
-                detectionReasons.push("3+ leaves in last 30 days");
-            }
-            if (dayOfWeek === 5 || dayOfWeek === 6) {
-                suspiciousScore += 20;
-                detectionReasons.push("Leave starts on weekend");
-            }
-            if (dayOfWeek === 1 || dayOfWeek === 5) {
-                suspiciousScore += 15;
-                detectionReasons.push("Long weekend creation attempt");
-            }
-            const daysUntilLeave = Math.ceil((fromDate - new Date()) / (1000 * 60 * 60 * 24));
-            if (daysUntilLeave <= 1 && daysUntilLeave >= 0) {
-                suspiciousScore += 25;
-                detectionReasons.push("Last minute leave request");
-            }
-            if (durationDays > 7) {
-                suspiciousScore += 15;
-                detectionReasons.push(`Unusually long leave (${durationDays} days)`);
-            }
-            
-            return {
-                suspiciousScore: Math.min(suspiciousScore, 100),
-                detectionReasons: detectionReasons,
-                isSuspicious: suspiciousScore >= 30
-            };
-        }
-        
-        // Main submit function with ML integration
-        window.submitLeaveWithML = async function() {
+        window.submitLeave = async function() {
             const user = auth.currentUser;
             if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
             
@@ -242,58 +163,6 @@
                 return;
             }
             
-            // Run ML Fraud Detection
-            let mlResult = null;
-            let fraudRisk = "Low";
-            let suspiciousScore = 0;
-            let detectionReasons = [];
-            
-            try {
-                mlResult = await checkFraudWithML({
-                    type: type,
-                    fromDate: from,
-                    toDate: to,
-                    reason: reason
-                });
-                
-                if (mlResult && mlResult.success) {
-                    fraudRisk = mlResult.risk_level;
-                    suspiciousScore = Math.round(mlResult.fraud_probability * 100);
-                    if (mlResult.prediction === 1) {
-                        detectionReasons.push(`ML Model detected ${fraudRisk} risk (${suspiciousScore}% probability)`);
-                    }
-                }
-            } catch(e) {
-                console.log("ML API not available, using rule-based only");
-            }
-            
-            // Get user's leave history for rule-based detection
-            const leaveHistory = await getUserLeaveHistory(user.email);
-            const ruleAnalysis = analyzeLeaveRequest({ fromDate: from, toDate: to, type: type, reason: reason }, leaveHistory);
-            
-            // Combine ML and rule-based scores
-            const finalScore = mlResult ? Math.min((ruleAnalysis.suspiciousScore + suspiciousScore) / 2, 100) : ruleAnalysis.suspiciousScore;
-            const finalRisk = finalScore >= 50 ? "High" : (finalScore >= 25 ? "Medium" : "Low");
-            const allReasons = [...ruleAnalysis.detectionReasons, ...detectionReasons];
-            
-            // Show warning if fraud detected
-            if (finalRisk === "High" || (mlResult && mlResult.prediction === 1)) {
-                const warningDiv = document.getElementById("fraudWarning");
-                warningDiv.style.display = "block";
-                warningDiv.innerHTML = `<div class="warning-text">
-                    <strong>⚠️ Fraud Detection Alert!</strong><br>
-                    Risk Level: ${finalRisk}<br>
-                    Fraud Score: ${finalScore}/100<br>
-                    Reasons: ${allReasons.join(', ')}<br>
-                    <small>This request has been flagged for admin review.</small>
-                </div>`;
-                
-                const userConfirmed = confirm(`⚠️ FRAUD DETECTION WARNING!\n\nRisk Level: ${finalRisk}\nFraud Score: ${finalScore}/100\n\nReasons:\n• ${allReasons.join('\n• ')}\n\nDo you still want to submit this request?`);
-                if (!userConfirmed) {
-                    return;
-                }
-            }
-            
             const requestData = {
                 userName: name,
                 userEmail: user.email,
@@ -307,42 +176,21 @@
                 adminEmail: adminEmail,
                 adminName: adminName,
                 status: "Pending",
-                timestamp: new Date().toISOString(),
-                suspiciousScore: finalScore,
-                fraudRisk: finalRisk,
-                detectionReasons: allReasons,
-                mlFraudProbability: suspiciousScore
+                timestamp: new Date().toISOString()
             };
             
             try {
                 await db.collection("leaves").add(requestData);
                 
-                await db.collection("notifications").add({
-                    type: "leave",
-                    userName: name,
-                    userEmail: user.email,
-                    department: department,
-                    adminEmail: adminEmail,
-                    requestId: Date.now().toString(),
-                    details: `${type} | ${from} → ${to}`,
-                    reason: reason,
-                    fraudRisk: finalRisk,
-                    suspiciousScore: finalScore,
-                    isRead: false,
-                    timestamp: new Date().toISOString()
-                });
+                // Send email to Admin
+                await sendEmailToAdmin(adminEmail, name, user.email, `Leave - ${type}`, `${from} → ${to}`, reason);
                 
-                let successMsg = "✅ Leave request submitted! Admin will be notified.";
-                if (finalRisk === "High") {
-                    successMsg += `\n⚠️ Marked as High Risk (Score: ${finalScore}/100)`;
-                }
-                alert(successMsg);
+                alert("✅ Leave request submitted! Admin will be notified by email.");
                 
                 document.getElementById("fromDate").value = "";
                 document.getElementById("toDate").value = "";
                 document.getElementById("leaveReason").value = "";
                 document.getElementById("dateError").innerHTML = "";
-                document.getElementById("fraudWarning").style.display = "none";
                 
             } catch(e) { 
                 console.error("Submit error:", e);
@@ -362,7 +210,7 @@
             if (userData.role === "admin") { window.location.href = "admin.html"; return; }
             
             document.getElementById("userAvatar").innerHTML = userData.name.charAt(0).toUpperCase();
-            document.getElementById("welcomeUser").innerHTML = `Welcome, ${userData.name}!`;
+            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${userData.name}!`;
             document.getElementById("studentName").value = userData.name;
             
             if (userData.department) {

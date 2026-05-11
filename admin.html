@@ -8,72 +8,80 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ========== EmailJS Configuration (আপনার তথ্য বসানো আছে) ==========
+        const EMAILJS_PUBLIC_KEY = "AL3i8ym-GFA_MMX8A";
+        const EMAILJS_SERVICE_ID = "service_wvak23r";
+        // ===================================================================
+        
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        console.log("✅ EmailJS initialized");
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #f0f2f5; font-family: 'Inter', sans-serif; padding: 20px; min-height: 100vh; }
         .admin-container { max-width: 1400px; margin: 0 auto; }
         
-        /* Header */
         .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
         .logo i { color: #2da44e; margin-right: 8px; }
         .header-right { display: flex; align-items: center; gap: 20px; position: relative; }
-        .notification-icon { position: relative; cursor: pointer; font-size: 22px; color: #555; }
-        .notification-icon:hover { color: #2da44e; }
-        .notification-badge { position: absolute; top: -8px; right: -12px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; min-width: 18px; text-align: center; }
-        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 320px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
-        .notification-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
-        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
         
-        /* Welcome Card */
+        /* Notification Styles */
+        .notification-icon { position: relative; cursor: pointer; font-size: 24px; color: #555; padding: 8px; border-radius: 50%; transition: 0.2s; }
+        .notification-icon:hover { background: #e8f5e9; color: #2da44e; }
+        .notification-badge { position: absolute; top: -5px; right: -8px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; min-width: 20px; text-align: center; box-shadow: 0 0 0 2px white; }
+        .notification-dropdown { position: absolute; right: 0; top: 45px; width: 380px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 1000; max-height: 450px; overflow-y: auto; border: 1px solid #e0e0e0; }
+        .notification-item { padding: 14px 16px; border-bottom: 1px solid #eee; cursor: pointer; transition: 0.2s; }
+        .notification-item:hover { background: #f8f9fa; }
+        .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
+        .notification-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .notification-title { font-weight: 600; font-size: 13px; }
+        .notification-user { font-size: 12px; color: #2da44e; margin-bottom: 5px; }
+        .notification-details { font-size: 11px; color: #666; margin-bottom: 5px; }
+        .notification-time { font-size: 10px; color: #999; margin-top: 5px; }
+        .mark-read-btn { background: none; border: none; color: #2da44e; font-size: 11px; cursor: pointer; padding: 2px 8px; border-radius: 10px; }
+        .mark-read-btn:hover { background: #d4edda; }
+        
+        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
+        
         .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
         .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
         .welcome-card p { font-size: 13px; opacity: 0.9; }
-        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; font-size: 12px; }
+        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
+        .email-status { background: rgba(255,255,255,0.15); padding: 5px 10px; border-radius: 20px; font-size: 11px; margin-left: 10px; display: inline-block; }
         
-        /* Dashboard Layout */
         .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
         .sidebar { flex: 1; min-width: 280px; }
         .main-content { flex: 3; min-width: 350px; }
         
-        /* Profile Card */
         .profile-card { background: white; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
         .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
         .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; }
-        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; }
+        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
+        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.2s; }
+        .btn-profile:hover { opacity: 0.9; transform: scale(0.98); }
         
-        /* Records & History Card */
         .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .records-card h3 { font-size: 15px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
         .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
         .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-clear { background: #6c757d; color: white; border: none; padding: 8px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; }
         .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         
-        /* Student Stats */
-        .student-stats { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-top: 12px; display: none; }
-        .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
-        .stat-label { font-size: 12px; color: #666; }
-        .stat-value { font-size: 16px; font-weight: 700; }
-        .stat-value.taken { color: #f59e0b; }
-        .stat-value.remaining { color: #10b981; }
-        .stat-value.pending { color: #ef4444; }
-        
-        /* Filter Bar */
         .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
+        .filter-btn:hover { opacity: 0.9; transform: scale(0.98); }
         
-        /* Requests Container */
-        .requests-container { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
-        .hide-requests-btn { background: #6c757d; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; }
+        .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
+        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; transition: 0.2s; }
+        .request-card:hover { transform: translateX(3px); }
         .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
         .user-name { font-weight: bold; font-size: 15px; }
         .user-email { font-size: 11px; color: #666; margin-top: 2px; }
@@ -84,27 +92,29 @@
         .status-rejected { background: #f8d7da; color: #721c24; }
         .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
         .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; outline: none; }
+        .comment-input input:focus { border-color: #2da44e; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .approve-btn:hover { opacity: 0.9; }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .reject-btn:hover { opacity: 0.9; }
         .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
+        
+        .analytics-card { background: white; border-radius: 16px; padding: 20px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .analytics-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .chart-container { margin-top: 15px; }
+        canvas { max-height: 300px; width: 100% !important; }
+        
         .hidden { display: none; }
         .position-relative { position: relative; }
         
-        /* Analytics Card */
-        .analytics-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 20px; }
-        .analytics-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
-        .chart-container { margin-top: 15px; min-height: 320px; }
-        canvas { max-height: 300px; width: 100% !important; }
-        .chart-note { text-align: center; font-size: 11px; color: #888; margin-top: 10px; }
-        
         @media (max-width: 1000px) { .dashboard-layout { flex-direction: column; } }
+        @media (max-width: 600px) { .filter-bar { flex-direction: column; } .comment-input { flex-direction: column; } }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <!-- Header -->
         <div class="header">
             <div class="logo"><i class="fas fa-crown"></i> Admin Dashboard</div>
             <div class="header-right">
@@ -116,73 +126,38 @@
                     <div id="notificationDropdown" class="notification-dropdown"></div>
                 </div>
                 <div class="admin-avatar" id="adminAvatar">A</div>
-                <button class="btn-logout" onclick="logout()">Logout</button>
+                <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </div>
         
-        <!-- Welcome Card -->
         <div class="welcome-card">
             <h2>Welcome, <span id="adminName">Admin</span>!</h2>
             <p>You are managing <strong id="deptName">your department</strong> department</p>
             <div class="dept-badge" id="deptBadge"><i class="fas fa-building"></i> Loading...</div>
+            <span class="email-status" id="emailStatus"><i class="fas fa-envelope"></i> Email: ✅ Ready</span>
         </div>
         
-        <!-- Dashboard Layout -->
         <div class="dashboard-layout">
-            <!-- Left Sidebar -->
             <div class="sidebar">
-                <!-- Profile Card -->
                 <div class="profile-card">
                     <div class="profile-avatar" id="profileAvatar"><span>A</span></div>
                     <div class="profile-name" id="profileName">Admin</div>
                     <div class="profile-email" id="profileEmail">admin@example.com</div>
-                    <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
+                    <button class="btn-profile" onclick="location.href='profile.html'"><i class="fas fa-user-edit"></i> Edit Profile</button>
                 </div>
                 
-                <!-- Records & History Card -->
                 <div class="records-card">
-                    <h3><i class="fas fa-chart-line"></i> Student Analytics & History</h3>
+                    <h3><i class="fas fa-chart-line"></i> Student Analytics</h3>
                     <select id="studentSelect" class="student-select">
                         <option value="all">Select a student</option>
                     </select>
                     <button class="btn-analytics" onclick="loadStudentAnalytics()"><i class="fas fa-chart-line"></i> View Analytics</button>
                     <button class="btn-history" onclick="viewStudentHistory()"><i class="fas fa-history"></i> View Full History</button>
-                    <button class="btn-clear" onclick="clearAnalyticsView()"><i class="fas fa-arrow-left"></i> Back to Requests</button>
-                    
-                    <!-- Student Stats -->
-                    <div id="studentStats" class="student-stats">
-                        <div class="stat-row">
-                            <span class="stat-label">Total Leaves Taken</span>
-                            <span class="stat-value taken" id="totalTaken">0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Total Leaves Allowed</span>
-                            <span class="stat-value remaining" id="totalAllowed">12</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Remaining Leaves</span>
-                            <span class="stat-value remaining" id="remainingLeaves">0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Pending Leaves</span>
-                            <span class="stat-value pending" id="pendingCount">0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Approved Leaves</span>
-                            <span class="stat-value taken" id="approvedCount">0</span>
-                        </div>
-                        <div class="stat-row">
-                            <span class="stat-label">Rejected Leaves</span>
-                            <span class="stat-value pending" id="rejectedCount">0</span>
-                        </div>
-                    </div>
                 </div>
             </div>
             
-            <!-- Right Main Content -->
             <div class="main-content">
-                <!-- Filter Bar -->
-                <div id="filterBar" class="filter-bar">
+                <div class="filter-bar">
                     <select id="typeFilter">
                         <option value="all">All Types</option>
                         <option value="leave">Leave Requests</option>
@@ -194,25 +169,18 @@
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                     </select>
-                    <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
+                    <button class="filter-btn" onclick="filterRequests()"><i class="fas fa-filter"></i> Apply Filter</button>
                 </div>
                 
-                <!-- Requests Container -->
-                <div id="requestsContainer" class="requests-container">
-                    <div class="section-title">
-                        <span>Requests</span>
-                        <button class="hide-requests-btn" onclick="hideRequests()">Hide</button>
-                    </div>
-                    <div id="requestsList"><div class="empty-state">Loading requests...</div></div>
+                <div class="requests-container">
+                    <div class="section-title"><i class="fas fa-list"></i> All Requests</div>
+                    <div id="requestsList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i> Loading requests...</div></div>
                 </div>
                 
-                <!-- Analytics Line Chart -->
                 <div id="analyticsCard" class="analytics-card hidden">
-                    <h3><i class="fas fa-chart-line"></i> Monthly Leave Analytics (Line Chart)</h3>
-                    <div class="chart-container">
-                        <canvas id="monthlyChart"></canvas>
-                    </div>
-                    <div class="chart-note">Showing monthly leave requests over time</div>
+                    <h3><i class="fas fa-chart-line"></i> Monthly Leave Analytics</h3>
+                    <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
+                    <div class="chart-note" style="font-size: 11px; color: #888; margin-top: 10px; text-align: center;">Showing monthly leave requests</div>
                 </div>
             </div>
         </div>
@@ -233,41 +201,189 @@
         
         let adminDepartment = null, adminName = null, adminEmail = null;
         let allLeaves = [], allPermissions = [];
-        let allNotifications = [];
         let studentsList = [];
         let monthlyChart = null;
-        let currentSelectedStudent = null;
-        let isAnalyticsView = false;
         
-        window.logout = async () => { await auth.signOut(); sessionStorage.clear(); window.location.href = "index.html"; };
+        // ============ LOCAL NOTIFICATION SYSTEM (Bell Icon) ============
         
-        function showRequestsOnly() {
-            document.getElementById("filterBar").classList.remove("hidden");
-            document.getElementById("requestsContainer").classList.remove("hidden");
-            document.getElementById("analyticsCard").classList.add("hidden");
+        function getNotifications() {
+            const stored = localStorage.getItem("adminNotifications");
+            return stored ? JSON.parse(stored) : [];
+        }
+        
+        function saveNotifications(notifications) {
+            localStorage.setItem("adminNotifications", JSON.stringify(notifications));
+        }
+        
+        function addNotification(request) {
+            let notifications = getNotifications();
+            if (notifications.some(n => n.requestId === request.id)) return;
             
-            // Re-render requests
-            filterRequests();
-            isAnalyticsView = false;
+            const details = request.type === "leave" 
+                ? `${request.type || request.leaveType} | ${request.fromDate} → ${request.toDate}`
+                : `${request.purpose} | ${request.date} | ${request.startTime} → ${request.endTime}`;
+            
+            notifications.unshift({
+                id: Date.now(),
+                type: request.type === "leave" ? "leave" : "permission",
+                userName: request.userName,
+                userEmail: request.userEmail,
+                details: details,
+                reason: request.reason || "No reason",
+                requestId: request.id,
+                timestamp: new Date().toISOString(),
+                isRead: false
+            });
+            
+            saveNotifications(notifications);
+            updateBadge();
         }
         
-        function hideRequests() {
-            if (!isAnalyticsView) {
-                document.getElementById("filterBar").classList.add("hidden");
-                document.getElementById("requestsContainer").classList.add("hidden");
+        function loadPendingRequestsAsNotifications() {
+            const pendingLeaves = allLeaves.filter(l => l.status === "Pending");
+            const pendingPermissions = allPermissions.filter(p => p.status === "Pending");
+            [...pendingLeaves, ...pendingPermissions].forEach(req => addNotification(req));
+        }
+        
+        function updateBadge() {
+            const notifications = getNotifications();
+            const unreadCount = notifications.filter(n => !n.isRead).length;
+            const badge = document.getElementById("notifBadge");
+            if (unreadCount > 0) {
+                badge.innerText = unreadCount;
+                badge.style.display = "inline-block";
+            } else {
+                badge.style.display = "none";
             }
         }
         
-        window.clearAnalyticsView = function() {
-            showRequestsOnly();
-            document.getElementById("studentStats").style.display = "none";
-            document.getElementById("studentSelect").value = "all";
-            currentSelectedStudent = null;
-            if (monthlyChart) {
-                monthlyChart.destroy();
-                monthlyChart = null;
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return "Just now";
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} min ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            const days = Math.floor(hours / 24);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        }
+        
+        function renderDropdown() {
+            const dropdown = document.getElementById("notificationDropdown");
+            const notifications = getNotifications();
+            
+            if (notifications.length === 0) {
+                dropdown.innerHTML = `<div style="padding:40px;text-align:center;color:#888;"><i class="fas fa-bell-slash"></i><br>No notifications</div>`;
+                return;
             }
+            
+            let html = '';
+            notifications.forEach(n => {
+                const date = new Date(n.timestamp);
+                const timeAgo = getTimeAgo(date);
+                const icon = n.type === 'leave' ? '📋' : '🔐';
+                const typeText = n.type === 'leave' ? 'Leave Request' : 'Permission Request';
+                
+                html += `
+                    <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markAsRead('${n.id}', '${n.requestId}')">
+                        <div class="notification-header">
+                            <span class="notification-title">${icon} ${typeText}</span>
+                            <button class="mark-read-btn" onclick="event.stopPropagation(); markAsRead('${n.id}', '${n.requestId}')">✓ Mark read</button>
+                        </div>
+                        <div class="notification-user">👤 ${n.userName}</div>
+                        <div class="notification-details">📝 ${n.details}</div>
+                        <div class="notification-time">🕐 ${timeAgo}</div>
+                    </div>
+                `;
+            });
+            dropdown.innerHTML = html;
+        }
+        
+        window.toggleNotifications = function() {
+            const dropdown = document.getElementById("notificationDropdown");
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+                return;
+            }
+            renderDropdown();
+            dropdown.style.display = "block";
         };
+        
+        window.markAsRead = function(id, requestId) {
+            let notifications = getNotifications();
+            notifications = notifications.map(n => n.id == id ? { ...n, isRead: true } : n);
+            saveNotifications(notifications);
+            updateBadge();
+            
+            if (requestId) {
+                const el = document.getElementById(`request-${requestId}`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    el.style.backgroundColor = '#e8f5e9';
+                    setTimeout(() => el.style.backgroundColor = '', 2000);
+                }
+            }
+            const dropdown = document.getElementById("notificationDropdown");
+            if (dropdown.style.display === "block") renderDropdown();
+        };
+        
+        // ============ EMAIL NOTIFICATION ============
+        
+        // Email to Student when Admin approves/rejects
+        async function sendEmailToStudent(studentEmail, studentName, requestType, status, details, adminComment) {
+            if (!studentEmail) return false;
+            try {
+                const templateParams = {
+                    from_name: `EduLeave System`,
+                    from_email: adminEmail,
+                    to_email: studentEmail,
+                    subject: `📋 Your ${requestType} has been ${status}`,
+                    message: `Dear ${studentName},\n\nYour ${requestType} has been ${status}.\n\nDetails: ${details}\n\nAdmin Comment: ${adminComment}\n\nThank you,\nEduLeave System`
+                };
+                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
+                console.log("📧 Email sent to student:", studentEmail);
+                return true;
+            } catch(e) {
+                console.error("Email error to student:", e);
+                return false;
+            }
+        }
+        
+        // ============ WATCH FOR NEW REQUESTS ============
+        
+        function watchNewRequests() {
+            if (!adminDepartment || !adminEmail) return;
+            
+            db.collection("leaves").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const data = change.doc.data();
+                        if (data.status === "Pending") {
+                            const details = `${data.type} | ${data.fromDate} → ${data.toDate}`;
+                            addNotification({ id: change.doc.id, ...data, type: "leave" });
+                            updateBadge();
+                        }
+                    }
+                });
+                loadRequests();
+            });
+            
+            db.collection("permissions").where("department", "==", adminDepartment).onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const data = change.doc.data();
+                        if (data.status === "Pending") {
+                            const details = `${data.purpose} | ${data.date} | ${data.startTime} → ${data.endTime}`;
+                            addNotification({ id: change.doc.id, ...data, type: "permission" });
+                            updateBadge();
+                        }
+                    }
+                });
+                loadRequests();
+            });
+        }
+        
+        // ============ LOAD DATA ============
         
         async function loadStudents() {
             const snap = await db.collection("users").where("role", "==", "user").where("department", "==", adminDepartment).get();
@@ -277,44 +393,6 @@
             select.innerHTML = '<option value="all">Select a student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name} (${s.batch || "N/A"})</option>`).join('');
         }
         
-        window.loadStudentAnalytics = async function() {
-            const selectedEmail = document.getElementById("studentSelect").value;
-            if (!selectedEmail || selectedEmail === "all") {
-                alert("Please select a student first!");
-                return;
-            }
-            currentSelectedStudent = studentsList.find(s => s.email === selectedEmail);
-            if (!currentSelectedStudent) return;
-            
-            // Hide requests and filter bar, show analytics
-            document.getElementById("filterBar").classList.add("hidden");
-            document.getElementById("requestsContainer").classList.add("hidden");
-            document.getElementById("analyticsCard").classList.remove("hidden");
-            isAnalyticsView = true;
-            
-            const leavesSnap = await db.collection("leaves").where("userEmail", "==", selectedEmail).get();
-            const studentLeaves = [];
-            leavesSnap.forEach(d => studentLeaves.push(d.data()));
-            
-            const totalTaken = studentLeaves.length;
-            const totalAllowed = 12;
-            const remaining = Math.max(0, totalAllowed - totalTaken);
-            const pending = studentLeaves.filter(l => l.status === "Pending").length;
-            const approved = studentLeaves.filter(l => l.status === "Approved").length;
-            const rejected = studentLeaves.filter(l => l.status === "Rejected").length;
-            
-            document.getElementById("totalTaken").innerHTML = totalTaken;
-            document.getElementById("totalAllowed").innerHTML = totalAllowed;
-            document.getElementById("remainingLeaves").innerHTML = remaining;
-            document.getElementById("pendingCount").innerHTML = pending;
-            document.getElementById("approvedCount").innerHTML = approved;
-            document.getElementById("rejectedCount").innerHTML = rejected;
-            document.getElementById("studentStats").style.display = "block";
-            
-            updateStudentMonthlyChart(studentLeaves, currentSelectedStudent.name);
-        };
-        
-        // ✅ FIX: View Full History - শুধু সিলেক্টেড স্টুডেন্টের ইতিহাস দেখাবে
         window.viewStudentHistory = function() {
             const selectedEmail = document.getElementById("studentSelect").value;
             if (!selectedEmail || selectedEmail === "all") {
@@ -323,30 +401,36 @@
             }
             const selectedStudent = studentsList.find(s => s.email === selectedEmail);
             if (selectedStudent) {
-                // Store selected student info in localStorage temporarily
                 localStorage.setItem("selectedStudentForHistory", JSON.stringify({
                     name: selectedStudent.name,
                     email: selectedStudent.email,
                     batch: selectedStudent.batch,
                     studentId: selectedStudent.studentId
                 }));
-                // Redirect to records page with query parameter
                 window.location.href = `records.html?student=${encodeURIComponent(selectedEmail)}`;
             }
         };
         
-        async function updateStudentMonthlyChart(studentLeaves, studentName) {
+        window.loadStudentAnalytics = async function() {
+            const selectedEmail = document.getElementById("studentSelect").value;
+            if (!selectedEmail || selectedEmail === "all") {
+                alert("Please select a student first!");
+                return;
+            }
+            const currentStudent = studentsList.find(s => s.email === selectedEmail);
+            if (!currentStudent) return;
+            
+            const leavesSnap = await db.collection("leaves").where("userEmail", "==", selectedEmail).get();
+            const studentLeaves = [];
+            leavesSnap.forEach(d => studentLeaves.push(d.data()));
+            
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const monthlyData = new Array(12).fill(0);
-            const approvedData = new Array(12).fill(0);
-            const rejectedData = new Array(12).fill(0);
             
             studentLeaves.forEach(leave => {
                 if (leave.fromDate) {
                     const month = new Date(leave.fromDate).getMonth();
                     monthlyData[month]++;
-                    if (leave.status === 'Approved') approvedData[month]++;
-                    if (leave.status === 'Rejected') rejectedData[month]++;
                 }
             });
             
@@ -357,121 +441,105 @@
                 type: 'line',
                 data: {
                     labels: months,
-                    datasets: [
-                        {
-                            label: `${studentName}'s Total Leaves`,
-                            data: monthlyData,
-                            borderColor: '#2da44e',
-                            backgroundColor: 'rgba(45, 164, 78, 0.1)',
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#2da44e'
-                        },
-                        {
-                            label: 'Approved',
-                            data: approvedData,
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#10b981'
-                        },
-                        {
-                            label: 'Rejected',
-                            data: rejectedData,
-                            borderColor: '#ef4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 3,
-                            pointBackgroundColor: '#ef4444'
-                        }
-                    ]
+                    datasets: [{
+                        label: `${currentStudent.name}'s Leaves`,
+                        data: monthlyData,
+                        borderColor: '#2da44e',
+                        backgroundColor: 'rgba(45, 164, 78, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#2da44e'
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Number of Leaves' } }
-                    }
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Leaves' } } }
                 }
             });
-        }
-        
-        async function loadRealData() {
-            if(!adminDepartment) return;
-            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).get();
-            const permsSnap = await db.collection("permissions").where("department", "==", adminDepartment).get();
-            allLeaves = []; allPermissions = [];
-            leavesSnap.forEach(d => allLeaves.push({ id: d.id, ...d.data(), type: "leave" }));
-            permsSnap.forEach(d => allPermissions.push({ id: d.id, ...d.data(), type: "permission" }));
-            allLeaves.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
-            allPermissions.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
             
-            if (!isAnalyticsView) {
-                filterRequests();
-            }
-        }
-        
-        async function updateBadgeAndDropdown() {
-            if(!adminEmail) return;
-            const snap = await db.collection("notifications").where("adminEmail", "==", adminEmail).orderBy("timestamp", "desc").get();
-            allNotifications = [];
-            let unread = 0;
-            snap.forEach(d => { 
-                let data = d.data(); 
-                if(!data.isRead) unread++; 
-                allNotifications.push({ id: d.id, ...data }); 
-            });
-            const badge = document.getElementById("notifBadge");
-            if(unread > 0) { badge.innerText = unread; badge.style.display = "inline-block"; }
-            else badge.style.display = "none";
-        }
-        
-        window.toggleNotifications = () => {
-            const dd = document.getElementById("notificationDropdown");
-            if(dd.style.display === "block") { dd.style.display = "none"; return; }
-            if(allNotifications.length === 0) dd.innerHTML = "<div style='padding:15px;text-align:center'>No notifications</div>";
-            else dd.innerHTML = allNotifications.map(n => `<div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markRead('${n.id}')">
-                <strong>${n.type === 'leave' ? 'Leave Request' : 'Permission Request'}</strong><br>
-                ${n.userName}<br>${n.details}<br><small>${new Date(n.timestamp).toLocaleString()}</small></div>`).join('');
-            dd.style.display = "block";
+            document.getElementById("analyticsCard").classList.remove("hidden");
         };
-        window.markRead = async (id) => { await db.collection("notifications").doc(id).update({ isRead: true }); updateBadgeAndDropdown(); document.getElementById("notificationDropdown").style.display = "none"; };
         
+        async function loadRequests() {
+            if (!adminDepartment) return;
+            const leaves = await db.collection("leaves").where("department", "==", adminDepartment).get();
+            const perms = await db.collection("permissions").where("department", "==", adminDepartment).get();
+            allLeaves = []; allPermissions = [];
+            leaves.forEach(d => allLeaves.push({ id: d.id, ...d.data(), type: "leave" }));
+            perms.forEach(d => allPermissions.push({ id: d.id, ...d.data(), type: "permission" }));
+            allLeaves.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            allPermissions.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            if (getNotifications().length === 0) {
+                loadPendingRequestsAsNotifications();
+            }
+            updateBadge();
+            filterRequests();
+        }
+        
+        // ============ UPDATE REQUEST STATUS WITH EMAIL TO STUDENT ============
         async function updateRequestStatus(id, type, newStatus, comment) {
-            if(!comment.trim()) return alert("Please write a comment!");
+            if (!comment.trim()) return alert("Please write a comment!");
             const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
+            
+            // Get request data before updating
+            const docSnap = await ref.get();
+            const requestData = docSnap.data();
+            
+            // Update status
             await ref.update({ status: newStatus, adminComment: comment, adminName: adminName, actionDate: new Date().toISOString() });
-            alert(`Request ${newStatus}`);
-            loadRealData(); updateBadgeAndDropdown();
+            
+            // Send email to student
+            let details = "";
+            if (type === "leave") {
+                details = `Leave from ${requestData.fromDate} → ${requestData.toDate}`;
+            } else {
+                details = `Permission on ${requestData.date} | ${requestData.startTime} → ${requestData.endTime}`;
+            }
+            
+            await sendEmailToStudent(
+                requestData.userEmail,
+                requestData.userName,
+                type === "leave" ? "Leave Request" : "Permission Request",
+                newStatus,
+                details,
+                comment
+            );
+            
+            // Remove notification
+            let notifications = getNotifications();
+            notifications = notifications.filter(n => n.requestId !== id);
+            saveNotifications(notifications);
+            updateBadge();
+            
+            alert(`✅ Request ${newStatus}! Email sent to student.`);
+            loadRequests();
         }
         
         function filterRequests() {
             const type = document.getElementById("typeFilter").value;
             const status = document.getElementById("statusFilter").value;
             let reqs = [];
-            if(type === "all" || type === "leave") reqs.push(...allLeaves.filter(l => status === "all" || l.status === status));
-            if(type === "all" || type === "permission") reqs.push(...allPermissions.filter(p => status === "all" || p.status === status));
+            if (type === "all" || type === "leave") reqs.push(...allLeaves.filter(l => status === "all" || l.status === status));
+            if (type === "all" || type === "permission") reqs.push(...allPermissions.filter(p => status === "all" || p.status === status));
             renderRequests(reqs);
         }
         
         function renderRequests(requests) {
             const container = document.getElementById("requestsList");
-            if(!requests.length) { container.innerHTML = `<div class="empty-state">No requests in ${adminDepartment}</div>`; return; }
+            if (!requests.length) {
+                container.innerHTML = `<div class="empty-state">No requests found</div>`;
+                return;
+            }
             container.innerHTML = "";
             requests.forEach(r => {
                 const statusCls = r.status === "Approved" ? "status-approved" : (r.status === "Rejected" ? "status-rejected" : "status-pending");
-                const details = r.type === "leave" ? `<div class="request-details"><strong>Dates:</strong> ${r.fromDate || r.from} → ${r.toDate || r.to}<br><strong>Reason:</strong> ${r.reason || "—"}</div>` :
+                const details = r.type === "leave" ? 
+                    `<div class="request-details"><strong>Dates:</strong> ${r.fromDate} → ${r.toDate}<br><strong>Reason:</strong> ${r.reason || "—"}</div>` :
                     `<div class="request-details"><strong>Date:</strong> ${r.date}<br><strong>Time:</strong> ${r.startTime} → ${r.endTime}<br><strong>Duration:</strong> ${r.duration}<br><strong>Reason:</strong> ${r.reason || "—"}</div>`;
                 const adminCommentHtml = r.adminComment ? `<div class="admin-comment">${r.adminComment}</div>` : "";
                 const actionHtml = (r.status !== "Approved" && r.status !== "Rejected") ? `
@@ -480,21 +548,38 @@
                         <button class="approve-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Approved',document.getElementById('comment-${r.id}').value)">Approve</button>
                         <button class="reject-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Rejected',document.getElementById('comment-${r.id}').value)">Reject</button>
                     </div>` : "";
-                container.innerHTML += `<div class="request-card">
-                    <div class="request-header"><div><div class="user-name">${r.userName}</div><div class="user-email">${r.userEmail}</div><div class="user-dept">${r.department} | Batch:${r.batch||"N/A"} | ID:${r.studentId||"N/A"}</div></div>
-                    <span class="status-badge ${statusCls}">${r.status || "Pending"}</span></div>
-                    ${details}${adminCommentHtml}${actionHtml}</div>`;
+                container.innerHTML += `<div class="request-card" id="request-${r.id}">
+                    <div class="request-header">
+                        <div>
+                            <div class="user-name">${r.userName}</div>
+                            <div class="user-email">${r.userEmail}</div>
+                            <div class="user-dept">${r.department} | Batch: ${r.batch || "N/A"} | ID: ${r.studentId || "N/A"}</div>
+                        </div>
+                        <span class="status-badge ${statusCls}">${r.status || "Pending"}</span>
+                    </div>
+                    ${details}
+                    ${adminCommentHtml}
+                    ${actionHtml}
+                </div>`;
             });
         }
         
-        // ✅ FIX: Update records.html to show only selected student (add this to records.html as well)
-        // Update records page to filter by student email if present in URL
+        window.logout = async () => {
+            await auth.signOut();
+            sessionStorage.clear();
+            window.location.href = "index.html";
+        };
         
         auth.onAuthStateChanged(async (user) => {
-            if(!user){ location.href="index.html"; return; }
-            const uDoc = await db.collection("users").doc(user.uid).get();
-            const data = uDoc.data();
-            adminDepartment = data.department; adminName = data.name; adminEmail = user.email;
+            if (!user) { window.location.href = "index.html"; return; }
+            const doc = await db.collection("users").doc(user.uid).get();
+            const data = doc.data();
+            if (!data || data.role !== "admin") { window.location.href = "home.html"; return; }
+            
+            adminDepartment = data.department;
+            adminName = data.name;
+            adminEmail = user.email;
+            
             document.getElementById("adminName").innerHTML = adminName;
             document.getElementById("deptName").innerHTML = adminDepartment;
             document.getElementById("deptBadge").innerHTML = `<i class="fas fa-building"></i> Department: ${adminDepartment}`;
@@ -502,18 +587,15 @@
             document.getElementById("profileAvatar").innerHTML = `<span>${adminName.charAt(0).toUpperCase()}</span>`;
             document.getElementById("profileName").innerHTML = adminName;
             document.getElementById("profileEmail").innerHTML = adminEmail;
+            
             await loadStudents();
-            await loadRealData();
-            await updateBadgeAndDropdown();
-            setInterval(updateBadgeAndDropdown, 5000);
+            await loadRequests();
+            watchNewRequests();
+            updateBadge();
             
-            window.addEventListener('resize', function() {
-                if (monthlyChart) monthlyChart.resize();
-            });
-            
-            db.collection("leaves").where("department","==",adminDepartment).onSnapshot(()=>loadRealData());
-            db.collection("permissions").where("department","==",adminDepartment).onSnapshot(()=>loadRealData());
-            db.collection("notifications").where("adminEmail","==",adminEmail).onSnapshot(()=>updateBadgeAndDropdown());
+            if (Notification.permission === "default") {
+                Notification.requestPermission();
+            }
         });
     </script>
 </body>

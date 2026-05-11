@@ -8,6 +8,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // ========== EmailJS Configuration ==========
+        const EMAILJS_PUBLIC_KEY = "AL3i8ym-GFA_MMX8A";
+        const EMAILJS_SERVICE_ID = "service_wvak23r";
+        // ===========================================
+        
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); font-family: 'Inter', sans-serif; padding: 20px; }
@@ -30,6 +39,8 @@
         .quick-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
         .quick-btn:hover { background: #2da44e; color: white; }
         .btn-submit { background: linear-gradient(135deg, #2da44e, #216e39); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; margin-top: 10px; }
+        .btn-submit:hover { transform: scale(0.98); }
+        .email-badge { background: #e8f5e9; padding: 4px 10px; border-radius: 20px; font-size: 11px; color: #2da44e; margin-left: 10px; display: inline-block; }
         @media (max-width: 550px) { .time-group { flex-direction: column; gap: 0; } body { padding: 10px; } }
     </style>
 </head>
@@ -48,7 +59,10 @@
         <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
         
         <div class="form-card">
-            <div class="form-title"><i class="fas fa-bolt"></i> Instant Permission Request</div>
+            <div class="form-title">
+                <i class="fas fa-bolt"></i> Instant Permission Request
+                <span class="email-badge"><i class="fas fa-envelope"></i> Email notification will be sent to Admin</span>
+            </div>
             
             <select id="department" class="input-field">
                 <option value="">Select Department</option>
@@ -130,6 +144,24 @@
             document.getElementById("endTime").value = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
         }
         
+        // Send email to Admin when student applies
+        async function sendEmailToAdmin(adminEmail, studentName, studentEmail, type, details, reason) {
+            if (!adminEmail) return;
+            try {
+                const templateParams = {
+                    from_name: `EduLeave - ${studentName}`,
+                    from_email: studentEmail,
+                    to_email: adminEmail,
+                    subject: `📋 New ${type} Request from ${studentName}`,
+                    message: `Student: ${studentName}\nEmail: ${studentEmail}\nType: ${type}\nDetails: ${details}\nReason: ${reason}\n\nPlease login to admin panel to approve/reject.`
+                };
+                await emailjs.send(EMAILJS_SERVICE_ID, "contact_form", templateParams);
+                console.log("📧 Email sent to admin:", adminEmail);
+            } catch(e) {
+                console.error("Email error:", e);
+            }
+        }
+        
         window.submitPermission = async function() {
             const user = auth.currentUser;
             if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
@@ -184,21 +216,10 @@
             try {
                 await db.collection("permissions").add(requestData);
                 
-                // ✅ Add notification for admin
-                await db.collection("notifications").add({
-                    type: "permission",
-                    userName: name,
-                    userEmail: user.email,
-                    department: department,
-                    adminEmail: adminEmail,
-                    requestId: Date.now().toString(),
-                    details: `${purpose} | ${date} | ${startTime} → ${endTime}`,
-                    reason: reason,
-                    isRead: false,
-                    timestamp: new Date().toISOString()
-                });
+                // Send email to Admin
+                await sendEmailToAdmin(adminEmail, name, user.email, `Permission - ${purpose}`, `${date} | ${startTime} → ${endTime} (${duration})`, reason);
                 
-                alert("✅ Permission request submitted! Admin will be notified.");
+                alert("✅ Permission request submitted! Admin will be notified by email.");
                 
                 document.getElementById("startTime").value = "";
                 document.getElementById("endTime").value = "";
