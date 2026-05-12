@@ -30,7 +30,7 @@
         }
         .box:hover { transform: translateY(-3px); }
         h2 { font-size: 1.8rem; font-weight: 700; text-align: center; color: #ffffff; margin-bottom: 0.5rem; }
-        .subtitle { text-align: center; color: #ffffff; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        .subtitle { text-align: center; color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem; }
         .input-group { position: relative; margin: 8px 0; }
         input, select {
             width: 100%;
@@ -41,10 +41,11 @@
             background: #2a2a2a;
             color: #ffffff;
             outline: none;
+            margin-bottom: 12px;
         }
         .input-group input { padding-right: 50px; }
         input::placeholder, select { color: #bbbbbb; }
-        input:focus, select:focus { border-color: #048428; }
+        input:focus, select:focus { border-color: #2da44e; box-shadow: 0 0 0 2px rgba(45, 164, 78, 0.1); }
         .password-toggle {
             position: absolute;
             right: 16px;
@@ -67,13 +68,13 @@
             cursor: pointer;
         }
         button:hover { background: #2c974b; transform: scale(0.98); }
-        .footer-text { text-align: center; margin-top: 1.5rem; color: #ffffff; font-size: 0.85rem; }
+        .footer-text { text-align: center; margin-top: 1.5rem; color: #6b7280; font-size: 0.85rem; }
         .footer-text a { color: #2da44e; text-decoration: none; font-weight: 600; }
         .suggestions-box {
             background: #2a2a2a;
             border-radius: 1rem;
             border: 1px solid #333;
-            margin-top: -5px;
+            margin-top: -10px;
             margin-bottom: 8px;
             max-height: 140px;
             overflow-y: auto;
@@ -84,7 +85,7 @@
         .strength-weak { background: #7f1a1a; color: #fca5a5; }
         .strength-medium { background: #78350f; color: #fde68a; }
         .strength-strong { background: #064e3b; color: #6ee7b7; }
-        .req-list { font-size: 0.75rem; margin: 10px 0 0 0; padding-left: 20px; color: #ffffff; list-style: none; }
+        .req-list { font-size: 0.75rem; margin: 10px 0 0 0; padding-left: 20px; color: #a1a1aa; list-style: none; }
         .req-list li { margin: 4px 0; }
         .error-msg { color: #f87171; font-size: 0.75rem; margin-top: 4px; }
         .success-msg { color: #4ade80; font-size: 0.75rem; margin-top: 4px; }
@@ -93,9 +94,19 @@
         .mb-2 { margin-bottom: 1rem; }
         .mt-2 { margin-top: 1rem; }
         .hidden { display: none; }
+        .verification-notice {
+            background: #064e3b;
+            color: #6ee7b7;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 13px;
+            border: 1px solid #059669;
+        }
         @media (max-width: 550px) {
             .box { padding: 1.5rem; }
-            .form-row { flex-direction: column; }
+            .form-row { flex-direction: column; gap: 0; }
         }
     </style>
 </head>
@@ -105,18 +116,22 @@
             <h2>Create Account</h2>
             <p class="subtitle">Join the leave management system</p>
             
-            <input type="text" id="name" placeholder="Full name" class="mb-2">
-            <input type="email" id="email" placeholder="Email address" class="mb-2">
+            <div id="registerError" class="error-msg"></div>
+            <div id="registerSuccess" class="success-msg"></div>
+            <div id="verificationNotice" class="verification-notice" style="display: none;"></div>
+            
+            <input type="text" id="name" placeholder="Full name">
+            <input type="email" id="email" placeholder="Email address">
             <div id="emailSuggestions" class="suggestions-box" style="display: none;"></div>
             
-            <select id="role" class="mb-2">
+            <select id="role">
                 <option value="">Select role</option>
                 <option value="user">User (Student/Employee)</option>
                 <option value="admin">Administrator</option>
             </select>
             
             <div id="userFields">
-                <select id="userDepartment" class="mb-2">
+                <select id="userDepartment">
                     <option value="">Select Department</option>
                     <option value="CSE">CSE</option>
                     <option value="EEE">EEE</option>
@@ -132,7 +147,7 @@
             </div>
             
             <div id="adminFields" class="hidden">
-                <select id="adminDepartment" class="mb-2">
+                <select id="adminDepartment">
                     <option value="">Select Department</option>
                     <option value="CSE">CSE</option>
                     <option value="EEE">EEE</option>
@@ -148,12 +163,12 @@
                 <i class="fas fa-eye password-toggle" onclick="togglePassword('password', this)"></i>
             </div>
             <div id="passwordStrength" class="password-strength">Password strength:</div>
-            <ul class="req-list mb-2">
-                <li id="reqUpper">Uppercase (A-Z)</li>
-                <li id="reqLower">Lowercase (a-z)</li>
-                <li id="reqDigit">Digit (0-9)</li>
-                <li id="reqSpecial">Special (@$!%*?&)</li>
-                <li id="reqLength">Minimum 8 characters</li>
+            <ul class="req-list">
+                <li id="reqUpper">✓ Uppercase (A-Z)</li>
+                <li id="reqLower">✓ Lowercase (a-z)</li>
+                <li id="reqDigit">✓ Digit (0-9)</li>
+                <li id="reqSpecial">✓ Special (@$!%*?&)</li>
+                <li id="reqLength">✓ Minimum 8 characters</li>
             </ul>
             
             <div class="input-group">
@@ -163,10 +178,7 @@
             <div id="confirmError" class="error-msg"></div>
             <div id="confirmSuccess" class="success-msg"></div>
             
-            <div id="registerError" class="error-msg"></div>
-            <div id="registerSuccess" class="success-msg"></div>
-            
-            <button onclick="register()" class="mt-2">Create Account</button>
+            <button onclick="register()">Create Account</button>
             
             <p class="footer-text">Already have account? <a href="index.html">Sign in</a></p>
         </div>
@@ -186,6 +198,7 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         
+        // ========== TOGGLE PASSWORD ==========
         function togglePassword(fieldId, btn) {
             const field = document.getElementById(fieldId);
             if (field.type === 'password') {
@@ -199,6 +212,7 @@
             }
         }
         
+        // ========== ROLE BASED FIELDS ==========
         const roleSelect = document.getElementById("role");
         const userFields = document.getElementById("userFields");
         const adminFields = document.getElementById("adminFields");
@@ -216,7 +230,8 @@
             }
         });
         
-        const commonDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "protonmail.com"];
+        // ========== EMAIL SUGGESTION ==========
+        const commonDomains = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "protonmail.com", "edu.bd", "university.edu", "office.com"];
         const emailField = document.getElementById("email");
         const suggBox = document.getElementById("emailSuggestions");
 
@@ -242,7 +257,8 @@
         document.addEventListener("click", (e) => {
             if (!suggBox.contains(e.target) && e.target !== emailField) suggBox.style.display = "none";
         });
-
+        
+        // ========== PASSWORD STRENGTH ==========
         const passwordInput = document.getElementById("password");
         const confirmInput = document.getElementById("confirmPassword");
         
@@ -261,13 +277,13 @@
             
             let div = document.getElementById("passwordStrength");
             if(hasUpper && hasLower && hasDigit && hasSpecial && isLong) {
-                div.innerHTML = 'Strong Password! Great job!';
+                div.innerHTML = '✅ Strong Password! Great job!';
                 div.className = "password-strength strength-strong";
             } else if((hasUpper || hasLower) && (hasDigit || hasSpecial) && pwd.length >= 6) {
-                div.innerHTML = 'Medium Password - Add more variety';
+                div.innerHTML = '⚠️ Medium Password - Add more variety';
                 div.className = "password-strength strength-medium";
             } else {
-                div.innerHTML = 'Weak Password - Follow requirements above';
+                div.innerHTML = '❌ Weak Password - Follow requirements above';
                 div.className = "password-strength strength-weak";
             }
         }
@@ -284,12 +300,12 @@
                 return;
             }
             if(password !== confirm) {
-                confirmError.innerHTML = 'Passwords do not match!';
+                confirmError.innerHTML = '✗ Passwords do not match!';
                 confirmSuccess.innerHTML = "";
                 return false;
             } else {
                 confirmError.innerHTML = "";
-                confirmSuccess.innerHTML = 'Passwords match!';
+                confirmSuccess.innerHTML = '✓ Passwords match!';
                 return true;
             }
         }
@@ -300,7 +316,7 @@
         });
         confirmInput?.addEventListener("input", validateConfirmPassword);
         
-        // Register function - WITHOUT email verification (direct login after registration)
+        // ========== REGISTER FUNCTION WITH EMAIL VERIFICATION ==========
         window.register = async function() {
             let name = document.getElementById("name").value.trim();
             let email = document.getElementById("email").value.trim();
@@ -309,9 +325,11 @@
             let confirmPwd = document.getElementById("confirmPassword").value;
             let errorDiv = document.getElementById("registerError");
             let successDiv = document.getElementById("registerSuccess");
+            let verificationDiv = document.getElementById("verificationNotice");
             
             errorDiv.innerHTML = "";
             successDiv.innerHTML = "";
+            verificationDiv.style.display = "none";
             
             if (!name || !email || !role || !pass || !confirmPwd) {
                 errorDiv.innerHTML = "Please fill all required fields!";
@@ -353,7 +371,7 @@
             const isLong = pass.length >= 8;
             
             if (!hasUpper || !hasLower || !hasDigit || !hasSpecial || !isLong) {
-                errorDiv.innerHTML = "Password must contain: Uppercase, Lowercase, Digit, Special character and min 8 characters!";
+                errorDiv.innerHTML = "Password must contain: Uppercase, Lowercase, Digit, Special character @$!%*?&# and min 8 chars!";
                 return;
             }
             
@@ -361,19 +379,48 @@
                 const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
                 const user = userCredential.user;
                 
-                // NO EMAIL VERIFICATION - directly work
-                // await user.sendEmailVerification(); // commented out
+                // Send email verification
+                await user.sendEmailVerification({
+                    url: window.location.origin + "/index.html",
+                    handleCodeInApp: false
+                });
                 
-                const userData = { name, email, department, role, createdAt: new Date().toISOString() };
-                if (role === "user") { userData.batch = batch; userData.studentId = studentId; }
+                const userData = { 
+                    name, email, department, role, 
+                    createdAt: new Date().toISOString(), 
+                    emailVerified: false 
+                };
+                if (role === "user") { 
+                    userData.batch = batch; 
+                    userData.studentId = studentId; 
+                }
                 await db.collection("users").doc(user.uid).set(userData);
                 
-                successDiv.innerHTML = "✅ Registration successful! Redirecting to login...";
+                await auth.signOut();
+                
+                verificationDiv.innerHTML = `
+                    <strong>📧 Verification Email Sent!</strong><br>
+                    Please check <strong>${email}</strong> (also check spam folder).<br>
+                    Click the verification link to activate your account.<br>
+                    You can login only after verifying your email.
+                `;
+                verificationDiv.style.display = "block";
+                successDiv.innerHTML = "✅ Registration successful! Verification email sent.";
+                
+                document.getElementById("name").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("password").value = "";
+                document.getElementById("confirmPassword").value = "";
+                document.getElementById("role").value = "";
+                userFields.classList.add("hidden");
+                adminFields.classList.add("hidden");
                 
                 setTimeout(() => {
                     window.location.href = "index.html";
-                }, 2000);
+                }, 5000);
+                
             } catch (error) {
+                console.error("Registration Error:", error);
                 if (error.code === 'auth/email-already-in-use') {
                     errorDiv.innerHTML = "Email already exists! Try login.";
                 } else if (error.code === 'auth/invalid-email') {

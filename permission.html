@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permission | EduLeave</title>
+    <title>Permission Management | EduLeave</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -17,32 +17,37 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); font-family: 'Inter', sans-serif; padding: 20px; }
-        .container { max-width: 700px; margin: 0 auto; }
+        .container { max-width: 750px; margin: 0 auto; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; }
         .logo { font-size: 18px; font-weight: bold; color: #1a1a2e; }
+        .logo i { color: #2da44e; }
         .user-avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
         .logout-btn { background: #dc3545; border: none; padding: 6px 12px; border-radius: 8px; color: white; cursor: pointer; }
         .btn-home { background: #4f46e5; border: none; padding: 8px 16px; border-radius: 8px; color: white; cursor: pointer; margin-bottom: 15px; display: inline-block; }
-        .welcome-card { background: white; border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; }
-        .welcome-text { color: #2da44e; font-weight: 500; }
-        .form-card { background: white; border-radius: 12px; padding: 20px; }
+        .form-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .form-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; border-bottom: 2px solid #2da44e; padding-bottom: 8px; display: inline-block; }
+        .section-title { font-size: 14px; font-weight: 600; margin: 15px 0 10px 0; color: #2da44e; }
         .input-field { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
         .input-field:focus { border-color: #2da44e; outline: none; }
-        .time-group { display: flex; gap: 15px; margin-bottom: 12px; }
-        .time-field { flex: 1; }
-        .time-field label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
-        .quick-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 15px 0; }
-        .quick-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; }
-        .quick-btn:hover { background: #2da44e; color: white; }
+        .date-group { display: flex; gap: 15px; margin-bottom: 12px; }
+        .date-field { flex: 1; }
+        .date-field label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+        .row-2cols { display: flex; gap: 15px; margin-bottom: 12px; }
+        .row-2cols > div { flex: 1; }
         .btn-submit { background: linear-gradient(135deg, #2da44e, #216e39); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; margin-top: 10px; }
-        @media (max-width: 550px) { .time-group { flex-direction: column; gap: 0; } body { padding: 10px; } }
+        .btn-submit:hover { transform: scale(0.98); }
+        .fraud-warning { background: #fff3cd; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 12px; display: none; }
+        .fraud-high { background: #f8d7da; border-left-color: #dc3545; }
+        .warning-text { color: #856404; }
+        .info-text { font-size: 11px; color: #666; margin-top: -8px; margin-bottom: 12px; }
+        .auto-field { background: #f5f5f5; cursor: default; }
+        @media (max-width: 650px) { .row-2cols { flex-direction: column; gap: 0; } .date-group { flex-direction: column; gap: 0; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="top-bar">
-            <div class="logo"><i class="fas fa-key"></i> Permission Management</div>
+            <div class="logo"><i class="fas fa-clock"></i> Permission Management</div>
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="user-avatar" id="userAvatar"></div>
                 <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -51,46 +56,54 @@
         
         <button class="btn-home" onclick="location.href='home.html'"><i class="fas fa-arrow-left"></i> Home</button>
         
-        <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
-        
         <div class="form-card">
-            <div class="form-title"><i class="fas fa-bolt"></i> Instant Permission Request</div>
+            <div class="form-title"><i class="fas fa-pen-alt"></i> Apply for Permission</div>
             
-            <select id="department" class="input-field">
-                <option value="">Select Department</option>
-                <option value="CSE">CSE</option><option value="EEE">EEE</option><option value="BBA">BBA</option>
-                <option value="LLB">LLB</option><option value="CEN">CEN</option><option value="TEX">TEX</option>
+            <select id="adminSelect" class="input-field"><option value="">Select Administrator</option></select>
+            <select id="permissionType" class="input-field">
+                <option value="">Select Permission Type</option>
+                <option value="Late Coming">Late Coming Permission</option>
+                <option value="Early Leaving">Early Leaving Permission</option>
+                <option value="Hour Leave">Hour Leave Permission</option>
+                <option value="Full Day Permission">Full Day Permission</option>
+                <option value="Emergency Permission">Emergency Permission</option>
             </select>
             
-            <input type="text" id="studentName" placeholder="Your Name" class="input-field">
+            <div class="date-group"><div class="date-field"><label>📅 Permission Date</label><input type="date" id="permissionDate" class="input-field"></div></div>
             
-            <select id="adminSelect" class="input-field">
-                <option value="">Select Administrator</option>
-            </select>
+            <div class="row-2cols"><div><label>⏰ Start Time</label><input type="time" id="startTime" class="input-field"></div><div><label>⏰ End Time</label><input type="time" id="endTime" class="input-field"></div></div>
+            <div id="timeError" style="color:#dc3545; font-size:12px; margin-bottom:10px;"></div>
             
-            <select id="purposeType" class="input-field">
-                <option value="">Select Purpose</option>
-                <option>Medical Emergency</option><option>Personal Work</option><option>Family Event</option>
-                <option>Official Work</option><option>Late Arrival</option><option>Early Departure</option>
-            </select>
-            
-            <div class="time-group">
-                <div class="time-field"><label>Start Time</label><input type="time" id="startTime" class="input-field" style="margin-bottom:0;"></div>
-                <div class="time-field"><label>End Time</label><input type="time" id="endTime" class="input-field" style="margin-bottom:0;"></div>
+            <div class="row-2cols">
+                <div><label style="font-size:12px; color:#666;">📅 Day of Week (Auto)</label><input type="text" id="dayDisplay" class="input-field auto-field" readonly placeholder="Select date"></div>
+                <div><label style="font-size:12px; color:#666;">🍂 Season (Auto)</label><input type="text" id="seasonDisplay" class="input-field auto-field" readonly placeholder="Select date"></div>
             </div>
             
-            <div class="time-field" style="margin:0;"><label>Permission Date</label><input type="date" id="permissionDate" class="input-field" style="margin-bottom:0;"></div>
+            <div class="row-2cols">
+                <div><label style="font-size:12px; color:#666;">⏱️ Permission Duration (Auto)</label><input type="text" id="durationDisplay" class="input-field auto-field" readonly placeholder="Select time"></div>
+                <div><label style="font-size:12px; color:#666;">📆 Month (Auto)</label><input type="text" id="monthDisplay" class="input-field auto-field" readonly placeholder="Select date"></div>
+            </div>
+            <div class="info-text"><i class="fas fa-info-circle"></i> Day, Season, Duration, and Month are automatically calculated.</div>
             
-            <div class="quick-actions">
-                <button type="button" class="quick-btn" onclick="setDuration(1)">1 Hour</button>
-                <button type="button" class="quick-btn" onclick="setDuration(2)">2 Hours</button>
-                <button type="button" class="quick-btn" onclick="setDuration(3)">3 Hours</button>
-                <button type="button" class="quick-btn" onclick="setDuration(4)">Half Day</button>
-                <button type="button" class="quick-btn" onclick="setDuration(8)">Full Day</button>
+            <div class="section-title"><i class="fas fa-stethoscope"></i> Reason for Permission</div>
+            <textarea id="permissionReason" placeholder="Write your reason for permission here..." class="input-field" style="min-height:80px;"></textarea>
+            
+            <div class="section-title"><i class="fas fa-chart-line"></i> Additional Information</div>
+            
+            <div class="row-2cols">
+                <div>
+                    <label style="font-size:12px; color:#666;">💰 Transportation Expense <span style="color:#f59e0b;">(BDT/Day)</span></label>
+                    <input type="number" id="transportExpensePerDay" step="10" placeholder="e.g., 200" class="input-field">
+                    <div class="info-text">প্রতিদিনের পরিবহন খরচ (যেমন: 200 টাকা/দিন)</div>
+                </div>
+                <div><label style="font-size:12px; color:#666;">📚 Class Load (hours/day)</label><input type="number" id="classLoad" step="0.5" placeholder="e.g., 6.5" class="input-field"></div>
             </div>
             
-            <textarea id="permissionReason" placeholder="Reason for permission..." class="input-field" style="min-height:80px;"></textarea>
+            <div class="row-2cols">
+                <div><label style="font-size:12px; color:#666;">🏠 Distance from Campus (km)</label><input type="number" id="distance" step="0.5" placeholder="e.g., 12" class="input-field"></div>
+            </div>
             
+            <div id="fraudWarning" class="fraud-warning"></div>
             <button class="btn-submit" onclick="submitPermission()"><i class="fas fa-paper-plane"></i> Submit Permission Request</button>
         </div>
     </div>
@@ -109,84 +122,120 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         
-        window.logout = async function() {
-            try { await auth.signOut(); } catch(e) {}
-            sessionStorage.removeItem("currentUser");
-            window.location.href = "index.html";
-        };
+        const dayNames = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday" };
+        const seasonNames = { 1: "Spring (March-May)", 2: "Summer (June-August)", 3: "Fall (September-November)", 4: "Winter (December-February)" };
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        window.logout = async function() { try { await auth.signOut(); } catch(e) {} window.location.href = "index.html"; };
         
         window.loadAdmins = async function(department) {
             if (!department) return;
             const adminsSnapshot = await db.collection("users").where("role", "==", "admin").where("department", "==", department).get();
             const adminSelect = document.getElementById("adminSelect");
             adminSelect.innerHTML = '<option value="">Select Administrator</option>';
-            adminsSnapshot.forEach(doc => {
-                const admin = doc.data();
-                adminSelect.innerHTML += `<option value="${admin.email}|${admin.name}">${admin.name}</option>`;
-            });
+            adminsSnapshot.forEach(doc => { const admin = doc.data(); adminSelect.innerHTML += `<option value="${admin.email}|${admin.name}">${admin.name}</option>`; });
         };
         
-        function setDuration(hours) {
-            let startTime = document.getElementById("startTime").value;
-            if(!startTime) { alert("Please select start time first!"); return; }
-            let [startHour, startMinute] = startTime.split(':').map(Number);
-            let endHour = startHour + hours;
-            let endMinute = startMinute;
-            if(endHour >= 24) { endHour = 23; endMinute = 59; alert("Time exceeds midnight, set to 23:59"); }
-            document.getElementById("endTime").value = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+        function getDayOfWeekFromDate(date) { const day = new Date(date).getDay(); if (day === 0) return 7; return day; }
+        function getSeasonFromDate(date) { const month = new Date(date).getMonth() + 1; if (month >= 3 && month <= 5) return 1; if (month >= 6 && month <= 8) return 2; if (month >= 9 && month <= 11) return 3; return 4; }
+        function calculatePermissionDuration(startTime, endTime) { if (!startTime || !endTime) return 0; const start = startTime.split(':').map(Number); const end = endTime.split(':').map(Number); let hours = end[0] - start[0]; if (end[1] < start[1]) hours -= 1; return Math.max(hours, 0.5); }
+        
+        function updateAutoFields() {
+            const permDate = document.getElementById("permissionDate").value;
+            const startTime = document.getElementById("startTime").value;
+            const endTime = document.getElementById("endTime").value;
+            if (permDate) {
+                const dayCode = getDayOfWeekFromDate(permDate);
+                document.getElementById("dayDisplay").value = dayNames[dayCode] || "Unknown";
+                const seasonCode = getSeasonFromDate(permDate);
+                document.getElementById("seasonDisplay").value = seasonNames[seasonCode] || "Unknown";
+                const month = new Date(permDate).getMonth();
+                document.getElementById("monthDisplay").value = monthNames[month] || "Unknown";
+            }
+            if (startTime && endTime) {
+                const duration = calculatePermissionDuration(startTime, endTime);
+                document.getElementById("durationDisplay").value = duration + " hour(s)";
+            } else { document.getElementById("durationDisplay").value = "Select time"; }
+        }
+        
+        async function detectFraud(permissionData) {
+            let fraudProbability = 0;
+            let riskFactors = [];
+            
+            if (permissionData.dayOfWeek === 1 || permissionData.dayOfWeek === 5) { fraudProbability += 0.20; riskFactors.push(`Permission on ${permissionData.dayOfWeek === 1 ? "Monday" : "Friday"} (long weekend pattern)`); }
+            if (permissionData.dayOfWeek === 6 || permissionData.dayOfWeek === 7) { fraudProbability += 0.10; riskFactors.push(`Permission on weekend`); }
+            if (permissionData.season === 1 || permissionData.season === 4) { fraudProbability += 0.08; riskFactors.push(`Permission during ${permissionData.season === 1 ? "Spring" : "Winter"} season`); }
+            if (permissionData.permissionDuration >= 4) { fraudProbability += 0.15; riskFactors.push(`Long permission duration (${permissionData.permissionDuration} hours)`); }
+            if (permissionData.permissionDuration >= 6) { fraudProbability += 0.10; riskFactors.push(`Very long permission (${permissionData.permissionDuration} hours)`); }
+            if (permissionData.month === 1 || permissionData.month === 6 || permissionData.month === 12) { fraudProbability += 0.10; riskFactors.push(`Permission during exam period (${monthNames[permissionData.month - 1]})`); }
+            
+            if (permissionData.transportExpensePerDay && permissionData.transportExpensePerDay < 100 && permissionData.permissionDuration > 3) {
+                fraudProbability += 0.08;
+                riskFactors.push(`Very low daily transport expense (${permissionData.transportExpensePerDay} BDT/day) with long permission`);
+            }
+            
+            if (permissionData.classLoad && permissionData.classLoad > 7) { fraudProbability += 0.12; riskFactors.push(`High class load (${permissionData.classLoad} hrs/day)`); }
+            if (permissionData.distance && permissionData.distance > 20) { fraudProbability += 0.10; riskFactors.push(`Far from campus (${permissionData.distance} km)`); }
+            
+            const permissionsSnapshot = await db.collection("permissions").where("userEmail", "==", permissionData.userEmail).get();
+            const permsInLast30Days = permissionsSnapshot.docs.filter(doc => { const permDate = new Date(doc.data().permissionDate); return (new Date() - permDate) / (1000 * 60 * 60 * 24) <= 30; }).length;
+            if (permsInLast30Days >= 3) { fraudProbability += 0.15; riskFactors.push(`${permsInLast30Days} permissions taken in last 30 days`); }
+            
+            fraudProbability = Math.min(Math.max(fraudProbability, 0), 0.98);
+            const prediction = fraudProbability >= 0.4 ? 1 : 0;
+            const riskLevel = fraudProbability >= 0.7 ? "High" : (fraudProbability >= 0.4 ? "Medium" : "Low");
+            return { prediction, fraud_probability: fraudProbability, risk_level: riskLevel, risk_factors: riskFactors, fraud_score: Math.round(fraudProbability * 100) };
         }
         
         window.submitPermission = async function() {
             const user = auth.currentUser;
-            if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
-            
+            if (!user) { alert("Please login"); window.location.href = "index.html"; return; }
             const userDoc = await db.collection("users").doc(user.uid).get();
             const userData = userDoc.data();
             
-            let department = document.getElementById("department").value;
-            let name = document.getElementById("studentName").value.trim();
             let adminValue = document.getElementById("adminSelect").value;
             let [adminEmail, adminName] = adminValue ? adminValue.split("|") : [];
-            let purpose = document.getElementById("purposeType").value;
+            let permissionType = document.getElementById("permissionType").value;
+            let permissionDate = document.getElementById("permissionDate").value;
             let startTime = document.getElementById("startTime").value;
             let endTime = document.getElementById("endTime").value;
-            let date = document.getElementById("permissionDate").value;
-            let reason = document.getElementById("permissionReason").value.trim();
+            let reasonText = document.getElementById("permissionReason").value.trim();
+            let transportExpensePerDay = parseInt(document.getElementById("transportExpensePerDay").value) || 0;
+            let classLoad = parseFloat(document.getElementById("classLoad").value) || 0;
+            let distance = parseFloat(document.getElementById("distance").value) || 0;
             
-            if (!department || !name || !adminEmail || !purpose || !startTime || !endTime || !date || !reason) {
-                alert("Please fill all fields!");
-                return;
+            let dayOfWeek = getDayOfWeekFromDate(permissionDate);
+            let season = getSeasonFromDate(permissionDate);
+            let permissionDuration = calculatePermissionDuration(startTime, endTime);
+            let month = new Date(permissionDate).getMonth() + 1;
+            
+            if (!adminEmail || !permissionType || !permissionDate || !startTime || !endTime || !reasonText) { alert("Please fill all required fields!"); return; }
+            if (startTime >= endTime) { document.getElementById("timeError").innerHTML = "End time must be after start time!"; return; }
+            
+            const fraudResult = await detectFraud({ userEmail: user.email, dayOfWeek, season, permissionDuration, month, transportExpensePerDay, classLoad, distance });
+            
+            if (fraudResult.prediction === 1) {
+                document.getElementById("fraudWarning").style.display = "block";
+                document.getElementById("fraudWarning").className = fraudResult.risk_level === "High" ? "fraud-warning fraud-high" : "fraud-warning";
+                document.getElementById("fraudWarning").innerHTML = `<div class="warning-text"><strong>⚠️ FRAUD DETECTION ALERT!</strong><br>Risk: ${fraudResult.risk_level} | Score: ${fraudResult.fraud_score}/100<br>Reasons: ${fraudResult.risk_factors.join(', ')}<br><small>This request has been flagged for admin review.</small></div>`;
+                if (!confirm(`⚠️ Fraud Warning!\nRisk: ${fraudResult.risk_level}\nScore: ${fraudResult.fraud_score}/100\n\nSubmit anyway?`)) return;
             }
-            if (startTime >= endTime) {
-                alert("End time must be after start time!");
-                return;
-            }
             
-            let [sh, sm] = startTime.split(':').map(Number);
-            let [eh, em] = endTime.split(':').map(Number);
-            let diff = (eh*60+em) - (sh*60+sm);
-            let hours = Math.floor(diff/60);
-            let minutes = diff%60;
-            let duration = hours > 0 ? (minutes > 0 ? `${hours}h ${minutes}m` : `${hours} hour${hours>1?'s':''}`) : `${minutes} minutes`;
+            await db.collection("permissions").add({
+                userName: userData.name, userEmail: user.email, department: userData.department || "N/A",
+                adminEmail, adminName, permissionType, permissionDate, startTime, endTime, permissionDuration, reasonText,
+                dayOfWeek, season, month, transportExpensePerDay, classLoad, distanceFromCampus: distance,
+                fraudScore: fraudResult.fraud_score, fraudRisk: fraudResult.risk_level,
+                detectionReasons: fraudResult.risk_factors, status: "Pending", timestamp: new Date().toISOString()
+            });
             
-            const requestData = {
-                userName: name,
-                userEmail: user.email,
-                department: department,
-                batch: userData.batch || "",
-                studentId: userData.studentId || "",
-                purpose: purpose,
-                startTime: startTime,
-                endTime: endTime,
-                date: date,
-                duration: duration,
-                reason: reason,
-                adminEmail: adminEmail,
-                adminName: adminName,
-                status: "Pending",
-                timestamp: new Date().toISOString()
-            };
+            await db.collection("notifications").add({
+                type: "permission", userName: userData.name, userEmail: user.email, department: userData.department,
+                adminEmail: adminEmail, details: `${permissionType} | ${permissionDate} (${permissionDuration} hrs)`,
+                fraudRisk: fraudResult.risk_level, fraudScore: fraudResult.fraud_score, isRead: false, timestamp: new Date().toISOString()
+            });
             
+<<<<<<< HEAD
             try {
                 await db.collection("permissions").add(requestData);
                 alert("✅ Permission request submitted! Admin will be notified by email.");
@@ -200,27 +249,27 @@
                 console.error("Submit error:", e);
                 alert("Failed to submit!"); 
             }
+=======
+            alert("✅ Permission request submitted!");
+            document.getElementById("permissionDate").value = ""; document.getElementById("startTime").value = ""; document.getElementById("endTime").value = "";
+            document.getElementById("permissionReason").value = ""; document.getElementById("transportExpensePerDay").value = "";
+            document.getElementById("classLoad").value = ""; document.getElementById("distance").value = ""; document.getElementById("adminSelect").value = "";
+            document.getElementById("fraudWarning").style.display = "none";
+            updateAutoFields();
+>>>>>>> 1ff49e1 (verification and ml added)
         };
         
-        document.getElementById("department")?.addEventListener("change", function() {
-            loadAdmins(this.value);
-        });
+        document.getElementById("permissionDate").addEventListener("change", updateAutoFields);
+        document.getElementById("startTime").addEventListener("change", updateAutoFields);
+        document.getElementById("endTime").addEventListener("change", updateAutoFields);
         
         auth.onAuthStateChanged(async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             const userDoc = await db.collection("users").doc(user.uid).get();
             const userData = userDoc.data();
-            if (!userData) { window.location.href = "index.html"; return; }
             if (userData.role === "admin") { window.location.href = "admin.html"; return; }
-            
             document.getElementById("userAvatar").innerHTML = userData.name.charAt(0).toUpperCase();
-            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${userData.name}!`;
-            document.getElementById("studentName").value = userData.name;
-            
-            if (userData.department) {
-                document.getElementById("department").value = userData.department;
-                loadAdmins(userData.department);
-            }
+            if (userData.department) loadAdmins(userData.department);
         });
     </script>
 </body>

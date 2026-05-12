@@ -18,54 +18,74 @@
         .logo { font-size: 20px; font-weight: bold; color: #1a1a2e; }
         .logo i { color: #2da44e; margin-right: 8px; }
         .header-right { display: flex; align-items: center; gap: 20px; position: relative; }
-        
         .notification-icon { position: relative; cursor: pointer; font-size: 22px; color: #555; }
         .notification-icon:hover { color: #2da44e; }
-        .notification-badge { position: absolute; top: -8px; right: -10px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold; min-width: 18px; text-align: center; }
-        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 100; max-height: 400px; overflow-y: auto; }
-        .notification-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .notification-item:hover { background: #f8f9fa; }
+        .notification-badge { position: absolute; top: -8px; right: -12px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; min-width: 18px; text-align: center; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .notification-dropdown { position: absolute; right: 0; top: 35px; width: 380px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: none; z-index: 1000; max-height: 450px; overflow-y: auto; }
+        .notification-item { padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
+        .notification-item:hover { background: #f5f5f5; }
         .notification-item.unread { background: #e8f5e9; border-left: 3px solid #2da44e; }
-        .notification-time { font-size: 10px; color: #888; margin-top: 5px; }
-        
-        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
-        .btn-logout:hover { opacity: 0.9; transform: scale(0.98); }
+        .notification-fraud { background: #FEF2F2 !important; border-left: 3px solid #dc3545 !important; }
+        .admin-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; }
         
         .welcome-card { background: linear-gradient(135deg, #2da44e, #216e39); color: white; padding: 20px 25px; border-radius: 12px; margin-bottom: 20px; }
         .welcome-card h2 { font-size: 20px; margin-bottom: 5px; }
         .welcome-card p { font-size: 13px; opacity: 0.9; }
-        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 12px; display: inline-block; margin-top: 8px; }
+        .dept-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; font-size: 12px; }
         
         .dashboard-layout { display: flex; gap: 25px; flex-wrap: wrap; }
-        .sidebar { flex: 1; min-width: 260px; }
-        .main-content { flex: 3; min-width: 300px; }
+        .sidebar { flex: 1; min-width: 280px; }
+        .main-content { flex: 3; min-width: 350px; }
         
-        .profile-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .profile-card { background: white; border-radius: 16px; padding: 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .profile-avatar { width: 70px; height: 70px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
         .profile-avatar span { font-size: 28px; color: white; font-weight: bold; }
         .profile-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; word-break: break-all; }
-        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.2s; }
-        .btn-profile:hover { opacity: 0.9; transform: scale(0.98); }
+        .profile-email { font-size: 11px; color: #666; margin-bottom: 12px; }
+        .btn-profile { background: #4f46e5; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; }
         
         .records-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .records-card h3 { font-size: 15px; margin-bottom: 15px; color: #1a1a2e; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+        .records-card h3 { font-size: 15px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
         .student-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-        .btn-history { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .btn-history:hover { opacity: 0.9; transform: scale(0.98); }
+        .btn-analytics { background: #2da44e; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-clear { background: #6c757d; color: white; border: none; padding: 8px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; }
+        .btn-history { background: #4f46e5; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        
+        .student-stats { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-top: 12px; display: none; }
+        .stat-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .stat-label { font-size: 12px; color: #666; }
+        .stat-value { font-size: 16px; font-weight: 700; }
+        .stat-value.taken { color: #f59e0b; }
+        .stat-value.remaining { color: #10b981; }
+        .stat-value.pending { color: #ef4444; }
         
         .filter-bar { display: flex; gap: 15px; flex-wrap: wrap; background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .filter-bar select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
-        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; transition: 0.2s; }
-        .filter-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .filter-btn { background: #4f46e5; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: 500; }
         
-        .requests-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; }
-        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; transition: 0.2s; }
-        .request-card:hover { transform: translateX(3px); }
+        .fraud-alerts-card { background: #FEF2F2; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #FECACA; }
+        .fraud-alerts-card h3 { margin-bottom: 15px; color: #991B1B; }
+        .fraud-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; border-left: 4px solid #dc3545; }
+        .fraud-risk-badge { background: #dc3545; color: white; padding: 2px 8px; border-radius: 20px; font-size: 10px; margin-left: 8px; }
+        
+        .requests-container { background: white; border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+        .hide-requests-btn { background: #6c757d; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .request-card { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #2da44e; position: relative; }
+        .fraud-card { border-left-color: #dc3545; background: #FEF2F2; }
         .request-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
-        .user-name { font-weight: bold; font-size: 15px; }
+        .user-name { 
+            font-weight: bold; 
+            font-size: 15px; 
+            cursor: pointer; 
+            color: #2da44e;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            text-underline-offset: 3px;
+        }
+        .user-name:hover { color: #1a5a2e; }
         .user-email { font-size: 11px; color: #666; margin-top: 2px; }
         .user-dept { font-size: 11px; color: #2da44e; margin-top: 2px; }
         .status-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; display: inline-block; }
@@ -73,19 +93,115 @@
         .status-approved { background: #d4edda; color: #155724; }
         .status-rejected { background: #f8d7da; color: #721c24; }
         .request-details { font-size: 12px; color: #555; margin: 10px 0; line-height: 1.5; }
-        .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; outline: none; }
-        .comment-input input:focus { border-color: #2da44e; }
-        .approve-btn { background: #2da44e; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
-        .approve-btn:hover { opacity: 0.9; transform: scale(0.98); }
-        .reject-btn { background: #dc3545; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: 0.2s; }
-        .reject-btn:hover { opacity: 0.9; transform: scale(0.98); }
+        .comment-input { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+        .comment-input input { flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; }
+        .approve-btn { background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .reject-btn { background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .admin-comment { background: #fff8e7; padding: 8px 12px; border-radius: 8px; margin-top: 8px; font-size: 11px; border-left: 3px solid #ffc107; }
         .empty-state { text-align: center; padding: 40px; color: #888; }
+        .hidden { display: none; }
         .position-relative { position: relative; }
         
-        @media (max-width: 900px) { .dashboard-layout { flex-direction: column; } }
-        @media (max-width: 600px) { .filter-bar { flex-direction: column; } .comment-input { flex-direction: column; } }
+        /* Modal Styles */
+        .user-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .user-modal-content {
+            background: #1e1e1e;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 90%;
+            animation: slideIn 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .user-modal-header {
+            background: linear-gradient(135deg, #2da44e, #216e39);
+            padding: 14px 18px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-modal-header h3 { 
+            margin: 0; 
+            font-size: 1rem; 
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .user-modal-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .user-modal-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.05); }
+        .user-modal-body { 
+            padding: 16px 18px; 
+            color: #ddd;
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+        .user-modal-body::-webkit-scrollbar { width: 4px; }
+        .user-modal-body::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 4px; }
+        .user-modal-body::-webkit-scrollbar-thumb { background: #2da44e; border-radius: 4px; }
+
+        .info-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 8px 0; 
+            border-bottom: 1px solid #2a2a2a; 
+        }
+        .info-label { 
+            font-weight: 600; 
+            color: #2da44e; 
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .info-value { 
+            color: #fff; 
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .analytics-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 20px; }
+        .analytics-card h3 { font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+        .chart-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
+        .chart-btn { padding: 6px 12px; border: none; border-radius: 20px; cursor: pointer; background: #e0e0e0; font-size: 12px; }
+        .chart-btn.active { background: #4f46e5; color: white; }
+        .chart-container { margin-top: 15px; min-height: 320px; }
+        canvas { max-height: 300px; width: 100% !important; }
+        .chart-note { text-align: center; font-size: 11px; color: #888; margin-top: 10px; }
+        
+        @media (max-width: 1000px) { .dashboard-layout { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -98,7 +214,9 @@
                         <i class="fas fa-bell"></i>
                         <span id="notifBadge" class="notification-badge" style="display:none;">0</span>
                     </div>
-                    <div id="notificationDropdown" class="notification-dropdown"></div>
+                    <div id="notificationDropdown" class="notification-dropdown">
+                        <div style="padding:12px; text-align:center;">Loading notifications...</div>
+                    </div>
                 </div>
                 <div class="admin-avatar" id="adminAvatar">A</div>
                 <button class="btn-logout" onclick="logout()">Logout</button>
@@ -115,24 +233,38 @@
             <div class="sidebar">
                 <div class="profile-card">
                     <div class="profile-avatar" id="profileAvatar"><span>A</span></div>
-                    <div class="profile-name" id="profileName">Admin User</div>
+                    <div class="profile-name" id="profileName">Admin</div>
                     <div class="profile-email" id="profileEmail">admin@example.com</div>
                     <button class="btn-profile" onclick="location.href='profile.html'">Edit Profile</button>
                 </div>
                 
                 <div class="records-card">
-                    <h3>Records & History</h3>
+                    <h3><i class="fas fa-chart-line"></i> Student Analytics</h3>
                     <select id="studentSelect" class="student-select">
-                        <option value="all">All Students (Department Wise)</option>
+                        <option value="all">Select a student</option>
                     </select>
-                    <button class="btn-history" onclick="viewHistory()">
-                        View History
-                    </button>
+                    <button class="btn-analytics" onclick="loadStudentAnalytics()"><i class="fas fa-chart-line"></i> View Analytics</button>
+                    <button class="btn-history" onclick="viewStudentHistory()"><i class="fas fa-history"></i> View Full History</button>
+                    <button class="btn-clear" onclick="clearAnalyticsView()"><i class="fas fa-arrow-left"></i> Back to Requests</button>
+                    
+                    <div id="studentStats" class="student-stats">
+                        <div class="stat-row"><span class="stat-label">Total Leaves Taken</span><span class="stat-value taken" id="totalTaken">0</span></div>
+                        <div class="stat-row"><span class="stat-label">Total Leaves Allowed</span><span class="stat-value remaining" id="totalAllowed">12</span></div>
+                        <div class="stat-row"><span class="stat-label">Remaining Leaves</span><span class="stat-value remaining" id="remainingLeaves">0</span></div>
+                        <div class="stat-row"><span class="stat-label">Pending Leaves</span><span class="stat-value pending" id="pendingCount">0</span></div>
+                        <div class="stat-row"><span class="stat-label">Approved Leaves</span><span class="stat-value taken" id="approvedCount">0</span></div>
+                        <div class="stat-row"><span class="stat-label">Rejected Leaves</span><span class="stat-value pending" id="rejectedCount">0</span></div>
+                    </div>
                 </div>
             </div>
             
             <div class="main-content">
-                <div class="filter-bar">
+                <div id="fraudAlertsCard" class="fraud-alerts-card">
+                    <h3><i class="fas fa-shield-alt"></i> 🚨 High Risk Fraud Alerts</h3>
+                    <div id="fraudAlertsList"><div style="text-align:center; padding:20px;">Loading fraud alerts...</div></div>
+                </div>
+                
+                <div id="filterBar" class="filter-bar">
                     <select id="typeFilter">
                         <option value="all">All Types</option>
                         <option value="leave">Leave Requests</option>
@@ -144,15 +276,46 @@
                         <option value="Approved">Approved</option>
                         <option value="Rejected">Rejected</option>
                     </select>
+                    <select id="riskFilter">
+                        <option value="all">All Risk Levels</option>
+                        <option value="High">High Risk Only</option>
+                        <option value="Medium">Medium Risk Only</option>
+                        <option value="Low">Low Risk Only</option>
+                    </select>
                     <button class="filter-btn" onclick="filterRequests()">Apply Filter</button>
                 </div>
                 
-                <div class="requests-container">
-                    <div class="section-title">All Requests</div>
-                    <div id="requestsList">
-                        <div class="empty-state">Loading requests...</div>
+                <div id="requestsContainer" class="requests-container">
+                    <div class="section-title">
+                        <span>📋 All Requests</span>
+                        <button class="hide-requests-btn" onclick="hideRequests()">Hide</button>
                     </div>
+                    <div id="requestsList"><div class="empty-state">Loading requests...</div></div>
                 </div>
+                
+                <div id="analyticsCard" class="analytics-card hidden">
+                    <h3><i class="fas fa-chart-line"></i> Leave Analytics <span style="font-size:12px; color:#666; margin-left:10px;" id="chartStudentName"></span></h3>
+                    <div class="chart-buttons">
+                        <button class="chart-btn active" onclick="setChartView('weekly')">Weekly</button>
+                        <button class="chart-btn" onclick="setChartView('monthly')">Monthly</button>
+                        <button class="chart-btn" onclick="setChartView('yearly')">Yearly</button>
+                    </div>
+                    <div class="chart-container"><canvas id="studentChart"></canvas></div>
+                    <div class="chart-note">Showing leave requests over time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Info Modal -->
+    <div id="userInfoModal" class="user-modal">
+        <div class="user-modal-content">
+            <div class="user-modal-header">
+                <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+                <button class="user-modal-close" onclick="closeUserModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="user-modal-body" id="modalBody">
+                <div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
             </div>
         </div>
     </div>
@@ -166,177 +329,513 @@
             messagingSenderId: "311349906309",
             appId: "1:311349906309:web:bf5391e233cd186943d2ec"
         };
-        
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         
+        let adminDepartment = null, adminName = null, adminEmail = null;
         let allLeaves = [], allPermissions = [];
-        let adminDepartment = null;
-        let adminName = null;
-        let adminEmail = null;
         let allNotifications = [];
-        let notificationsListener = null;
-        let allStudents = [];
+        let studentsList = [];
+        let currentChart = null;
+        let currentStudentLeaves = [];
+        let currentChartView = 'weekly';
+        let isAnalyticsView = false;
+        let userDataCache = new Map();
         
-        window.logout = async function() {
-            try { await auth.signOut(); } catch(e) {}
-            sessionStorage.removeItem("currentUser");
-            window.location.href = "index.html";
+        window.logout = async () => { await auth.signOut(); sessionStorage.clear(); window.location.href = "index.html"; };
+        
+        function showRequestsOnly() {
+            document.getElementById("filterBar").classList.remove("hidden");
+            document.getElementById("requestsContainer").classList.remove("hidden");
+            document.getElementById("analyticsCard").classList.add("hidden");
+            filterRequests();
+            isAnalyticsView = false;
+        }
+        
+        function hideRequests() {
+            if (!isAnalyticsView) {
+                document.getElementById("filterBar").classList.add("hidden");
+                document.getElementById("requestsContainer").classList.add("hidden");
+            }
+        }
+        
+        window.clearAnalyticsView = function() {
+            showRequestsOnly();
+            document.getElementById("studentStats").style.display = "none";
+            document.getElementById("studentSelect").value = "all";
+            if (currentChart) { currentChart.destroy(); currentChart = null; }
         };
         
         async function loadStudents() {
-            const studentsSnapshot = await db.collection("users")
-                .where("role", "==", "user")
-                .where("department", "==", adminDepartment)
-                .get();
-            
-            allStudents = [];
-            studentsSnapshot.forEach(doc => {
-                const data = doc.data();
-                allStudents.push({ id: doc.id, name: data.name, email: data.email, batch: data.batch });
-            });
-            
+            const snap = await db.collection("users").where("role", "==", "user").where("department", "==", adminDepartment).get();
+            studentsList = [];
+            snap.forEach(d => studentsList.push({ id: d.id, ...d.data() }));
             const select = document.getElementById("studentSelect");
-            select.innerHTML = '<option value="all">All Students (' + adminDepartment + ' Department)</option>';
-            allStudents.forEach(student => {
-                select.innerHTML += `<option value="${student.email}">${student.name} (Batch: ${student.batch || "N/A"})</option>`;
-            });
+            select.innerHTML = '<option value="all">Select a student</option>' + studentsList.map(s => `<option value="${s.email}">${s.name} (${s.batch || "N/A"})</option>`).join('');
         }
         
-        window.viewHistory = function() {
-            const selectedStudent = document.getElementById("studentSelect").value;
-            if (selectedStudent === "all") {
-                window.location.href = "records.html";
-            } else {
-                const student = allStudents.find(s => s.email === selectedStudent);
-                if (student) {
-                    sessionStorage.setItem("selectedStudent", JSON.stringify(student));
-                    window.location.href = "records.html?student=" + encodeURIComponent(student.email);
+        window.setChartView = function(view) {
+            currentChartView = view;
+            document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            updateChart();
+        };
+        
+        function updateChart() {
+            if (!currentChart || !currentStudentLeaves) return;
+            let labels = [], data = [];
+            const now = new Date();
+            if (currentChartView === 'weekly') {
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(now.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+                    data.push(currentStudentLeaves.filter(leave => new Date(leave.fromDate).toDateString() === date.toDateString()).length);
                 }
+            } else if (currentChartView === 'monthly') {
+                for (let i = 11; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(now.getMonth() - i);
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
+                    data.push(currentStudentLeaves.filter(leave => {
+                        const ld = new Date(leave.fromDate);
+                        return ld.getMonth() === date.getMonth() && ld.getFullYear() === date.getFullYear();
+                    }).length);
+                }
+            } else {
+                for (let i = 4; i >= 0; i--) {
+                    const year = now.getFullYear() - i;
+                    labels.push(year.toString());
+                    data.push(currentStudentLeaves.filter(leave => new Date(leave.fromDate).getFullYear() === year).length);
+                }
+            }
+            currentChart.data.labels = labels;
+            currentChart.data.datasets[0].data = data;
+            currentChart.update();
+        }
+        
+        window.loadStudentAnalytics = async function() {
+            const selectedEmail = document.getElementById("studentSelect").value;
+            if (!selectedEmail || selectedEmail === "all") { alert("Please select a student first!"); return; }
+            const selectedStudent = studentsList.find(s => s.email === selectedEmail);
+            if (!selectedStudent) return;
+            document.getElementById("chartStudentName").innerHTML = `- ${selectedStudent.name}`;
+            document.getElementById("filterBar").classList.add("hidden");
+            document.getElementById("requestsContainer").classList.add("hidden");
+            document.getElementById("analyticsCard").classList.remove("hidden");
+            isAnalyticsView = true;
+            const leavesSnap = await db.collection("leaves").where("userEmail", "==", selectedEmail).get();
+            currentStudentLeaves = [];
+            leavesSnap.forEach(d => currentStudentLeaves.push(d.data()));
+            document.getElementById("totalTaken").innerHTML = currentStudentLeaves.length;
+            document.getElementById("remainingLeaves").innerHTML = Math.max(0, 12 - currentStudentLeaves.length);
+            document.getElementById("pendingCount").innerHTML = currentStudentLeaves.filter(l => l.status === "Pending").length;
+            document.getElementById("approvedCount").innerHTML = currentStudentLeaves.filter(l => l.status === "Approved").length;
+            document.getElementById("rejectedCount").innerHTML = currentStudentLeaves.filter(l => l.status === "Rejected").length;
+            document.getElementById("studentStats").style.display = "block";
+            const ctx = document.getElementById('studentChart').getContext('2d');
+            if (currentChart) currentChart.destroy();
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: `${selectedStudent.name}'s Leaves`, data: [], borderColor: '#2da44e', backgroundColor: 'rgba(45, 164, 78, 0.1)', borderWidth: 2.5, fill: true, tension: 0.3 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+            });
+            updateChart();
+        };
+        
+        window.viewStudentHistory = function() {
+            const selectedEmail = document.getElementById("studentSelect").value;
+            if (!selectedEmail || selectedEmail === "all") { alert("Please select a student first!"); return; }
+            const selectedStudent = studentsList.find(s => s.email === selectedEmail);
+            if (selectedStudent) {
+                localStorage.setItem("selectedStudentForHistory", JSON.stringify({ name: selectedStudent.name, email: selectedStudent.email, batch: selectedStudent.batch, studentId: selectedStudent.studentId }));
+                window.location.href = `records.html?student=${encodeURIComponent(selectedEmail)}`;
             }
         };
         
-        // ============ NOTIFICATION SYSTEM ============
-        
-        function setupNotificationsListener() {
-            if (notificationsListener) notificationsListener();
-            
-            notificationsListener = db.collection("notifications")
-                .where("adminEmail", "==", adminEmail)
-                .orderBy("timestamp", "desc")
-                .onSnapshot((snapshot) => {
-                    let unreadCount = 0;
-                    let notifications = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        if (!data.isRead) unreadCount++;
-                        notifications.push({ id: doc.id, ...data });
-                    });
-                    allNotifications = notifications;
-                    
-                    const badge = document.getElementById("notifBadge");
-                    if (unreadCount > 0) {
-                        badge.innerText = unreadCount;
-                        badge.style.display = "inline-block";
-                    } else {
-                        badge.style.display = "none";
-                    }
-                    
-                    const dropdown = document.getElementById("notificationDropdown");
-                    if (dropdown.style.display === "block") {
-                        renderNotificationsDropdown();
-                    }
-                });
+        async function loadRealData() {
+            if(!adminDepartment || !adminEmail) return;
+            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).get();
+            const permsSnap = await db.collection("permissions").where("department", "==", adminDepartment).get();
+            allLeaves = []; allPermissions = [];
+            leavesSnap.forEach(d => { const data = d.data(); if (data.adminEmail === adminEmail) { allLeaves.push({ id: d.id, ...data, type: "leave" }); } });
+            permsSnap.forEach(d => { const data = d.data(); if (data.adminEmail === adminEmail) { allPermissions.push({ id: d.id, ...data, type: "permission" }); } });
+            allLeaves.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+            allPermissions.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+            if (!isAnalyticsView) filterRequests();
+            loadFraudAlerts();
         }
         
-        function renderNotificationsDropdown() {
-            const dropdown = document.getElementById("notificationDropdown");
-            if (allNotifications.length === 0) {
-                dropdown.innerHTML = "<div style='padding:15px; text-align:center; color:#888;'>No notifications</div>";
+        async function loadFraudAlerts() {
+            if (!adminDepartment || !adminEmail) return;
+            const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).where("adminEmail", "==", adminEmail).get();
+            const permsSnap = await db.collection("permissions").where("department", "==", adminDepartment).where("adminEmail", "==", adminEmail).get();
+            let fraudRequests = [];
+            leavesSnap.forEach(d => { const data = d.data(); if (data.fraudRisk === "High" && data.status === "Pending") { fraudRequests.push({ id: d.id, ...data, requestType: "Leave" }); } });
+            permsSnap.forEach(d => { const data = d.data(); if (data.fraudRisk === "High" && data.status === "Pending") { fraudRequests.push({ id: d.id, ...data, requestType: "Permission" }); } });
+            const container = document.getElementById("fraudAlertsList");
+            if (!container) return;
+            if (fraudRequests.length === 0) { container.innerHTML = "<div style='text-align:center; padding:20px;'>✅ No pending high-risk fraud alerts</div>"; return; }
+            container.innerHTML = "";
+            fraudRequests.forEach(req => {
+                container.innerHTML += `<div class="fraud-item"><div style="display:flex; justify-content:space-between;"><div><strong>${req.userName}</strong> (${req.userEmail})<span class="fraud-risk-badge">RISK: ${req.fraudRisk}</span></div><span>${new Date(req.timestamp).toLocaleString()}</span></div><div>${req.requestType === "Leave" ? `📅 ${req.leaveType} | ${req.fromDate} → ${req.toDate}` : `⏰ ${req.permissionType} | ${req.permissionDate}`}</div><div class="fraud-warning">⚠️ Score: ${req.fraudScore || 0}/100<br>Reasons: ${req.detectionReasons?.join(', ') || 'N/A'}</div><div><input type="text" id="fc-${req.id}" placeholder="Comment..."><button onclick="resolveFraud('${req.id}','${req.requestType === "Leave" ? "leave" : "permission"}','Approved',document.getElementById('fc-${req.id}').value)">Approve</button><button onclick="resolveFraud('${req.id}','${req.requestType === "Leave" ? "leave" : "permission"}','Rejected',document.getElementById('fc-${req.id}').value)">Reject</button></div></div>`;
+            });
+        }
+        
+        window.resolveFraud = async (id, type, status, comment) => {
+            if (!comment.trim()) { alert("Write a comment!"); return; }
+            await db.collection(type === "leave" ? "leaves" : "permissions").doc(id).update({ status, adminComment: comment, adminName, actionDate: new Date().toISOString() });
+            alert(`Fraud request ${status}`);
+            loadRealData();
+        };
+        
+        // ========== USER INFO MODAL ==========
+        async function showUserInfo(userEmail, userName) {
+            const modal = document.getElementById("userInfoModal");
+            const modalBody = document.getElementById("modalBody");
+            
+            modal.style.display = "flex";
+            modalBody.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+            
+            try {
+                let userData;
+                if (userDataCache.has(userEmail)) {
+                    userData = userDataCache.get(userEmail);
+                } else {
+                    const userQuery = await db.collection("users").where("email", "==", userEmail).get();
+                    if (userQuery.empty) throw new Error("User not found");
+                    userData = userQuery.docs[0].data();
+                    userData.uid = userQuery.docs[0].id;
+                    userDataCache.set(userEmail, userData);
+                }
+                
+                const leavesSnap = await db.collection("leaves").where("userEmail", "==", userEmail).get();
+                const permissionSnap = await db.collection("permissions").where("userEmail", "==", userEmail).get();
+                
+                const userLeaves = [];
+                leavesSnap.forEach(d => userLeaves.push({ ...d.data(), type: "leave" }));
+                permissionSnap.forEach(d => userLeaves.push({ ...d.data(), type: "permission" }));
+                userLeaves.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                const totalTaken = userLeaves.length;
+                const totalAllowed = 12;
+                const remaining = Math.max(0, totalAllowed - totalTaken);
+                const pending = userLeaves.filter(l => l.status === "Pending").length;
+                
+                const fraudRequests = userLeaves.filter(l => {
+                    return l.fraudRisk === "High" || l.fraudRisk === "Medium" || l.fraudScore >= 50 || l.suspiciousScore >= 50;
+                });
+                const totalFraud = fraudRequests.length;
+                const highRiskFraud = fraudRequests.filter(l => l.fraudRisk === "High" || l.fraudScore >= 70).length;
+                const recentRequests = userLeaves.slice(0, 2);
+                
+                modalBody.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <div class="info-row" style="border-bottom: 2px solid #2da44e;">
+                            <span class="info-label"><i class="fas fa-id-card"></i> Student ID</span>
+                            <span class="info-value" style="font-weight:600; font-size:14px;">${userData.studentId || "Not provided"}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label"><i class="fas fa-calendar-alt"></i> Batch</span>
+                            <span class="info-value" style="font-size:14px;">${userData.batch || "Not provided"}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #2a2a2a; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                        <div style="font-size: 12px; color: #2da44e; margin-bottom: 10px; font-weight: 600;"><i class="fas fa-chart-line"></i> Leave Summary</div>
+                        <div style="display: flex; gap: 15px; text-align: center;">
+                            <div style="flex:1;"><div style="font-size: 22px; font-weight: 700; color: #f59e0b;">${totalTaken}</div><div style="font-size: 11px; color: #aaa;">Taken</div></div>
+                            <div style="flex:1;"><div style="font-size: 22px; font-weight: 700; color: #10b981;">${remaining}</div><div style="font-size: 11px; color: #aaa;">Remaining</div></div>
+                            <div style="flex:1;"><div style="font-size: 22px; font-weight: 700; color: #f59e0b;">${pending}</div><div style="font-size: 11px; color: #aaa;">Pending</div></div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: ${totalFraud > 0 ? 'rgba(220, 53, 69, 0.15)' : '#1a2d1a'}; border-radius: 12px; padding: 12px; margin-bottom: 12px; border-left: 3px solid ${totalFraud > 0 ? '#dc3545' : '#10b981'};">
+                        <div style="font-size: 12px; color: ${totalFraud > 0 ? '#f87171' : '#4ade80'}; margin-bottom: 10px; font-weight: 600;"><i class="fas fa-shield-alt"></i> Fraud Summary</div>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="flex:1;"><div style="font-size: 20px; font-weight: 700; color: ${totalFraud > 0 ? '#f87171' : '#4ade80'};">${totalFraud}</div><div style="font-size: 11px; color: #aaa;">Flagged</div></div>
+                            <div style="flex:1;"><div style="font-size: 20px; font-weight: 700; color: ${highRiskFraud > 0 ? '#dc3545' : '#aaa'};">${highRiskFraud}</div><div style="font-size: 11px; color: #aaa;">High Risk</div></div>
+                            <div style="flex:1;"><div style="font-size: 20px; font-weight: 700; color: #aaa;">${totalAllowed}</div><div style="font-size: 11px; color: #aaa;">Yearly</div></div>
+                        </div>
+                        ${totalFraud > 0 ? `<div style="margin-top: 8px; font-size: 11px; background: rgba(220,53,69,0.2); padding: 5px 8px; border-radius: 6px;">⚠️ Suspicious activity detected</div>` : `<div style="margin-top: 6px; font-size: 11px; color: #4ade80;">✓ No fraud detected</div>`}
+                    </div>
+                    
+                    ${recentRequests.length > 0 ? `
+                    <div>
+                        <div style="font-size: 12px; color: #2da44e; margin-bottom: 8px; font-weight: 600;"><i class="fas fa-history"></i> Last ${recentRequests.length} Request${recentRequests.length > 1 ? 's' : ''}</div>
+                        ${recentRequests.map(req => {
+                            let statusColor = req.status === "Approved" ? "#10b981" : (req.status === "Rejected" ? "#dc3545" : "#f59e0b");
+                            let isFraud = req.fraudRisk === "High" || req.fraudScore >= 50;
+                            return `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2a2a2a;">
+                                    <div><span style="font-size: 13px; font-weight: 600; color: #2da44e;">${req.leaveType || req.permissionType || req.type}</span><div style="font-size: 11px; color: #888; margin-top: 2px;">${req.fromDate || req.permissionDate}</div></div>
+                                    <div style="text-align: right;"><span style="font-size: 10px; padding: 3px 10px; border-radius: 12px; background: ${statusColor}20; color: ${statusColor};">${req.status}</span>${isFraud ? `<div style="font-size: 10px; color: #dc3545; margin-top: 3px;">⚠️ Fraud</div>` : `<div style="font-size: 10px; color: #aaa; margin-top: 3px;">Score: ${Math.round(req.fraudScore || req.suspiciousScore || 0)}/100</div>`}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    ` : '<div style="font-size: 13px; color: #888; text-align: center; padding: 15px;">No requests yet</div>'}
+                    
+                    <div style="margin-top: 12px; font-size: 10px; color: #555; text-align: center; border-top: 1px solid #2a2a2a; padding-top: 10px;">Showing last ${recentRequests.length} request(s) | Total: ${totalTaken}/${totalAllowed}</div>
+                `;
+            } catch (error) {
+                modalBody.innerHTML = `<div style="text-align:center; padding:20px; color:#f87171;"><i class="fas fa-exclamation-triangle"></i> Error loading data<br><small>${error.message}</small></div>`;
+            }
+        }
+        
+        window.closeUserModal = function() {
+            document.getElementById("userInfoModal").style.display = "none";
+        };
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById("userInfoModal");
+            if (event.target === modal) closeUserModal();
+        };
+        
+        // ========== NOTIFICATION FUNCTIONS ==========
+        async function loadNotifications() {
+            if(!adminEmail || !adminDepartment) return;
+            try {
+                const leavesSnap = await db.collection("leaves").where("department", "==", adminDepartment).where("adminEmail", "==", adminEmail).where("status", "==", "Pending").get();
+                const permsSnap = await db.collection("permissions").where("department", "==", adminDepartment).where("adminEmail", "==", adminEmail).where("status", "==", "Pending").get();
+                
+                const notifications = [];
+                
+                leavesSnap.forEach(doc => {
+                    const data = doc.data();
+                    notifications.push({
+                        id: doc.id,
+                        type: "leave",
+                        userName: data.userName,
+                        userEmail: data.userEmail,
+                        details: `${data.leaveType || data.type} | ${data.fromDate} → ${data.toDate}`,
+                        reason: data.reasonText || data.reason,
+                        fraudRisk: data.fraudRisk || "Low",
+                        fraudScore: data.fraudScore || 0,
+                        timestamp: data.timestamp,
+                        isRead: false
+                    });
+                });
+                
+                permsSnap.forEach(doc => {
+                    const data = doc.data();
+                    notifications.push({
+                        id: doc.id,
+                        type: "permission",
+                        userName: data.userName,
+                        userEmail: data.userEmail,
+                        details: `${data.permissionType || data.type} | ${data.permissionDate}`,
+                        reason: data.reasonText || data.reason,
+                        fraudRisk: data.fraudRisk || "Low",
+                        fraudScore: data.fraudScore || 0,
+                        timestamp: data.timestamp,
+                        isRead: false
+                    });
+                });
+                
+                notifications.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                allNotifications = notifications;
+                
+                const badge = document.getElementById("notifBadge");
+                if(badge) {
+                    if(notifications.length > 0) { 
+                        badge.innerText = notifications.length; 
+                        badge.style.display = "inline-block";
+                        document.title = `(${notifications.length}) Admin Panel | EduLeave`;
+                        const bellIcon = document.querySelector(".notification-icon i");
+                        if(bellIcon) bellIcon.style.color = "#dc3545";
+                    } else { 
+                        badge.style.display = "none";
+                        document.title = "Admin Panel | EduLeave";
+                        const bellIcon = document.querySelector(".notification-icon i");
+                        if(bellIcon) bellIcon.style.color = "#555";
+                    }
+                }
+                
+                updateNotificationDropdown();
+            } catch(e) { console.error("Error loading notifications:", e); }
+        }
+        
+        function updateNotificationDropdown() {
+            const dd = document.getElementById("notificationDropdown");
+            if(!dd) return;
+            
+            if(allNotifications.length === 0) {
+                dd.innerHTML = `<div style="padding:20px; text-align:center; color:#666;">
+                    <i class="fas fa-bell-slash"></i><br>No pending notifications
+                </div>`;
             } else {
-                dropdown.innerHTML = allNotifications.map(n => {
-                    const date = n.timestamp ? (n.timestamp.toDate ? n.timestamp.toDate() : new Date(n.timestamp)) : new Date();
-                    const timeAgo = getTimeAgo(date);
+                dd.innerHTML = allNotifications.map(n => {
+                    let isFraud = n.fraudRisk === "High";
                     return `
-                        <div class="notification-item ${n.isRead ? '' : 'unread'}" onclick="markNotificationRead('${n.id}')">
-                            <strong>${n.type === 'leave' ? '📋 Leave Request' : '🔐 Permission Request'}</strong><br>
-                            👤 ${n.userName}<br>
-                            📝 ${n.details || ''}<br>
-                            <div class="notification-time">${timeAgo}</div>
+                        <div class="notification-item unread ${isFraud ? 'notification-fraud' : ''}" onclick="goToRequest('${n.id}', '${n.type}')">
+                            <div style="display:flex; justify-content:space-between; align-items:start;">
+                                <strong>${n.type === 'leave' ? '📋 Leave Request' : '⏰ Permission Request'}</strong>
+                                <span style="background:#2da44e; color:white; padding:2px 6px; border-radius:10px; font-size:9px;">NEW</span>
+                                ${isFraud ? '<span style="background:#dc3545; color:white; padding:2px 6px; border-radius:10px; font-size:9px;">🚨 FRAUD</span>' : ''}
+                            </div>
+                            <div style="font-size:13px; margin-top:6px;"><strong>${n.userName}</strong> (${n.userEmail})</div>
+                            <div style="font-size:11px; color:#666; margin-top:4px;">📅 ${n.details || ''}</div>
+                            <div style="font-size:10px; color:#999; margin-top:4px;">📝 ${n.reason?.substring(0, 60) || ''}</div>
+                            ${isFraud ? `<div style="color:#dc3545; font-size:10px; margin-top:3px;">⚠️ Fraud Score: ${n.fraudScore || 0}/100</div>` : ''}
+                            <div style="font-size:10px; color:#999; margin-top:5px;">${new Date(n.timestamp).toLocaleString()}</div>
                         </div>
                     `;
                 }).join('');
             }
         }
         
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-            if (seconds < 60) return 'Just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes} min ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            const days = Math.floor(hours / 24);
-            return `${days} day${days > 1 ? 's' : ''} ago`;
+        window.goToRequest = function(requestId, type) {
+            const dd = document.getElementById("notificationDropdown");
+            dd.style.display = "none";
+        };
+        
+        window.toggleNotifications = () => {
+            const dd = document.getElementById("notificationDropdown");
+            if(!dd) return;
+            if(dd.style.display === "block") { 
+                dd.style.display = "none"; 
+                return; 
+            }
+            updateNotificationDropdown();
+            dd.style.display = "block";
+        };
+        
+        // ========== FIXED: No auto re-render while typing ==========
+        function setupListeners() {
+            if(!adminDepartment || !adminEmail) return;
+            
+            // Only update notifications in real-time, NOT full request list
+            db.collection("leaves")
+                .where("department", "==", adminDepartment)
+                .where("adminEmail", "==", adminEmail)
+                .onSnapshot(() => { 
+                    loadNotifications(); 
+                });
+            
+            db.collection("permissions")
+                .where("department", "==", adminDepartment)
+                .where("adminEmail", "==", adminEmail)
+                .onSnapshot(() => { 
+                    loadNotifications(); 
+                });
         }
         
-        window.toggleNotifications = function() {
-            const dropdown = document.getElementById("notificationDropdown");
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
+        // ========== FIXED: UPDATE REQUEST STATUS ==========
+        window.updateRequestStatus = async function(id, type, newStatus) {
+            const commentInput = document.getElementById(`comment-${id}`);
+            const comment = commentInput ? commentInput.value.trim() : "";
+            
+            if (!comment) {
+                alert("Please write a comment before approving or rejecting!");
+                if(commentInput) commentInput.focus();
                 return;
             }
-            renderNotificationsDropdown();
-            dropdown.style.display = "block";
-        };
-        
-        window.markNotificationRead = async function(id) {
-            await db.collection("notifications").doc(id).update({ isRead: true });
-            document.getElementById("notificationDropdown").style.display = "none";
-        };
-        
-        async function createNotificationForPendingRequests() {
-            const pendingLeaves = allLeaves.filter(l => l.status === "Pending");
-            const pendingPermissions = allPermissions.filter(p => p.status === "Pending");
-            const allPending = [...pendingLeaves, ...pendingPermissions];
             
-            for (const req of allPending) {
-                const existing = await db.collection("notifications")
-                    .where("requestId", "==", req.id)
-                    .where("adminEmail", "==", adminEmail)
-                    .get();
+            try {
+                const ref = type === "leave" ? db.collection("leaves").doc(id) : db.collection("permissions").doc(id);
+                await ref.update({ 
+                    status: newStatus, 
+                    adminComment: comment, 
+                    adminName: adminName, 
+                    actionDate: new Date().toISOString() 
+                });
                 
-                if (existing.empty) {
-                    const details = req.type === "leave" 
-                        ? `${req.type} | ${req.fromDate} → ${req.toDate}`
-                        : `${req.purpose} | ${req.date} | ${req.startTime} → ${req.endTime}`;
-                    
-                    await db.collection("notifications").add({
-                        type: req.type === "leave" ? "leave" : "permission",
-                        userName: req.userName,
-                        userEmail: req.userEmail,
-                        department: req.department,
-                        adminEmail: adminEmail,
-                        requestId: req.id,
-                        details: details,
-                        reason: req.reason || "No reason",
-                        isRead: false,
-                        timestamp: req.timestamp || new Date().toISOString()
-                    });
-                }
+                // Refresh data after action
+                await loadRealData();
+                await loadNotifications();
+                
+                alert(`✅ Request ${newStatus} successfully!`);
+                
+            } catch (error) {
+                console.error("Error updating request:", error);
+                alert("Failed to update request. Please try again.");
             }
+        };
+        
+        function filterRequests() {
+            const type = document.getElementById("typeFilter").value;
+            const status = document.getElementById("statusFilter").value;
+            const risk = document.getElementById("riskFilter").value;
+            let reqs = [];
+            if(type === "all" || type === "leave") reqs.push(...allLeaves.filter(l => status === "all" || l.status === status));
+            if(type === "all" || type === "permission") reqs.push(...allPermissions.filter(p => status === "all" || p.status === status));
+            if (risk !== "all") { reqs = reqs.filter(r => r.fraudRisk === risk); }
+            renderRequests(reqs);
         }
         
-        async function loadData() {
-            const user = auth.currentUser;
-            if (!user) { window.location.href = "index.html"; return; }
+        // ========== FIXED: Render Requests without breaking focus ==========
+        function renderRequests(requests) {
+            const container = document.getElementById("requestsList");
+            if(!requests.length) { 
+                container.innerHTML = `<div class="empty-state">📭 No requests assigned to you in ${adminDepartment} department</div>`; 
+                return; 
+            }
             
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            const userData = userDoc.data();
-            adminDepartment = userData.department;
-            adminName = userData.name;
-            adminEmail = user.email;
+            // Save current input values before re-render
+            const savedComments = {};
+            document.querySelectorAll('.comment-input input').forEach(input => {
+                if(input.id && input.id.startsWith('comment-')) {
+                    savedComments[input.id] = input.value;
+                }
+            });
+            
+            container.innerHTML = "";
+            requests.forEach(r => {
+                const statusCls = r.status === "Approved" ? "status-approved" : (r.status === "Rejected" ? "status-rejected" : "status-pending");
+                const isFraud = r.fraudRisk === "High";
+                const fraudHtml = isFraud ? `<div style="background:#fee2e2; padding:6px; border-radius:8px; margin:6px 0; font-size:11px; color:#991b1b;"><i class="fas fa-shield-alt"></i> ⚠️ Fraud Risk: ${r.fraudRisk} | Score: ${r.fraudScore || 0}/100</div>` : '';
+                
+                const details = r.type === "leave" ? 
+                    `<div class="request-details"><strong>Dates:</strong> ${r.fromDate} → ${r.toDate}<br><strong>Duration:</strong> ${r.leaveDuration} days<br><strong>Reason:</strong> ${r.reasonText || "—"}</div>` : 
+                    `<div class="request-details"><strong>Date:</strong> ${r.permissionDate}<br><strong>Time:</strong> ${r.startTime} → ${r.endTime}<br><strong>Duration:</strong> ${r.permissionDuration} hours<br><strong>Reason:</strong> ${r.reasonText || "—"}</div>`;
+                
+                const adminCommentHtml = r.adminComment ? `<div class="admin-comment"><i class="fas fa-comment"></i> ${r.adminComment}</div>` : "";
+                
+                const actionHtml = (r.status !== "Approved" && r.status !== "Rejected") ? `
+                    <div class="comment-input">
+                        <input type="text" id="comment-${r.id}" class="comment-field" placeholder="Write comment..." style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px;">
+                        <button class="approve-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Approved')" style="background: #2da44e; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer;">✓ Approve</button>
+                        <button class="reject-btn" onclick="updateRequestStatus('${r.id}','${r.type}','Rejected')" style="background: #dc3545; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer;">✗ Reject</button>
+                    </div>
+                ` : "";
+                
+                container.innerHTML += `
+                    <div class="request-card ${isFraud ? 'fraud-card' : ''}" data-request-id="${r.id}">
+                        <div class="request-header">
+                            <div>
+                                <div class="user-name" onclick="showUserInfo('${r.userEmail}', '${r.userName}')"><i class="fas fa-user-circle"></i> ${r.userName}</div>
+                                <div class="user-email">${r.userEmail}</div>
+                                <div class="user-dept">${r.department} | Batch:${r.batch||"N/A"}</div>
+                            </div>
+                            <div>
+                                <span class="status-badge ${statusCls}">${r.status || "Pending"}</span>
+                                ${r.fraudRisk ? `<span style="margin-left:8px; font-size:10px; color:${r.fraudRisk === 'High' ? '#dc3545' : '#f59e0b'}">⚠️ ${r.fraudRisk}</span>` : ''}
+                            </div>
+                        </div>
+                        ${details}
+                        ${fraudHtml}
+                        ${adminCommentHtml}
+                        ${actionHtml}
+                    </div>
+                `;
+            });
+            
+            // Restore saved input values after re-render
+            setTimeout(() => {
+                Object.keys(savedComments).forEach(id => {
+                    const input = document.getElementById(id);
+                    if(input) input.value = savedComments[id];
+                });
+            }, 10);
+        }
+        
+        auth.onAuthStateChanged(async (user) => {
+            if(!user){ location.href="index.html"; return; }
+            const uDoc = await db.collection("users").doc(user.uid).get();
+            const data = uDoc.data();
+            adminDepartment = data.department; adminName = data.name; adminEmail = user.email;
             
             document.getElementById("adminName").innerHTML = adminName;
             document.getElementById("deptName").innerHTML = adminDepartment;
@@ -347,160 +846,11 @@
             document.getElementById("profileEmail").innerHTML = adminEmail;
             
             await loadStudents();
-            setupNotificationsListener();
+            await loadRealData();
+            await loadNotifications();
+            setupListeners();
             
-            const leavesSnapshot = await db.collection("leaves")
-                .where("department", "==", adminDepartment)
-                .get();
-            
-            const permissionsSnapshot = await db.collection("permissions")
-                .where("department", "==", adminDepartment)
-                .get();
-            
-            allLeaves = [];
-            allPermissions = [];
-            
-            leavesSnapshot.forEach(doc => {
-                allLeaves.push({ id: doc.id, ...doc.data(), type: "leave" });
-            });
-            
-            permissionsSnapshot.forEach(doc => {
-                allPermissions.push({ id: doc.id, ...doc.data(), type: "permission" });
-            });
-            
-            allLeaves.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-            allPermissions.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-            
-            await createNotificationForPendingRequests();
-            filterRequests();
-        }
-        
-        async function updateRequestStatus(id, type, newStatus, comment) {
-            if (!comment.trim()) { alert("Please write a comment!"); return; }
-            
-            try {
-                const collectionRef = type === "leave" ? db.collection("leaves") : db.collection("permissions");
-                await collectionRef.doc(id).update({ 
-                    status: newStatus, 
-                    adminComment: comment, 
-                    adminName: adminName, 
-                    actionDate: new Date().toISOString() 
-                });
-                
-                const notifQuery = await db.collection("notifications")
-                    .where("requestId", "==", id)
-                    .get();
-                notifQuery.forEach(async (doc) => {
-                    await db.collection("notifications").doc(doc.id).update({ isRead: true });
-                });
-                
-                alert(`Request ${newStatus} with comment: "${comment}"`);
-                loadData();
-            } catch(e) { 
-                console.error("Error:", e);
-                alert("Failed to update!"); 
-            }
-        }
-        
-        function filterRequests() {
-            const typeFilter = document.getElementById("typeFilter").value;
-            const statusFilter = document.getElementById("statusFilter").value;
-            
-            let requests = [];
-            if (typeFilter === "all" || typeFilter === "leave") {
-                let filtered = [...allLeaves];
-                if (statusFilter !== "all") {
-                    filtered = filtered.filter(r => r.status === statusFilter);
-                }
-                requests.push(...filtered);
-            }
-            if (typeFilter === "all" || typeFilter === "permission") {
-                let filtered = [...allPermissions];
-                if (statusFilter !== "all") {
-                    filtered = filtered.filter(r => r.status === statusFilter);
-                }
-                requests.push(...filtered);
-            }
-            
-            renderRequests(requests);
-        }
-        
-        function renderRequests(requests) {
-            const container = document.getElementById("requestsList");
-            if (requests.length === 0) {
-                container.innerHTML = `<div class="empty-state">No requests found in ${adminDepartment} department.</div>`;
-                return;
-            }
-            
-            container.innerHTML = "";
-            requests.forEach(req => {
-                const statusClass = req.status === "Approved" ? "status-approved" : (req.status === "Rejected" ? "status-rejected" : "status-pending");
-                const statusText = req.status || "Pending";
-                
-                let details = "";
-                if (req.type === "leave") {
-                    details = `<div class="request-details">
-                        <strong>Dates:</strong> ${req.fromDate || req.from} → ${req.toDate || req.to}<br>
-                        <strong>Reason:</strong> ${req.reason || "No reason provided"}
-                    </div>`;
-                } else {
-                    details = `<div class="request-details">
-                        <strong>Date:</strong> ${req.date}<br>
-                        <strong>Time:</strong> ${req.startTime} → ${req.endTime}<br>
-                        <strong>Duration:</strong> ${req.duration}<br>
-                        <strong>Reason:</strong> ${req.reason || "No reason provided"}
-                    </div>`;
-                }
-                
-                const adminCommentHtml = req.adminComment ? `<div class="admin-comment">${req.adminComment}</div>` : "";
-                const actionHtml = (req.status !== "Approved" && req.status !== "Rejected") ? 
-                    `<div class="comment-input">
-                        <input type="text" id="comment-${req.id}" placeholder="Write your comment here...">
-                        <button class="approve-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Approved', document.getElementById('comment-${req.id}').value)">Approve</button>
-                        <button class="reject-btn" onclick="updateRequestStatus('${req.id}', '${req.type}', 'Rejected', document.getElementById('comment-${req.id}').value)">Reject</button>
-                    </div>` : "";
-                
-                container.innerHTML += `
-                    <div class="request-card" id="request-${req.id}">
-                        <div class="request-header">
-                            <div>
-                                <div class="user-name">${req.userName}</div>
-                                <div class="user-email">${req.userEmail}</div>
-                                <div class="user-dept">${req.department} | Batch: ${req.batch || "N/A"} | ID: ${req.studentId || "N/A"}</div>
-                            </div>
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </div>
-                        ${details}
-                        ${adminCommentHtml}
-                        ${actionHtml}
-                    </div>
-                `;
-            });
-        }
-        
-        let leavesUnsubscribe = null;
-        let permissionsUnsubscribe = null;
-        
-        function setupRealtimeListeners() {
-            if (leavesUnsubscribe) leavesUnsubscribe();
-            if (permissionsUnsubscribe) permissionsUnsubscribe();
-            
-            leavesUnsubscribe = db.collection("leaves")
-                .where("department", "==", adminDepartment)
-                .onSnapshot(() => loadData());
-            
-            permissionsUnsubscribe = db.collection("permissions")
-                .where("department", "==", adminDepartment)
-                .onSnapshot(() => loadData());
-        }
-        
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                await loadData();
-                setupRealtimeListeners();
-            } else {
-                window.location.href = "index.html";
-            }
+            setInterval(() => { loadNotifications(); }, 10000);
         });
     </script>
 </body>

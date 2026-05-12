@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | EduLeave</title>
+    <title>Leave Management | EduLeave</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -17,24 +17,31 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); font-family: 'Inter', sans-serif; padding: 20px; }
-        .container { max-width: 700px; margin: 0 auto; }
+        .container { max-width: 750px; margin: 0 auto; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; }
         .logo { font-size: 18px; font-weight: bold; color: #1a1a2e; }
+        .logo i { color: #2da44e; }
         .user-avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #2da44e, #216e39); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
         .logout-btn { background: #dc3545; border: none; padding: 6px 12px; border-radius: 8px; color: white; cursor: pointer; }
         .btn-home { background: #4f46e5; border: none; padding: 8px 16px; border-radius: 8px; color: white; cursor: pointer; margin-bottom: 15px; display: inline-block; }
-        .welcome-card { background: white; border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; }
-        .welcome-text { color: #2da44e; font-weight: 500; }
-        .form-card { background: white; border-radius: 12px; padding: 20px; }
+        .form-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .form-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; border-bottom: 2px solid #2da44e; padding-bottom: 8px; display: inline-block; }
+        .section-title { font-size: 14px; font-weight: 600; margin: 15px 0 10px 0; color: #2da44e; }
         .input-field { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
         .input-field:focus { border-color: #2da44e; outline: none; }
         .date-group { display: flex; gap: 15px; margin-bottom: 12px; }
         .date-field { flex: 1; }
         .date-field label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+        .row-2cols { display: flex; gap: 15px; margin-bottom: 12px; }
+        .row-2cols > div { flex: 1; }
         .btn-submit { background: linear-gradient(135deg, #2da44e, #216e39); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 500; margin-top: 10px; }
         .btn-submit:hover { transform: scale(0.98); }
-        @media (max-width: 550px) { .date-group { flex-direction: column; gap: 0; } body { padding: 10px; } }
+        .fraud-warning { background: #fff3cd; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 12px; display: none; }
+        .fraud-high { background: #f8d7da; border-left-color: #dc3545; }
+        .warning-text { color: #856404; }
+        .info-text { font-size: 11px; color: #666; margin-top: -8px; margin-bottom: 12px; }
+        .auto-field { background: #f5f5f5; cursor: default; }
+        @media (max-width: 650px) { .row-2cols { flex-direction: column; gap: 0; } .date-group { flex-direction: column; gap: 0; } }
     </style>
 </head>
 <body>
@@ -49,34 +56,83 @@
         
         <button class="btn-home" onclick="location.href='home.html'"><i class="fas fa-arrow-left"></i> Home</button>
         
-        <div class="welcome-card"><div class="welcome-text" id="welcomeUser"></div></div>
-        
         <div class="form-card">
             <div class="form-title"><i class="fas fa-pen-alt"></i> Apply for Leave</div>
             
-            <select id="department" class="input-field">
-                <option value="">Select Department</option>
-                <option value="CSE">CSE</option><option value="EEE">EEE</option><option value="BBA">BBA</option>
-                <option value="LLB">LLB</option><option value="CEN">CEN</option><option value="TEX">TEX</option>
-            </select>
-            
-            <input type="text" id="studentName" placeholder="Your Name" class="input-field">
-            
+            <!-- Select Administrator -->
             <select id="adminSelect" class="input-field">
                 <option value="">Select Administrator</option>
             </select>
             
+            <!-- Leave Type -->
             <select id="leaveType" class="input-field">
-                <option>Sick Leave</option><option>Casual Leave</option><option>Emergency Leave</option><option>Annual Leave</option>
+                <option value="">Select Leave Type</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Emergency Leave">Emergency Leave</option>
+                <option value="Annual Leave">Annual Leave</option>
+                <option value="Study Leave">Study Leave</option>
+                <option value="Maternity/Paternity Leave">Maternity/Paternity Leave</option>
             </select>
             
+            <!-- Start Date & End Date -->
             <div class="date-group">
-                <div class="date-field"><label>Start Date</label><input type="date" id="fromDate" class="input-field" style="margin-bottom:0;"></div>
-                <div class="date-field"><label>End Date</label><input type="date" id="toDate" class="input-field" style="margin-bottom:0;"></div>
+                <div class="date-field"><label>📅 Start Date</label><input type="date" id="fromDate" class="input-field"></div>
+                <div class="date-field"><label>📅 End Date</label><input type="date" id="toDate" class="input-field"></div>
             </div>
             <div id="dateError" style="color:#dc3545; font-size:12px; margin-bottom:10px;"></div>
             
-            <textarea id="leaveReason" placeholder="Reason for leave..." class="input-field" style="min-height:80px;"></textarea>
+            <!-- Auto-calculated Fields (Read-only) -->
+            <div class="row-2cols">
+                <div>
+                    <label style="font-size:12px; color:#666;">📅 Starting Day (Auto)</label>
+                    <input type="text" id="dayDisplay" class="input-field auto-field" readonly placeholder="Select start date">
+                </div>
+                <div>
+                    <label style="font-size:12px; color:#666;">🍂 Season (Auto)</label>
+                    <input type="text" id="seasonDisplay" class="input-field auto-field" readonly placeholder="Select start date">
+                </div>
+            </div>
+            
+            <div class="row-2cols">
+                <div>
+                    <label style="font-size:12px; color:#666;">📊 Leave Duration (Auto)</label>
+                    <input type="text" id="durationDisplay" class="input-field auto-field" readonly placeholder="Select dates">
+                </div>
+                <div>
+                    <label style="font-size:12px; color:#666;">📆 Month (Auto)</label>
+                    <input type="text" id="monthDisplay" class="input-field auto-field" readonly placeholder="Select start date">
+                </div>
+            </div>
+            <div class="info-text"><i class="fas fa-info-circle"></i> Day, Season, Duration, and Month are automatically calculated.</div>
+            
+            <!-- Reason for Leave -->
+            <div class="section-title"><i class="fas fa-stethoscope"></i> Reason for Leave</div>
+            <textarea id="leaveReason" placeholder="Write your reason for leave here..." class="input-field" style="min-height:80px;"></textarea>
+            
+            <!-- Additional Information -->
+            <div class="section-title"><i class="fas fa-chart-line"></i> Additional Information</div>
+            
+            <div class="row-2cols">
+                <div>
+                    <label style="font-size:12px; color:#666;">💰 Transportation Expense <span style="color:#f59e0b;">(BDT/Day)</span></label>
+                    <input type="number" id="transportExpensePerDay" step="10" placeholder="e.g., 200" class="input-field">
+                    <div class="info-text">প্রতিদিনের পরিবহন খরচ (যেমন: 200 টাকা/দিন)</div>
+                </div>
+                <div>
+                    <label style="font-size:12px; color:#666;">📚 Class Load (hours/day)</label>
+                    <input type="number" id="classLoad" step="0.5" placeholder="e.g., 6.5" class="input-field">
+                </div>
+            </div>
+            
+            <div class="row-2cols">
+                <div>
+                    <label style="font-size:12px; color:#666;">🏠 Distance from Campus (km)</label>
+                    <input type="number" id="distance" step="0.5" placeholder="e.g., 12" class="input-field">
+                </div>
+            </div>
+            
+            <div id="fraudWarning" class="fraud-warning"></div>
             
             <button class="btn-submit" onclick="submitLeave()"><i class="fas fa-paper-plane"></i> Submit Leave Request</button>
         </div>
@@ -96,11 +152,11 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
         
-        window.logout = async function() {
-            try { await auth.signOut(); } catch(e) {}
-            sessionStorage.removeItem("currentUser");
-            window.location.href = "index.html";
-        };
+        const dayNames = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday" };
+        const seasonNames = { 1: "Spring (March-May)", 2: "Summer (June-August)", 3: "Fall (September-November)", 4: "Winter (December-February)" };
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        window.logout = async function() { try { await auth.signOut(); } catch(e) {} window.location.href = "index.html"; };
         
         window.loadAdmins = async function(department) {
             if (!department) return;
@@ -113,81 +169,130 @@
             });
         };
         
+        function getDayOfWeekFromDate(date) { const day = new Date(date).getDay(); if (day === 0) return 7; return day; }
+        function getSeasonFromDate(date) { const month = new Date(date).getMonth() + 1; if (month >= 3 && month <= 5) return 1; if (month >= 6 && month <= 8) return 2; if (month >= 9 && month <= 11) return 3; return 4; }
+        function calculateLeaveDuration(fromDate, toDate) { const from = new Date(fromDate); const to = new Date(toDate); return Math.ceil((to - from) / (1000 * 60 * 60 * 24)) + 1; }
+        
+        function updateAutoFields() {
+            const fromDate = document.getElementById("fromDate").value;
+            const toDate = document.getElementById("toDate").value;
+            if (fromDate) {
+                const dayCode = getDayOfWeekFromDate(fromDate);
+                document.getElementById("dayDisplay").value = dayNames[dayCode] || "Unknown";
+                const seasonCode = getSeasonFromDate(fromDate);
+                document.getElementById("seasonDisplay").value = seasonNames[seasonCode] || "Unknown";
+                const month = new Date(fromDate).getMonth();
+                document.getElementById("monthDisplay").value = monthNames[month] || "Unknown";
+                if (toDate) {
+                    const duration = calculateLeaveDuration(fromDate, toDate);
+                    document.getElementById("durationDisplay").value = duration + " day(s)";
+                } else { document.getElementById("durationDisplay").value = "Select end date"; }
+            } else {
+                document.getElementById("dayDisplay").value = "Select start date";
+                document.getElementById("seasonDisplay").value = "Select start date";
+                document.getElementById("monthDisplay").value = "Select start date";
+                document.getElementById("durationDisplay").value = "Select dates";
+            }
+        }
+        
+        async function detectFraud(leaveData) {
+            let fraudProbability = 0;
+            let riskFactors = [];
+            
+            if (leaveData.dayOfWeek === 1 || leaveData.dayOfWeek === 5) { fraudProbability += 0.20; riskFactors.push(`Leave starts on ${leaveData.dayOfWeek === 1 ? "Monday" : "Friday"} (long weekend pattern)`); }
+            if (leaveData.dayOfWeek === 6 || leaveData.dayOfWeek === 7) { fraudProbability += 0.10; riskFactors.push(`Leave starts on weekend`); }
+            if (leaveData.season === 1 || leaveData.season === 4) { fraudProbability += 0.08; riskFactors.push(`Leave during ${leaveData.season === 1 ? "Spring" : "Winter"} season`); }
+            if (leaveData.leaveDuration >= 5) { fraudProbability += 0.15; riskFactors.push(`Long leave duration (${leaveData.leaveDuration} days)`); }
+            if (leaveData.leaveDuration >= 7) { fraudProbability += 0.10; riskFactors.push(`Very long leave (${leaveData.leaveDuration} days)`); }
+            if (leaveData.month === 1 || leaveData.month === 6 || leaveData.month === 12) { fraudProbability += 0.10; riskFactors.push(`Leave during exam period (${monthNames[leaveData.month - 1]})`); }
+            
+            // Transport Expense per day based fraud detection
+            if (leaveData.transportExpensePerDay && leaveData.transportExpensePerDay < 100 && leaveData.leaveDuration > 3) {
+                fraudProbability += 0.08;
+                riskFactors.push(`Very low daily transport expense (${leaveData.transportExpensePerDay} BDT/day) with long leave`);
+            }
+            if (leaveData.transportExpensePerDay && leaveData.transportExpensePerDay > 500) {
+                fraudProbability += 0.05;
+                riskFactors.push(`High daily transport expense (${leaveData.transportExpensePerDay} BDT/day)`);
+            }
+            
+            if (leaveData.classLoad && leaveData.classLoad > 7) { fraudProbability += 0.12; riskFactors.push(`High class load (${leaveData.classLoad} hrs/day)`); }
+            if (leaveData.distance && leaveData.distance > 20) { fraudProbability += 0.10; riskFactors.push(`Far from campus (${leaveData.distance} km)`); }
+            
+            const leavesSnapshot = await db.collection("leaves").where("userEmail", "==", leaveData.userEmail).get();
+            const leavesInLast30Days = leavesSnapshot.docs.filter(doc => { const leaveDate = new Date(doc.data().fromDate); return (new Date() - leaveDate) / (1000 * 60 * 60 * 24) <= 30; }).length;
+            if (leavesInLast30Days >= 3) { fraudProbability += 0.15; riskFactors.push(`${leavesInLast30Days} leaves taken in last 30 days`); }
+            
+            fraudProbability = Math.min(Math.max(fraudProbability, 0), 0.98);
+            const prediction = fraudProbability >= 0.4 ? 1 : 0;
+            const riskLevel = fraudProbability >= 0.7 ? "High" : (fraudProbability >= 0.4 ? "Medium" : "Low");
+            return { prediction, fraud_probability: fraudProbability, risk_level: riskLevel, risk_factors: riskFactors, fraud_score: Math.round(fraudProbability * 100) };
+        }
+        
         window.submitLeave = async function() {
             const user = auth.currentUser;
-            if (!user) { alert("Please login again"); window.location.href = "index.html"; return; }
-            
+            if (!user) { alert("Please login"); window.location.href = "index.html"; return; }
             const userDoc = await db.collection("users").doc(user.uid).get();
             const userData = userDoc.data();
             
-            let department = document.getElementById("department").value;
-            let name = document.getElementById("studentName").value.trim();
             let adminValue = document.getElementById("adminSelect").value;
             let [adminEmail, adminName] = adminValue ? adminValue.split("|") : [];
-            let type = document.getElementById("leaveType").value;
+            let leaveType = document.getElementById("leaveType").value;
             let from = document.getElementById("fromDate").value;
             let to = document.getElementById("toDate").value;
-            let reason = document.getElementById("leaveReason").value.trim();
+            let reasonText = document.getElementById("leaveReason").value.trim();
+            let transportExpensePerDay = parseInt(document.getElementById("transportExpensePerDay").value) || 0;
+            let classLoad = parseFloat(document.getElementById("classLoad").value) || 0;
+            let distance = parseFloat(document.getElementById("distance").value) || 0;
             
-            if (!department || !name || !adminEmail || !from || !to || !reason) {
-                alert("Please fill all fields!");
-                return;
-            }
-            if (new Date(from) > new Date(to)) {
-                document.getElementById("dateError").innerHTML = "End date cannot be before start date!";
-                return;
+            let dayOfWeek = getDayOfWeekFromDate(from);
+            let season = getSeasonFromDate(from);
+            let leaveDuration = calculateLeaveDuration(from, to);
+            let month = new Date(from).getMonth() + 1;
+            
+            if (!adminEmail || !leaveType || !from || !to || !reasonText) { alert("Please fill all required fields!"); return; }
+            if (new Date(from) > new Date(to)) { document.getElementById("dateError").innerHTML = "End date cannot be before start date!"; return; }
+            
+            const fraudResult = await detectFraud({ userEmail: user.email, dayOfWeek, season, leaveDuration, month, transportExpensePerDay, classLoad, distance });
+            
+            if (fraudResult.prediction === 1) {
+                document.getElementById("fraudWarning").style.display = "block";
+                document.getElementById("fraudWarning").className = fraudResult.risk_level === "High" ? "fraud-warning fraud-high" : "fraud-warning";
+                document.getElementById("fraudWarning").innerHTML = `<div class="warning-text"><strong>⚠️ FRAUD DETECTION ALERT!</strong><br>Risk: ${fraudResult.risk_level} | Score: ${fraudResult.fraud_score}/100<br>Reasons: ${fraudResult.risk_factors.join(', ')}<br><small>This request has been flagged for admin review.</small></div>`;
+                if (!confirm(`⚠️ Fraud Warning!\nRisk: ${fraudResult.risk_level}\nScore: ${fraudResult.fraud_score}/100\n\nSubmit anyway?`)) return;
             }
             
-            const requestData = {
-                userName: name,
-                userEmail: user.email,
-                department: department,
-                batch: userData.batch || "",
-                studentId: userData.studentId || "",
-                fromDate: from,
-                toDate: to,
-                reason: reason,
-                type: type,
-                adminEmail: adminEmail,
-                adminName: adminName,
-                status: "Pending",
-                timestamp: new Date().toISOString()
-            };
+            await db.collection("leaves").add({
+                userName: userData.name, userEmail: user.email, department: userData.department || "N/A",
+                adminEmail, adminName, leaveType, fromDate: from, toDate: to, leaveDuration, reasonText,
+                dayOfWeek, season, month, transportExpensePerDay, classLoad, distanceFromCampus: distance,
+                fraudScore: fraudResult.fraud_score, fraudRisk: fraudResult.risk_level,
+                detectionReasons: fraudResult.risk_factors, status: "Pending", timestamp: new Date().toISOString()
+            });
             
-            try {
-                await db.collection("leaves").add(requestData);
-                alert("✅ Leave request submitted! Admin will be notified by email.");
-                
-                document.getElementById("fromDate").value = "";
-                document.getElementById("toDate").value = "";
-                document.getElementById("leaveReason").value = "";
-                document.getElementById("dateError").innerHTML = "";
-                
-            } catch(e) { 
-                console.error("Submit error:", e);
-                alert("Failed to submit!"); 
-            }
+            await db.collection("notifications").add({
+                type: "leave", userName: userData.name, userEmail: user.email, department: userData.department,
+                adminEmail: adminEmail, details: `${leaveType} | ${from} → ${to}`,
+                fraudRisk: fraudResult.risk_level, fraudScore: fraudResult.fraud_score, isRead: false, timestamp: new Date().toISOString()
+            });
+            
+            alert("✅ Leave request submitted!");
+            document.getElementById("fromDate").value = ""; document.getElementById("toDate").value = ""; document.getElementById("leaveReason").value = "";
+            document.getElementById("transportExpensePerDay").value = ""; document.getElementById("classLoad").value = ""; document.getElementById("distance").value = "";
+            document.getElementById("adminSelect").value = ""; document.getElementById("fraudWarning").style.display = "none";
+            updateAutoFields();
         };
         
-        document.getElementById("department")?.addEventListener("change", function() {
-            loadAdmins(this.value);
-        });
+        document.getElementById("fromDate").addEventListener("change", updateAutoFields);
+        document.getElementById("toDate").addEventListener("change", updateAutoFields);
         
         auth.onAuthStateChanged(async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
             const userDoc = await db.collection("users").doc(user.uid).get();
             const userData = userDoc.data();
-            if (!userData) { window.location.href = "index.html"; return; }
             if (userData.role === "admin") { window.location.href = "admin.html"; return; }
-            
             document.getElementById("userAvatar").innerHTML = userData.name.charAt(0).toUpperCase();
-            document.getElementById("welcomeUser").innerHTML = ` Welcome, ${userData.name}!`;
-            document.getElementById("studentName").value = userData.name;
-            
-            if (userData.department) {
-                document.getElementById("department").value = userData.department;
-                loadAdmins(userData.department);
-            }
+            if (userData.department) loadAdmins(userData.department);
         });
     </script>
 </body>
